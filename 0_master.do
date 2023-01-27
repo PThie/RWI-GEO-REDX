@@ -15,29 +15,33 @@ global ROOT "M:\_FDZ\RWI-GEO\RWI-GEO-REDX\"
 cd "${ROOT}" 
 
 ***************** with new wave, needs to be updated!!!
-***************** lines 14 to 29 need to be adjusted with new wave
+***************** lines 14 to 35 need to be adjusted with new wave
 
-global maxyear 2022 //givex the maximum year of the data 
+global maxyear 2022 //gives the maximum year of the data 
 
 global maxyear2 2022 //gives year in which the last full quarter lies
 
-global maxmonth 06 // gives the maximum month in the data (in the last available year?)
+global maxmonth 12 // gives the maximum month in the data (in the last available year?)
 
-global month "Jul2022"
+global month "Dez2022"
 global diff = $maxyear2 - 2008 
-global version "v9"
-global maxqudate 249 // gives the maximum quarter
-
-global red_version "v7" // latest RED version which should be used here
+global version "v10"
+global maxqudate 251 // gives the maximum quarter
+/* 
+NOTE way to find the max quarter:
+	gen qdate = qofd(dofm(ym(ejahr, emonat)))
+	tab qdate
+*/
+global red_version "v8" // latest RED version which should be used here
 
 sysdir set PERSONAL "M:\_FDZ\RWI-GEO\RWI-GEO-REDX\Immobilienpreisindizes\ado\"
 
 
-global varWM "i.constr first_occupancy  balkon garten einbaukueche gaestewc keller i.ausstattung zimmeranzahl_full"
+global varWM "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.keller i.ausstattung zimmeranzahl_full"
 global depWM "ln_rent_sqm"
-global varHK "i.constr first_occupancy gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size typ_*"
+global varHK "i.constr first_occupancy i.gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size typ_*"
 global depHK "ln_houseprice_sqm"
-global varWK "i.constr first_occupancy  balkon garten einbaukueche gaestewc aufzug keller betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
+global varWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
 global depWK "ln_flatprice_sqm"
 global priceHK "houseprice"
 global priceWK "flatprice"
@@ -66,10 +70,10 @@ global noPUF = 50
 
 global TYPES "WK WM HK"
 
-do "aufbereitung\\${version}\1_prepare.do"
-do "aufbereitung\\${version}\2_regression.do"
-do "aufbereitung\\${version}\3_plot.do"
-do "aufbereitung\\${version}\4_export.do"
+do "aufbereitung\1_prepare.do"
+do "aufbereitung\2_regression.do"
+do "aufbereitung\3_plot.do"
+do "aufbereitung\4_export.do"
 
 
 

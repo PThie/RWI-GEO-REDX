@@ -19,7 +19,6 @@ global REFORM_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/output/Gemeindereformen/"
 
 log using "${LOG_PATH}1_prepare_RWIGEOREDX_`TYPE'__`c(current_date)'.log", replace
 
-*************** needs to be changed when new data!!!
 use "${ORIG_PATH}On-site/${red_version}/`TYPE'_allVersions_ohneText.dta", clear
 
 *drop unnecessary string variables
