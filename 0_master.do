@@ -3,7 +3,6 @@
 
 /*
 This file generates the Real Estate Indices (RWI-GEO-REDX).
-
 */
 
 *******************************************************************************
@@ -51,6 +50,9 @@ global version "v11"
 * define version of the latest RED version
 global red_version "v9"
 
+* define housing types (DO NOT ADJUST FOR NEW DELIVERYs)
+global TYPES "WK WM HK"
+
 *******************************************************************************
 * paths
 
@@ -60,38 +62,47 @@ sysdir set PERSONAL "${ROOT}output/ado/"
 *******************************************************************************
 * variables for regression
 
+* variables for apartment rents
 global varWM "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.keller i.ausstattung zimmeranzahl_full"
 global depWM "ln_rent_sqm"
+
+* variables for house sales
 global varHK "i.constr first_occupancy i.gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size typ_*"
 global depHK "ln_houseprice_sqm"
+
+* variables for apartment sales
 global varWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
 global depWK "ln_flatprice_sqm"
-global priceHK "houseprice"
-global priceWK "flatprice"
-global priceWM "rent"
 
+//global priceHK "houseprice"
+//global priceWK "flatprice"
+//global priceWM "rent"
 
+*******************************************************************************
+* naming 
 
+* German names of regional units
 global dnamekid2019 "kreis"
 global dnamegid2019 "gemeinde"
 global dnamegrid "grid"
 global dnameAMR2 "AMR2"
 
+* English names of regional units
 global enamekid2019 "District"
 global enamegid2019 "Municip"
 global enamegrid "Grid"
 global enameAMR2 "AMR2"
 
+* Labels for different housing types
 global WMname "ApRent"
 global HKname "HouPurc"
 global WKname "ApPurc"
 
+*******************************************************************************
+* threshold for anonymization
+
 global noSUF = 5
 global noPUF = 50
-
-
-
-global TYPES "WK WM HK"
 
 *******************************************************************************
 * Workflow steps
