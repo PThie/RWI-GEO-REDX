@@ -60,10 +60,7 @@ global red_version "v9"
 
 global RED_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-RED/"
 global ORIG_PATH "${RED_PATH}daten/" 
-global DATA_PATH "${ROOT}output/`TYPE'/data/$month/" 
-global LOG_PATH "${ROOT}output/`TYPE'/log/$month/"
 global PROG_PATH "${ROOT}daten/aufbereitung/prog/"
-global OUTPUT_PATH "${ROOT}output/`TYPE'/output/$month/"
 global SHAPE_PATH "M:/_FDZ/interne Daten/Gebietseinheit/"
 global REFORM_PATH "${ROOT}output/Gemeindereformen/"
 
@@ -85,11 +82,10 @@ global depHK "ln_houseprice_sqm"
 global varWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
 global depWK "ln_flatprice_sqm"
 
-****** DELETE ?
-//global priceHK "houseprice"
-//global priceWK "flatprice"
-//global priceWM "rent"
-******
+* placeholders for mean price calculation
+global priceHK "houseprice"
+global priceWK "flatprice"
+global priceWM "rent"
 
 *******************************************************************************
 * naming 

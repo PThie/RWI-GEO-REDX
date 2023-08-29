@@ -19,6 +19,16 @@ global TYPES "WK WM HK"
 * loop through all housing types
 
 foreach TYPE of global TYPES {
+    ***************************************************************************
+	* paths
+	
+	global OUTPUT_PATH "${ROOT}output/`TYPE'/output/${month}/"
+	global DATA_PATH "${ROOT}output/`TYPE'/data/${month}/" 
+	global LOG_PATH "${ROOT}output/`TYPE'/log/${month}/"
+
+	***************************************************************************
+	* set up
+	
 	* set up log file
 	log using "${LOG_PATH}1_prepare_RWIGEOREDX_`TYPE'__`c(current_date)'.log", replace
 
