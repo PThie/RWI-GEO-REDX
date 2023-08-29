@@ -16,11 +16,11 @@ global SHAPE_PATH "M:/_FDZ/interne Daten/Gebietseinheit/"
 
 log using "${LOG_PATH}2_regression_`TYPE'_`c(current_date)'.log", append
 
-global exWM "i.constr first_occupancy  balkon garten einbaukueche gaestewc keller i.ausstattung zimmeranzahl_full"
+global exWM "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.keller i.ausstattung zimmeranzahl_full"
 global depWM "ln_rent_sqm"
-global exHK "i.constr first_occupancy gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size typ_*"
+global exHK "i.constr first_occupancy i.gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size typ_*"
 global depHK "ln_houseprice_sqm"
-global exWK "i.constr first_occupancy  balkon garten einbaukueche gaestewc aufzug keller betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
+global exWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
 global depWK "ln_flatprice_sqm"
 
 global dnamekid2015 "kreis"
