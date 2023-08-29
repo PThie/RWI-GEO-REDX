@@ -97,13 +97,13 @@ global TYPES "WK WM HK"
 * Workflow steps
 
 * STEP 1: Preparation of the data
-do "aufbereitung\1_prepare.do"
+do "aufbereitung/1_prepare.do"
 
 * STEP 2: Running regression
-do "aufbereitung\2_regression.do"
+do "aufbereitung/2_regression.do"
 
 * STEP 3: Plotting outcome
-do "aufbereitung\3_plot.do"
+do "aufbereitung/3_plot.do"
 
 * STEP 4: Exporting the data
-do "aufbereitung\4_export.do"
+do "aufbereitung/4_export.do"
