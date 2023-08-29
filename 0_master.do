@@ -15,7 +15,7 @@ set matsize 10000
 capture log close
 
 * set directory
-global ROOT "M:\_FDZ\RWI-GEO\RWI-GEO-REDX\"
+global ROOT "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/"
 cd "${ROOT}" 
 
 *******************************************************************************
@@ -50,13 +50,24 @@ global version "v11"
 * define version of the latest RED version
 global red_version "v9"
 
+****** DELETE? 
 * define housing types (DO NOT ADJUST FOR NEW DELIVERYs)
-global TYPES "WK WM HK"
+* global TYPES "WK WM HK"
+******
 
 *******************************************************************************
 * paths
 
-* ado path
+global RED_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-RED/"
+global ORIG_PATH "${RED_PATH}daten/" 
+global DATA_PATH "${ROOT}output/`TYPE'/data/$month/" 
+global LOG_PATH "${ROOT}output/`TYPE'/log/$month/"
+global PROG_PATH "${ROOT}daten/aufbereitung/prog/"
+global OUTPUT_PATH "${ROOT}output/`TYPE'/output/$month/"
+global SHAPE_PATH "M:/_FDZ/interne Daten/Gebietseinheit/"
+global REFORM_PATH "${ROOT}output/Gemeindereformen/"
+
+* ado paths
 sysdir set PERSONAL "${ROOT}output/ado/"
 
 *******************************************************************************
@@ -74,9 +85,11 @@ global depHK "ln_houseprice_sqm"
 global varWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
 global depWK "ln_flatprice_sqm"
 
+****** DELETE ?
 //global priceHK "houseprice"
 //global priceWK "flatprice"
 //global priceWM "rent"
+******
 
 *******************************************************************************
 * naming 
