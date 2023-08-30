@@ -123,6 +123,7 @@ do "aufbereitung/1_prepare.do"
 do "aufbereitung/2_regression.do"
 
 * STEP 3: Plotting outcome
+* If necessary run: aux_prepare_plot.do first
 do "aufbereitung/3_plot.do"
 
 * STEP 4: Exporting the data
