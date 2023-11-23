@@ -72,14 +72,17 @@ sysdir set PERSONAL "${ROOT}output/ado/"
 
 * variables for apartment rents
 global varWM "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.keller i.ausstattung zimmeranzahl_full"
+*global var2WM "constr first_occupancy  balkon garten einbaukueche gaestewc keller ausstattung zimmeranzahl_full"
 global depWM "ln_rent_sqm"
 
 * variables for house sales
-global varHK "i.constr first_occupancy i.gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size typ_*"
+global varHK "i.constr first_occupancy i.gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full plotarea_size typ_*"
+*global var2HK "constr first_occupancy gaestewc einliegerwohnung ausstattung zimmeranzahl_full plotarea_size typ_freistehend typ_DHH typ_Reihenhaus typ_exclusive typ_MFH typ_other"
 global depHK "ln_houseprice_sqm"
 
 * variables for apartment sales
 global varWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
+*global var2WK "constr first_occupancy balkon garten einbaukueche gaestewc aufzug keller betreut ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
 global depWK "ln_flatprice_sqm"
 
 * placeholders for mean price calculation
@@ -128,3 +131,6 @@ do "aufbereitung/3_plot.do"
 
 * STEP 4: Exporting the data
 do "aufbereitung/4_export.do"
+*
+* STEP 2: Running regression
+*do "aufbereitung/2_regressionGrid.do"
