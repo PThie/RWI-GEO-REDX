@@ -68,7 +68,7 @@ foreach TYPE of global TYPES {
 
 			*Regression 1
 			preserve 
-			xtreg ${dep`TYPE'} ${ex`TYPE'} i.`time' if ejahr != 2007, fe i(`region') robust
+			xtreg ${dep`TYPE'} ${var`TYPE'} i.`time' if ejahr != 2007, fe i(`region') robust
 			estimate store m1 
 			estout m1 using "${DATA_PATH}`region'_timeeff_`TYPE'_`time'_reg1.csv", deli(";") cells("b ci_l ci_u") replace
 			predict pindex_FE, u
@@ -85,7 +85,7 @@ foreach TYPE of global TYPES {
 				preserve
 				drop if ejahr == 2007
 				xtset id_`region'_`time'
-				xtreg ${dep`TYPE'} ${ex`TYPE'}, fe i(id_`region'_`time') robust
+				xtreg ${dep`TYPE'} ${var`TYPE'}, fe i(id_`region'_`time') robust
 				keep if e(sample)
 				su ${dep`TYPE'}
 				predict pindex_FE, u 
@@ -112,7 +112,7 @@ foreach TYPE of global TYPES {
 					preserve //to save data during loop
 					drop if `time'!=`x' //only review 1 year
 					//FE Kreise regression with mean adjusted flatprice/sqm and its effects
-					xtreg ${dep`TYPE'} ${ex`TYPE'}, fe i(`region') robust
+					xtreg ${dep`TYPE'} ${var`TYPE'}, fe i(`region') robust
 					predict pindex_FE if e(sample), u //predict/save residuals from regression, but only if (full) observation is used in the estimation
 					keep if e(sample) //keep the observation only if used
 					su ${dep`TYPE'}
@@ -143,7 +143,7 @@ foreach TYPE of global TYPES {
 					* keep if ejahr !=${maxyear2} & emonat!= ${maxmonth}
 					keep if qudate == `x'
 					//FE Kreise regression with price/sqm 
-					xtreg ${dep`TYPE'} ${ex`TYPE'}, fe i(`region') robust
+					xtreg ${dep`TYPE'} ${var`TYPE'}, fe i(`region') robust
 					predict pindex_FE if e(sample), u //predict/save residuals from regression, but only if (full) observation is used in the estimation
 					keep if e(sample) //keep the observation only if used
 					su ${dep`TYPE'}
