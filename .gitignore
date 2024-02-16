@@ -2,3 +2,5 @@ _targets/
 config.R
 run.sh
 run.R
+renv/
+renv.lock
