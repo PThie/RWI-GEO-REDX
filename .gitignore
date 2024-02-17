@@ -5,3 +5,6 @@ run.R
 renv/
 renv.lock
 .Rprofile
+.Rproj
+aufbereitung.Rproj
+.Rproj.user
