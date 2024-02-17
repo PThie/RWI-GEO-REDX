@@ -1,4 +1,4 @@
-prepare_housing <- function(housing_file = NA) {
+prepare_housing <- function(housing_file = NA, data_type = NA) {
     #' @title Prepare housing data
     #' 
     #' @description 
@@ -34,10 +34,11 @@ prepare_housing <- function(housing_file = NA) {
     }
 
     #----------------------------------------------
-    # recode missing values in living space
+    # general cleaning (identical for all types)
 
     org_data <- org_data |>
         dplyr::mutate(
+            # recode missing values in living space
             wohnflaeche = dplyr::case_when(
                 wohnflaeche < 0 ~ 0,
                 TRUE ~ wohnflaeche
@@ -47,8 +48,48 @@ prepare_housing <- function(housing_file = NA) {
     #----------------------------------------------
     # type specific cleaning
 
-    if (housing_type == "WK") {
-        print("TEST")
+    # Apartment sales
+    if (data_type == "WK") {
+        org_data <- org_data |>
+            dplyr::mutate(
+                # replace missings in price with 0
+                kaufpreis = dplyr::case_when(
+                    kaufpreis < 0 ~ 0,
+                    TRUE ~ kaufpreis
+                ),
+                # add logarithmic price
+                ln_flatprice = log(kaufpreis),
+                # add flat price per sqm
+                flatprice_sqmeter = kaufpreis / wohnflaeche
+            )
+    # Apartment rentals
+    } else if (data_type == "WM") {
+        org_data <- org_data |>
+            dplyr::mutate(
+                # replace missings in rent with 0
+                mietekalt = dplyr::case_when(
+                    mietekalt < 0 ~ 0,
+                    TRUE ~ mietekalt
+                ),
+                # add logarithmic rent
+                ln_rent = log(mietekalt),
+                # add rent per sqm
+                rent_sqmeter = mietekalt / wohnflaeche
+            )
+    # House sales
+    } else {
+        org_data <- org_data |>
+            dplyr::mutate(
+                # replace missings in price with 0
+                kaufpreis = dplyr::case_when(
+                    kaufpreis < 0 ~ 0,
+                    TRUE ~ kaufpreis
+                ),
+                # add logarithmic price
+                ln_houseprice = log(kaufpreis),
+                # add house price per sqm
+                houseprice_sqmeter = kaufpreis / wohnflaeche
+            )
     }
 
     #----------------------------------------------
