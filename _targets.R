@@ -70,6 +70,9 @@ targets_preparation_housing <- tar_map(
         housing_data,
         prepare_housing(
             housing_file = housing_type_file_name,
+            data_type = substring(
+                housing_type_file_name, 1, 2
+            )
         )
     ),
     values = housing_data_info,
