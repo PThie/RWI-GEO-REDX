@@ -232,9 +232,9 @@ prepare_housing <- function(housing_file = NA, data_type = NA) {
                 einbaukueche < 0 ~ 0,
                 TRUE ~ einbaukueche
             ),
-            gaeste_wc = dplyr::case_when(
-                gaeste_wc < 0 ~ 0,
-                TRUE ~ gaeste_wc
+            gaestewc = dplyr::case_when(
+                gaestewc < 0 ~ 0,
+                TRUE ~ gaestewc
             ),
             keller = dplyr::case_when(
                 keller < 0 ~ 0,
@@ -337,7 +337,13 @@ prepare_housing <- function(housing_file = NA, data_type = NA) {
     #----------------------------------------------
     # recode all negative values to NA
 
-    org_data[org_data < 0] <- NA 
+    org_data[org_data < 0] <- NA
+
+    #----------------------------------------------
+    # add geo information
+    # add municipality verband and labor market regions
+    # NOTE: replace municipality code (gid2019) with code from municipality
+    # verband
 
     #----------------------------------------------
     # return
