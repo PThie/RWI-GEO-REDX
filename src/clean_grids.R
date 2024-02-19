@@ -1,11 +1,10 @@
 clean_grids <- function() {
-    #' @title
+    #' @title Creating a clean grid data set
     #' 
-    #' @description
+    #' @description This function cleans up the geographical information on the
+    #' grids.
     #' 
-    #' @param
-    #' 
-    #' @return
+    #' @return qs object
     #' @author Patrick Thiel
     
     #----------------------------------------------
@@ -21,5 +20,19 @@ clean_grids <- function() {
         quiet = TRUE
     )
 
+    #----------------------------------------------
+    # rename grid ID and drop long ID
+    # transform to UTM (32632) reference system
 
+    grids <- grids |>
+        dplyr::rename(
+            ergg_1km = idm
+        ) |>
+        dplyr::select(-id) |>
+        sf::st_transform(config_globals()[["utmcrs"]])
+
+    #----------------------------------------------
+    # return
+
+    return(grids)
 }
