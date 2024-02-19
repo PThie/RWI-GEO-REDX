@@ -39,6 +39,9 @@ clean_labor_market_regions <- function() {
         ) |>
         sf::st_transform(config_globals()[["utmcrs"]])
 
+    # set as sf object
+    lmr <- sf::st_as_sf(lmr)
+
     #----------------------------------------------
     # return
 

@@ -31,6 +31,9 @@ clean_grids <- function() {
         dplyr::select(-id) |>
         sf::st_transform(config_globals()[["utmcrs"]])
 
+    # set as sf object
+    grids <- sf::st_as_sf(grids)
+
     #----------------------------------------------
     # return
 

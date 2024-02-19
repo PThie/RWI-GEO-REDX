@@ -37,6 +37,9 @@ clean_municipalities <- function() {
         ) |>
         sf::st_transform(config_globals()[["utmcrs"]])
 
+    # set as sf object
+    municipalities <- sf::st_as_sf(municipalities)
+
     #----------------------------------------------
     # return
     
