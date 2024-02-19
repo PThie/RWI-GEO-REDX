@@ -215,7 +215,129 @@ prepare_housing <- function(housing_file = NA, data_type = NA) {
             )
     }
 
-    # CONTINUE: with missing information
+    #----------------------------------------------
+    # replacing missing information
+
+    org_data <- org_data |>
+        dplyr::mutate(
+            balkon = dplyr::case_when(
+                balkon < 0 ~ 0,
+                TRUE ~ balkon
+            ),
+            garten = dplyr::case_when(
+                garten < 0 ~ 0,
+                TRUE ~ garten
+            ),
+            einbaukueche = dplyr::case_when(
+                einbaukueche < 0 ~ 0,
+                TRUE ~ einbaukueche
+            ),
+            gaeste_wc = dplyr::case_when(
+                gaeste_wc < 0 ~ 0,
+                TRUE ~ gaeste_wc
+            ),
+            keller = dplyr::case_when(
+                keller < 0 ~ 0,
+                TRUE ~ keller
+            ),
+            aufzug = dplyr::case_when(
+                aufzug < 0 ~ 0,
+                TRUE ~ aufzug
+            ),
+            ausstattung = dplyr::case_when(
+                ausstattung < 0 ~ 0,
+                TRUE ~ ausstattung
+            ),
+            einliegerwohnung = dplyr::case_when(
+                einliegerwohnung < 0 ~ 0,
+                TRUE ~ einliegerwohnung
+            ),
+            zimmeranzahl = dplyr::case_when(
+                zimmeranzahl < 0 ~ 0,
+                TRUE ~ zimmeranzahl
+            ),
+            # round down number of rooms to nearest integer
+            # TODO: rename to English
+            zimmeranzahl_full = floor(zimmeranzahl) 
+        )
+
+    #----------------------------------------------
+    # handle extreme values
+    # TODO: adjust the extreme values to a data-driven approach (maybe use
+    # percentiles); problem: the current approach is fixed and does not respond
+    # to potential changes in the composition of homes
+
+    if (data_type == "WM") {
+        org_data <- org_data |>
+            dplyr::filter(
+                zimmeranzahl_full <= 7
+            ) |>
+            dplyr::filter(
+                mietekalt > 0 & mietekalt <= 5000
+            ) |>
+            dplyr::filter(
+                wohnflaeche >= 15 & wohnflaeche <= 400
+            )
+    } else if (data_type == "HK") {
+        org_data <- org_data |>
+            dplyr::filter(
+                zimmeranzahl_full <= 15
+            ) |>
+            dplyr::filter(
+                kaufpreis > 0 & kaufpreis <= 5000000
+            ) |>
+            dplyr::filter(
+                wohnflaeche >= 50 & wohnflaeche <= 600
+            ) |>
+            dplyr::filter(
+                # to sdrop houses with agrarian use
+                grundstuecksflaeche <= 2500
+            ) |>
+            dplyr::filter(
+                anzahletagen <= 5
+            )
+    } else {
+        # TODO: for living space a data-driven approach is used, why? adjust
+        # everything to a data-driven approach
+        org_data <- org_data |>
+            dplyr::filter(
+                zimmeranzahl_full <= 8
+            ) |>
+            dplyr::filter(
+                kaufpreis > 0 & kaufpreis <= 2000000
+            ) |>
+            dplyr::filter(
+                wohnflaeche >= as.numeric(quantile(org_data$wohnflaeche, 0.01, na.rm = TRUE)) &
+                wohnflaeche <= as.numeric(quantile(org_data$wohnflaeche, 0.99, na.rm = TRUE))
+            )
+    }
+
+    #----------------------------------------------
+    # keep only last spell, i.e. latest update of the listing
+
+    org_data$n <- ave(
+        1:length(org_data$obid),
+        org_data$obid,
+        FUN = length
+    )
+
+    org_data <- org_data |>
+        dplyr::filter(
+            n == spell
+        ) |>
+        dplyr::select(
+            -n
+        )
+
+    # UNIT TEST: no duplicates in obid
+    tar_assert_true(
+        sum(duplicated(org_data$obid)) == 0
+    )
+
+    #----------------------------------------------
+    # recode all negative values to NA
+
+    org_data[org_data < 0] <- NA 
 
     #----------------------------------------------
     # return
