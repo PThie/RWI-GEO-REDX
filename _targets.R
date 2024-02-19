@@ -13,6 +13,8 @@ suppressPackageStartupMessages({
     library(dplyr)
     library(here)
     library(tarchetypes)
+    library(haven)
+    library(sf)
 })
 
 #----------------------------------------------
