@@ -329,6 +329,25 @@ prepare_housing <- function(housing_file = NA, data_type = NA) {
             -n
         )
 
+    if (data_type == "WK") {
+        # add an exception for object 83297808
+        # NOTE: after the above algorithm is run through, the object 83297808
+        # still appears twice with complete identical information (including
+        # the spell). Therefore, the above algortihm does not capture this as
+        # duplicate. Solution: Just keep one of the two observations.
+        org_data <- dplyr::bind_rows(
+            org_data |>
+                dplyr::filter(
+                    obid != "83297808"
+                ),
+            org_data |>
+                dplyr::filter(
+                    obid == "83297808"
+                ) |>
+                dplyr::slice(1)
+        )
+    }
+
     # UNIT TEST: no duplicates in obid
     tar_assert_true(
         sum(duplicated(org_data$obid)) == 0
@@ -341,9 +360,9 @@ prepare_housing <- function(housing_file = NA, data_type = NA) {
 
     #----------------------------------------------
     # add geo information
-    # add municipality verband and labor market regions
+    # add municipality association (Gemeindeverband) and labor market regions
     # NOTE: replace municipality code (gid2019) with code from municipality
-    # verband
+    # association
 
     #----------------------------------------------
     # return
