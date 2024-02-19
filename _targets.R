@@ -80,6 +80,20 @@ targets_preparation_geo <- rlang::list2(
     tar_qs(
         labor_market_regions_cleaned,
         clean_labor_market_regions()
+    ),
+    tar_fst(
+        grids_municipalities,
+        connect_grids_municipality(
+            grid_cleaned = grid_cleaned,
+            municipalities_cleaned = municipalities_cleaned
+        )
+    ),
+    tar_fst(
+        grids_lmr,
+        connect_grids_lmr(
+            grid_cleaned = grid_cleaned,
+            labor_market_regions_cleaned = labor_market_regions_cleaned
+        )
     )
 )
 
@@ -102,6 +116,6 @@ targets_preparation_housing <- tar_map(
 # combine all
 
 rlang::list2(
-    #targets_preparation_geo,
+    targets_preparation_geo,
     targets_preparation_housing
 )
