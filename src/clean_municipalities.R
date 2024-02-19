@@ -26,5 +26,19 @@ clean_municipalities <- function() {
         quiet = TRUE
     )
 
+    #----------------------------------------------
+    # clean municipalities
+
+    municipalities <- municipalities |>
+        dplyr::select(
+            gid2019 = RS,
+            gid2019_name = GEN,
+            geometry
+        ) |>
+        sf::st_transform(config_globals()[["utmcrs"]])
+
+    #----------------------------------------------
+    # return
     
+    return(municipalities)
 }
