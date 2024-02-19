@@ -17,11 +17,13 @@ connect_grids_lmr <- function (
     #----------------------------------------------
     #  join both data sets together
 
-    grids_lmr <- sf::st_join(
-        grid_cleaned,
-        labor_market_regions_cleaned,
-        left = TRUE,
-        largest = TRUE
+    suppressWarnings(
+        grids_lmr <- sf::st_join(
+            grid_cleaned,
+            labor_market_regions_cleaned,
+            left = TRUE,
+            largest = TRUE
+        )
     )
 
     # remove geometry

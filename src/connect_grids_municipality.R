@@ -21,11 +21,13 @@ connect_grids_municipality <- function (
     #----------------------------------------------
     #  join both data sets together
 
-    grids_munic <- sf::st_join(
-        grid_cleaned,
-        municipalities_cleaned,
-        left = TRUE,
-        largest = TRUE
+    suppressWarnings(
+        grids_munic <- sf::st_join(
+            grid_cleaned,
+            municipalities_cleaned,
+            left = TRUE,
+            largest = TRUE
+        )
     )
 
     # remove geometry
