@@ -15,6 +15,7 @@ suppressPackageStartupMessages({
     library(tarchetypes)
     library(haven)
     library(sf)
+    library(stringr)
 })
 
 #----------------------------------------------
@@ -66,6 +67,22 @@ housing_data_info <- data.frame(
 #----------------------------------------------
 # processing steps
 
+# Preparation of the geo information
+targets_preparation_geo <- rlang::list2(
+    tar_qs(
+        grid_cleaned,
+        clean_grids()
+    ),
+    tar_qs(
+        municipalities_cleaned,
+        clean_municipalities()
+    ),
+    tar_qs(
+        labor_market_regions_cleaned,
+        clean_labor_market_regions()
+    )
+)
+
 # Preparation of the housing data
 targets_preparation_housing <- tar_map(
     tar_fst(
@@ -85,5 +102,6 @@ targets_preparation_housing <- tar_map(
 # combine all
 
 rlang::list2(
+    #targets_preparation_geo,
     targets_preparation_housing
 )
