@@ -1,11 +1,17 @@
-prepare_housing <- function(housing_file = NA, data_type = NA) {
+prepare_housing <- function(
+    housing_file = NA,
+    data_type = NA,
+    grids_municipalities = NA,
+    grids_lmr = NA
+) {
     #' @title Prepare housing data
     #' 
-    #' @description 
+    #' @description This file cleans the original RED housing data and prepares
+    #' it for the estimations.
     #' 
     #' @param housing_file Name of the original housing data file
     #' 
-    #' @return
+    #' @return Dataframe with prepared housing data
     #' @author Patrick Thiel
     
     #----------------------------------------------
@@ -360,9 +366,23 @@ prepare_housing <- function(housing_file = NA, data_type = NA) {
 
     #----------------------------------------------
     # add geo information
-    # add municipality association (Gemeindeverband) and labor market regions
-    # NOTE: replace municipality code (gid2019) with code from municipality
-    # association
+
+    org_data <- org_data |>
+        dplyr::select(
+            # remove included municipality ID since it is given at municipality
+            # level (Gemeinde) and not at municipality association (Gemeindeverband)
+            -gid2019
+        ) |>
+        merge(
+            grids_municipalities,
+            by = "ergg_1km",
+            all.x = TRUE
+        ) |>
+        merge(
+            grids_lmr,
+            by = "ergg_1km",
+            all.x = TRUE
+        )
 
     #----------------------------------------------
     # return
