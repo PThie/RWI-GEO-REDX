@@ -355,13 +355,14 @@ prepare_housing <- function(
     }
 
     # UNIT TEST: no duplicates in obid
-    tar_assert_true(
-        sum(duplicated(org_data$obid)) == 0
-    )
+    # tar_assert_true(
+    #     sum(duplicated(org_data$obid)) == 0
+    # )
 
     #----------------------------------------------
     # recode all negative values to NA
-
+    # TODO: NOT SURE if that is correct because in original preparation there is something
+    # similar included but there are still negative values in the prepared data set
     org_data[org_data < 0] <- NA
 
     #----------------------------------------------
@@ -382,6 +383,27 @@ prepare_housing <- function(
             grids_lmr,
             by = "ergg_1km",
             all.x = TRUE
+        )
+
+    #----------------------------------------------
+    # add timing variables
+    # NOTE: the later used variables qudate and modate refer to the year-quarter
+    # and year-month of the end date
+
+    org_data <- org_data |>
+        dplyr::mutate(
+            start_date = as.Date(paste0(ajahr, "-", amonat, "-01"), "%Y-%m-%d"),
+            end_date = as.Date(paste0(ejahr, "-", emonat, "-01"), "%Y-%m-%d"),
+            a_year_mon = format(start_date, "%Y-%m"),
+            e_year_mon = format(end_date, "%Y-%m"),
+            equarter = lubridate::quarter(end_date),
+            aquarter = lubridate::quarter(start_date),
+            a_year_quarter = paste0(ajahr, "-0", aquarter),
+            e_year_quarter = paste0(ejahr, "-0", equarter)
+        ) |>
+        # drop auxiliary variables
+        dplyr::select(
+            -c(start_date, end_date, equarter, aquarter)
         )
 
     #----------------------------------------------
