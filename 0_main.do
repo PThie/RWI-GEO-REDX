@@ -116,6 +116,9 @@ global noPUF = 50
 *******************************************************************************
 * Workflow steps
 
+* STEP 0: Create folder structure using R-file
+* "aufbereitung/0_create_folder_structure.R"
+
 * STEP 1: Preparation of the data
 do "aufbereitung/1_prepare.do"
 
