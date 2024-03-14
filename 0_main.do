@@ -28,10 +28,10 @@ global maxyear 2023
 global maxyear2 2023
 
 * maximum month in the data
-global maxmonth 6
+global maxmonth 12
 
 * maximum quarter in the data
-global maxqudate 253
+global maxqudate 255
 /* 
 NOTE way to find the max quarter:
 	gen qdate = qofd(dofm(ym(ejahr, emonat)))
@@ -42,13 +42,13 @@ NOTE way to find the max quarter:
 global diff = $maxyear2 - 2008 
 
 * define month of delivery (for folder structure)
-global month "Jun2023"
+global month "Dez2023"
 
 * define version of the wave
-global version "v11"
+global version "v12"
 
 * define version of the latest RED version
-global red_version "v9"
+global red_version "v10"
 
 ****** DELETE? 
 * define housing types (DO NOT ADJUST FOR NEW DELIVERYs)
@@ -71,18 +71,15 @@ sysdir set PERSONAL "${ROOT}output/ado/"
 * variables for regression
 
 * variables for apartment rents
-global varWM "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.keller i.ausstattung zimmeranzahl_full"
-*global var2WM "constr first_occupancy  balkon garten einbaukueche gaestewc keller ausstattung zimmeranzahl_full"
+global varWM "i.constr i.first_occupancy i.balkon i.garten i.einbaukueche i.gaestewc i.keller i.ausstattung zimmeranzahl_full"
 global depWM "ln_rent_sqm"
 
 * variables for house sales
-global varHK "i.constr first_occupancy i.gaestewc einliegerwohnung i.ausstattung zimmeranzahl_full plotarea_size typ_*"
-*global var2HK "constr first_occupancy gaestewc einliegerwohnung ausstattung zimmeranzahl_full plotarea_size typ_freistehend typ_DHH typ_Reihenhaus typ_exclusive typ_MFH typ_other"
+global varHK "i.constr i.first_occupancy i.gaestewc i.einliegerwohnung i.ausstattung zimmeranzahl_full i.plotarea_size i.typ_*"
 global depHK "ln_houseprice_sqm"
 
 * variables for apartment sales
-global varWK "i.constr first_occupancy  i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
-*global var2WK "constr first_occupancy balkon garten einbaukueche gaestewc aufzug keller betreut ausstattung declared_wohngeld zimmeranzahl_full nofloors catfloors"
+global varWK "i.constr i.first_occupancy i.balkon i.garten i.einbaukueche i.gaestewc i.aufzug i.keller i.betreut i.ausstattung i.declared_wohngeld zimmeranzahl_full i.nofloors i.catfloors"
 global depWK "ln_flatprice_sqm"
 
 * placeholders for mean price calculation
