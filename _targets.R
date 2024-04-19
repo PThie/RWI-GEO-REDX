@@ -141,18 +141,18 @@ targets_preparation_geo <- rlang::list2(
     ),
     tar_qs(
         labor_market_regions_cleaned,
-        clean_labor_market_regions()
+        cleaning_labor_market_regions()
     ),
     tar_fst(
         grids_municipalities,
-        connect_grids_municipality(
+        connecting_grids_municipality(
             grid_cleaned = grid_cleaned,
             municipalities_cleaned = municipalities_cleaned
         )
     ),
     tar_fst(
         grids_lmr,
-        connect_grids_lmr(
+        connecting_grids_lmr(
             grid_cleaned = grid_cleaned,
             labor_market_regions_cleaned = labor_market_regions_cleaned
         )
@@ -166,14 +166,14 @@ targets_prep_est <- rlang::list2(
             # define paths orginal data
             tar_target(
                 housing_data_org_file_names,
-                make_housing_data_org_file_names(
+                making_housing_data_org_file_names(
                     data_type = housing_types
                 )
             ),
             tar_file_read(
                 housing_data_org_names,
                 housing_data_org_file_names,
-                read_housing_data_org(!!.x)
+                reading_housing_data_org(!!.x)
             )
         ),
         values = list(
@@ -237,7 +237,7 @@ targets_test <- rlang::list2(
         list(
             tar_fst(
                 output_data_current,
-                read_output_file(
+                reading_output_file(
                     housing_type_label = housing_type_labels,
                     housing_type = housing_types,
                     delivery = config_globals()[["current_delivery"]],
@@ -246,7 +246,7 @@ targets_test <- rlang::list2(
             ),
             tar_fst(
                 output_data_previous,
-                read_output_file(
+                reading_output_file(
                     housing_type_label = housing_type_labels,
                     housing_type = housing_types,
                     delivery = config_globals()[["previous_delivery"]],
@@ -255,7 +255,7 @@ targets_test <- rlang::list2(
             ),
             tar_fst(
                 output_data_tests,
-                test_output_data(
+                testing_output_data(
                     output_data_current = output_data_current,
                     output_data_previous = output_data_previous
                 )
