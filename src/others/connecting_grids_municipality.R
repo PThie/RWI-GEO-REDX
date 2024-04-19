@@ -1,4 +1,4 @@
-connect_grids_municipality <- function (
+connecting_grids_municipality <- function (
     grid_cleaned = NA,
     municipalities_cleaned = NA
 ) {

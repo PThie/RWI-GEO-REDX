@@ -1,4 +1,4 @@
-connect_grids_lmr <- function (
+connecting_grids_lmr <- function (
     grid_cleaned = NA,
     labor_market_regions_cleaned = NA
 ) {

@@ -1,4 +1,4 @@
-prepare_housing <- function(
+preparing_housing <- function(
     housing_file = NA,
     data_type = NA,
     grids_municipalities = NA,
@@ -94,6 +94,8 @@ prepare_housing <- function(
                 ln_flatprice = log(kaufpreis),
                 # add flat price per sqm
                 flatprice_sqmeter = kaufpreis / wohnflaeche,
+                # add logarithmic price per sqm
+                ln_flatprice_sqm = log(flatprice_sqmeter),
                 #----------------------------------------------
                 # dummy for supported living
                 betreut = dplyr::case_when(

@@ -1,4 +1,4 @@
-clean_municipalities <- function() {
+cleaning_municipalities <- function() {
     #' @title Creating a clean municipality data set
     #' 
     #' @description This function cleans up the geographical information on the

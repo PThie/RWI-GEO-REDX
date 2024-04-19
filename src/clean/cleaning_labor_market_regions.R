@@ -1,4 +1,4 @@
-clean_labor_market_regions <- function() {
+cleaning_labor_market_regions <- function() {
     #' @title Creating a clean labor market regions data set
     #' 
     #' @description This function cleans up the geographical information on the
