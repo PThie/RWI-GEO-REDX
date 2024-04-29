@@ -1,6 +1,6 @@
-preparing_housing <- function(
-    housing_file = NA,
-    data_type = NA,
+cleaning_housing <- function(
+    housing_data_org = NA,
+    housing_type = NA,
     grids_municipalities = NA,
     grids_lmr = NA
 ) {
@@ -14,21 +14,6 @@ preparing_housing <- function(
     #' @return Dataframe with prepared housing data
     #' @author Patrick Thiel
     
-    #----------------------------------------------
-    # load original data
-
-    # TODO: replace housing file name
-    org_data <- haven::read_dta(
-        file.path(
-            config_paths()[["org_data_path"]],
-            "On-site",
-            config_globals()[["red_version"]],
-            # NOTE: uncomment later for loop
-            paste0(housing_file, ".dta")
-            #"WK_allVersions_ohneText.dta"
-        )
-    )
-
     #----------------------------------------------
     # delete unnecessary string variables
     
@@ -50,7 +35,7 @@ preparing_housing <- function(
     # )
     #####
 
-    org_data <- org_data |>
+    org_data <- housing_data_org |>
         dplyr::mutate(
             # recode missing values in living space
             wohnflaeche = dplyr::case_when(
@@ -81,7 +66,7 @@ preparing_housing <- function(
     # type specific cleaning
 
     # Apartment sales
-    if (data_type == "WK") {
+    if (housing_type == "WK") {
         org_data <- org_data |>
             dplyr::mutate(
                 #----------------------------------------------
@@ -138,7 +123,7 @@ preparing_housing <- function(
                 )
             )
     # Apartment rentals
-    } else if (data_type == "WM") {
+    } else if (housing_type == "WM") {
         org_data <- org_data |>
             dplyr::mutate(
                 #----------------------------------------------
@@ -275,7 +260,7 @@ preparing_housing <- function(
     # percentiles); problem: the current approach is fixed and does not respond
     # to potential changes in the composition of homes
 
-    if (data_type == "WM") {
+    if (housing_type == "WM") {
         org_data <- org_data |>
             dplyr::filter(
                 zimmeranzahl_full <= 7
@@ -286,7 +271,7 @@ preparing_housing <- function(
             dplyr::filter(
                 wohnflaeche >= 15 & wohnflaeche <= 400
             )
-    } else if (data_type == "HK") {
+    } else if (housing_type == "HK") {
         org_data <- org_data |>
             dplyr::filter(
                 zimmeranzahl_full <= 15
@@ -337,7 +322,7 @@ preparing_housing <- function(
             -n
         )
 
-    if (data_type == "WK") {
+    if (housing_type == "WK") {
         # add an exception for object 83297808
         # NOTE: after the above algorithm is run through, the object 83297808
         # still appears twice with complete identical information (including
@@ -354,7 +339,7 @@ preparing_housing <- function(
                 ) |>
                 dplyr::slice(1)
         )
-    } else if (data_type == "WM") {
+    } else if (housing_type == "WM") {
         identical_rows <- c(
             "128172990",
             "81330431",
@@ -467,9 +452,9 @@ preparing_housing <- function(
 
     for (var in grouping_vars) {
         # define price variable
-        if (data_type == "WK") {
+        if (housing_type == "WK") {
             price_var <- "flatprice_sqmeter"
-        } else if (data_type == "WM") {
+        } else if (housing_type == "WM") {
             price_var <- "rent_sqmeter"
         } else {
             price_var <- "houseprice_sqmeter"
