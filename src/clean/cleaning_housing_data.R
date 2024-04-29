@@ -22,8 +22,8 @@ cleaning_housing_data <- function(
     
     string_vars <- c("freiab", "courtage", "mietekaution")
     for (col in string_vars) {
-        if (col %in% names(org_data)) {
-            org_data[[col]] <- NULL
+        if (col %in% names(housing_data_org)) {
+            housing_data_org[[col]] <- NULL
         }
     }
 
@@ -125,6 +125,18 @@ cleaning_housing_data <- function(
                     TRUE ~ 0
                 )
             )
+        
+        # drop variables that should not be included as they are not needed
+        drop_vars <- c(
+            "mietekalt", "nebenkosten", "mietewarm", "immobilientyp",
+            "foerderung", "einliegerwohnung", "heizkosten_in_wm_enthalten",
+            "haustier_erlaubt", "kategorie_Haus", "nebenraeume"
+        )
+        for (drop_var in drop_vars) {
+            if (drop_var %in% names(org_data)) {
+                org_data[[col]] <- NULL
+            }
+        }
     # Apartment rentals
     } else if (housing_type == "WM") {
         org_data <- org_data |>
@@ -189,7 +201,7 @@ cleaning_housing_data <- function(
                 ),
                 # dummy for terraced single family house (all categories for
                 # terraced houses)
-                tpy_Reihenhaus = dplyr::case_when(
+                typ_Reihenhaus = dplyr::case_when(
                     kategorie_Haus == 4 | kategorie_Haus == 5 | kategorie_Haus == 6 ~ 1,
                     TRUE ~ 0
                 ),
@@ -199,7 +211,7 @@ cleaning_housing_data <- function(
                     TRUE ~ 0
                 ),
                 # dummy for block flats (two-family house or block of flats)
-                type_MFH = dplyr::case_when(
+                typ_MFH = dplyr::case_when(
                     kategorie_Haus == 11 | kategorie_Haus == 12 ~ 1,
                     TRUE ~ 0
                 ),
@@ -209,6 +221,19 @@ cleaning_housing_data <- function(
                     TRUE ~ 0
                 )
             )
+
+        # drop variables that should not be included because they belong to a
+        # different type of housing
+        drop_vars <- c(
+            "mietekalt", "nebenkosten", "etage", "wohngeld", "betreut",
+            "foerderung", "garten", "heizkosten_in_wm_enthalten",
+            "haustier_erlaubt", "kategorie_Wohnung"
+        )
+        for (drop_var in drop_vars) {
+            if (drop_var %in% names(org_data)) {
+                org_data[[col]] <- NULL
+            }
+        }
     }
 
     #----------------------------------------------
