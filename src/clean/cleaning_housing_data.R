@@ -1,4 +1,4 @@
-cleaning_housing <- function(
+cleaning_housing_data <- function(
     housing_data_org = NA,
     housing_type = NA,
     grids_municipalities = NA,
@@ -9,7 +9,10 @@ cleaning_housing <- function(
     #' @description This file cleans the original RED housing data and prepares
     #' it for the estimations.
     #' 
-    #' @param housing_file Name of the original housing data file
+    #' @param housing_data_org Original housing data
+    #' @param housing_type Type of housing data: WK, WM, HK
+    #' @param grids_municipalities Connection between grids and municipalities
+    #' @param grids_lmr Connection between grids and LMR
     #' 
     #' @return Dataframe with prepared housing data
     #' @author Patrick Thiel
