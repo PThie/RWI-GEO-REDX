@@ -21,12 +21,31 @@ suppressPackageStartupMessages({
     library(qs)
     library(fixest)
     library(openxlsx)
+    library(future)
+    library(future.callr)
 })
 
 #----------------------------------------------
 # set working directory
 
 setwd(here::here())
+
+#--------------------------------------------------
+# Pipeline settings
+
+# target options
+tar_option_set(
+    resources = tar_resources(
+        fst = tar_resources_fst(compress = 50)
+    ),
+    seed = 1,
+    garbage_collection = TRUE,
+    storage = "worker",
+    retrieval = "worker"
+)
+
+# tar_make_future() configuration:
+plan(callr)
 
 #----------------------------------------------
 # load configurations
@@ -70,10 +89,10 @@ for (sub_directory in sub_directories) {
 # data frame for loop through the housing data
 
 # define housing types
-static_housing_types <- c("WK", "HK")
+static_housing_types <- c("WK", "HK", "WM")
 
 # define housing types labels as in output data
-static_housing_types_labels <- c("ApPurc", "HouPurc")
+static_housing_types_labels <- c("ApPurc", "HouPurc", "ApRent")
 
 # for branching in tar_eval
 # defines the names of the target objects
