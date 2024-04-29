@@ -152,6 +152,18 @@ cleaning_housing_data <- function(
                 # add rent per sqm
                 rent_sqmeter = mietekalt / wohnflaeche
             )
+
+        # drop variables that should not be included as they are not needed
+        drop_vars <- c(
+            "kaufpreis", "mieteinnahmenpromonat", "nutzflaeche", "wohngeld",
+            "foerderung", "betreut", "denkmalobjekt", "einliegerwohnung",
+            "ferienhaus", "kategorie_Haus", "nebenraeume", "kaufvermietet"
+        )
+        for (drop_var in drop_vars) {
+            if (drop_var %in% names(org_data)) {
+                org_data[[col]] <- NULL
+            }
+        }
     # House sales
     } else {
         org_data <- org_data |>
