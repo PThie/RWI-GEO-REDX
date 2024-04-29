@@ -85,6 +85,11 @@ static_housing_data_org_names <- glue::glue(
     "{static_housing_types}_housing_data_org"
 )
 
+static_housing_data_cleaned <- glue::glue(
+    "{static_housing_types}_cleaned"
+)
+
+
 
 static_output_names_current <- glue::glue(
     "{static_housing_types_labels}_output_data_{config_globals()[['current_version']]}"
@@ -117,10 +122,11 @@ static_output_test_names <- glue::glue(
 #     )
 
 #----------------------------------------------
-# processing steps
-
 # Preparation of the geo information
+
 targets_preparation_geo <- rlang::list2(
+    #--------------------------------------------------
+    # Grids (1 x 1 km)
     tar_file_read(
         grids_raw,
         file.path(
@@ -129,26 +135,107 @@ targets_preparation_geo <- rlang::list2(
             "ger_1km_rectangle",
             "ger_1km_rectangle.shp"
         ),
-        sf::st_read(!!.x, quiet = TRUE)
+        sf::st_read(!!.x, quiet = TRUE),
+        format = "qs"
     ),
     tar_qs(
         grid_cleaned,
         cleaning_grids(grids_raw = grids_raw)
     ),
+    #--------------------------------------------------
+    # Municipalities
+    # NOTE: Not using Gemeindeverbände as before in older REDX versions but
+    # switching to Gemeinden as the new data basis is a combination of grid
+    # values
+    tar_file_read(
+        municipalities_raw,
+        file.path(
+            config_paths()[["gebiete_path"]],
+            "Gemeinde",
+            "2019",
+            "VG250_GEM.shp"
+        ),
+        sf::st_read(!!.x, quiet = TRUE),
+        format = "qs"
+    ),
     tar_qs(
         municipalities_cleaned,
-        cleaning_municipalities()
+        cleaning_municipalities(municipalities_raw = municipalities_raw)
+    ),
+    #--------------------------------------------------
+    # Districts
+    tar_file_read(
+        districts_raw,
+        file.path(
+            config_paths()[["gebiete_path"]],
+            "Kreis",
+            "2019",
+            "VG250_KRS.shp"
+        ),
+        sf::st_read(!!.x, quiet = TRUE),
+        format = "qs"
+    ),
+    tar_qs(
+        districts_cleaned,
+        cleaning_districts(districts_raw = districts_raw)
+    ),
+    #--------------------------------------------------
+    # Local labor market regions
+    tar_file_read(
+        labor_market_regions_raw,
+        file.path(
+            config_paths()[["gebiete_path"]],
+            "Arbeitsmarktregion",
+            "RWI2018",
+            "shapefiles",
+            "amr2.gpkg"
+        ),
+        sf::st_read(!!.x, quiet = TRUE),
+        format = "qs"
     ),
     tar_qs(
         labor_market_regions_cleaned,
-        cleaning_labor_market_regions()
-    ),
-    tar_fst(
-        grids_municipalities,
-        connecting_grids_municipality(
-            grid_cleaned = grid_cleaned,
-            municipalities_cleaned = municipalities_cleaned
+        cleaning_labor_market_regions(
+            labor_market_regions_raw = labor_market_regions_raw
         )
+    ),
+    #--------------------------------------------------
+    # Connection between grids and other regional classifications
+    tar_file_read(
+        grids_municipalities,
+        file.path(
+            config_paths()[["gebiete_path"]],
+            "Zuordnung",
+            "_Gemeinde",
+            "2019_Grids_Municipality_Exact_unambiguous.csv"
+        ),
+        data.table::fread(!!.x) |>
+            dplyr::select(
+                ergg_1km = r1_id,
+                gid2019 = AGS
+            ) |>
+            dplyr::mutate(
+                gid2019 = stringr::str_pad(gid2019, 8, pad = "0")
+            ),
+        format = "fst"
+    ),
+    tar_file_read(
+        grids_districts,
+        file.path(
+            config_paths()[["gebiete_path"]],
+            "Zuordnung",
+            "Raster_Kreis",
+            "zuordnung_r1_krs_2019.csv"
+        ),
+        data.table::fread(!!.x) |>
+            dplyr::select(
+                ergg_1km = r1_id,
+                kid2019 = AGS
+            ) |>
+            dplyr::mutate(
+                kid2019 = stringr::str_pad(kid2019, 5, pad = "0")
+            ),
+        format = "fst"
     ),
     tar_fst(
         grids_lmr,
@@ -159,30 +246,46 @@ targets_preparation_geo <- rlang::list2(
     )
 )
 
-# Preparation and estimation
-targets_prep_est <- rlang::list2(
+#--------------------------------------------------
+# Preparation of the housing data
+
+targets_preparation_housing <- rlang::list2(
     tar_eval(
         list(
-            # define paths orginal data
-            tar_target(
+            tar_file(
                 housing_data_org_file_names,
-                making_housing_data_org_file_names(
-                    data_type = housing_types
+                file.path(
+                    config_paths()[["org_data_path"]],
+                    "On-site",
+                    config_globals()[["red_version"]],
+                    "parquet",
+                    paste0(housing_types, "_allVersions_ohneText.parquet")
                 )
             ),
             tar_file_read(
                 housing_data_org_names,
                 housing_data_org_file_names,
                 reading_housing_data_org(!!.x)
+            ),
+            tar_fst(
+                housing_cleaned,
+                cleaning_housing_data(
+                    housing_data_org = housing_data_org_names,
+                    housing_type = housing_types,
+                    grids_municipalities = grids_municipalities,
+                    grids_lmr = grids_lmr
+                )
             )
         ),
         values = list(
             housing_types = static_housing_types,
-            housing_org_file_names = rlang::syms(static_housing_org_file_names),
-            housing_data_org_names = rlang::syms(static_housing_data_org_names)
+            housing_data_org_file_names = rlang::syms(static_housing_org_file_names),
+            housing_data_org_names = rlang::syms(static_housing_data_org_names),
+            housing_cleaned = rlang::syms(static_housing_data_cleaned)
         )
     )
 )
+
 
 # Preparation of the housing data
 # targets_preparation_housing <- tar_map(list(
@@ -211,6 +314,33 @@ targets_prep_est <- rlang::list2(
 #     values = housing_data_info,
 #     names = housing_type
 # )
+
+# Preparation and estimation
+targets_prep_est <- rlang::list2(
+    tar_eval(
+        list(
+            # define paths orginal data
+            tar_target(
+                housing_data_org_file_names,
+                making_housing_data_org_file_names(
+                    data_type = housing_types
+                )
+            ),
+            tar_file_read(
+                housing_data_org_names,
+                housing_data_org_file_names,
+                reading_housing_data_org(!!.x)
+            )
+        ),
+        values = list(
+            housing_types = static_housing_types,
+            housing_org_file_names = rlang::syms(static_housing_org_file_names),
+            housing_data_org_names = rlang::syms(static_housing_data_org_names)
+        )
+    )
+)
+
+
 
 # Estimation
 # targets_estimation <- tar_map(
@@ -276,7 +406,7 @@ targets_test <- rlang::list2(
 
 rlang::list2(
     targets_preparation_geo,
-    #targets_preparation_housing,
+    targets_preparation_housing,
     # targets_prep_est,
     #targets_estimation,
     #targets_test
