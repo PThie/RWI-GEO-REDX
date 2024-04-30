@@ -125,18 +125,7 @@ cleaning_housing_data <- function(
                     TRUE ~ 0
                 )
             )
-        
-        # drop variables that should not be included as they are not needed
-        drop_vars <- c(
-            "mietekalt", "nebenkosten", "mietewarm", "immobilientyp",
-            "foerderung", "einliegerwohnung", "heizkosten_in_wm_enthalten",
-            "haustier_erlaubt", "kategorie_Haus", "nebenraeume"
-        )
-        for (drop_var in drop_vars) {
-            if (drop_var %in% names(org_data)) {
-                org_data[[col]] <- NULL
-            }
-        }
+
     # Apartment rentals
     } else if (housing_type == "WM") {
         org_data <- org_data |>
@@ -153,17 +142,6 @@ cleaning_housing_data <- function(
                 rent_sqmeter = mietekalt / wohnflaeche
             )
 
-        # drop variables that should not be included as they are not needed
-        drop_vars <- c(
-            "kaufpreis", "mieteinnahmenpromonat", "nutzflaeche", "wohngeld",
-            "foerderung", "betreut", "denkmalobjekt", "einliegerwohnung",
-            "ferienhaus", "kategorie_Haus", "nebenraeume", "kaufvermietet"
-        )
-        for (drop_var in drop_vars) {
-            if (drop_var %in% names(org_data)) {
-                org_data[[col]] <- NULL
-            }
-        }
     # House sales
     } else {
         org_data <- org_data |>
@@ -233,19 +211,6 @@ cleaning_housing_data <- function(
                     TRUE ~ 0
                 )
             )
-
-        # drop variables that should not be included because they belong to a
-        # different type of housing
-        drop_vars <- c(
-            "mietekalt", "nebenkosten", "etage", "wohngeld", "betreut",
-            "foerderung", "garten", "heizkosten_in_wm_enthalten",
-            "haustier_erlaubt", "kategorie_Wohnung"
-        )
-        for (drop_var in drop_vars) {
-            if (drop_var %in% names(org_data)) {
-                org_data[[col]] <- NULL
-            }
-        }
     }
 
     #----------------------------------------------
