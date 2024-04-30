@@ -156,6 +156,7 @@ cleaning_housing_data <- function(
                 ln_houseprice = log(kaufpreis),
                 # add house price per sqm
                 houseprice_sqmeter = kaufpreis / wohnflaeche,
+                ln_houseprice_sqm = log(houseprice_sqmeter),
                 #----------------------------------------------
                 # recode missings in plot area
                 grundstuecksflaeche = dplyr::case_when(
