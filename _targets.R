@@ -82,6 +82,23 @@ for (sub_directory in sub_directories) {
             ),
             source
         )
+    } else {
+        files <- list.files(
+            file.path(
+                config_paths()[["code_path"]],
+                sub_directory
+            ),
+            pattern = "\\.R$",
+            full.names = TRUE,
+            ignore.case = TRUE
+        )
+        files <- files[
+            stringr::str_detect(
+                files,
+                "config"
+            ) == FALSE
+        ]
+        lapply(files, source)
     }
 }
 
@@ -108,19 +125,27 @@ static_housing_data_cleaned <- glue::glue(
     "{static_housing_types}_cleaned"
 )
 
-
-
-static_output_names_current <- glue::glue(
-    "{static_housing_types_labels}_output_data_{config_globals()[['current_version']]}"
+static_housing_data_demeaned <- glue::glue(
+    "{static_housing_types}_demeaned"
 )
 
-static_output_names_previous <- glue::glue(
-    "{static_housing_types_labels}_output_data_{config_globals()[['previous_version']]}"
+static_estimated_time_effects <- glue::glue(
+    "{static_housing_types}_estimated_time_effects"
 )
 
-static_output_test_names <- glue::glue(
-    "{static_housing_types_labels}_output_test"
-)
+
+
+# static_output_names_current <- glue::glue(
+#     "{static_housing_types_labels}_output_data_{config_globals()[['current_version']]}"
+# )
+
+# static_output_names_previous <- glue::glue(
+#     "{static_housing_types_labels}_output_data_{config_globals()[['previous_version']]}"
+# )
+
+# static_output_test_names <- glue::glue(
+#     "{static_housing_types_labels}_output_test"
+# )
 
 
 # housing_data_info <- data.frame(
@@ -295,12 +320,39 @@ targets_preparation_housing <- rlang::list2(
                     grids_lmr = grids_lmr
                 )
             )
+            # tar_fst(
+            #     housing_demeaned,
+            #     demeaning_housing_data(
+            #         housing_data_cleaned = housing_cleaned,
+            #         housing_type = housing_types
+            #     )
+            # )
         ),
         values = list(
             housing_types = static_housing_types,
             housing_data_org_file_names = rlang::syms(static_housing_org_file_names),
             housing_data_org_names = rlang::syms(static_housing_data_org_names),
             housing_cleaned = rlang::syms(static_housing_data_cleaned)
+            # housing_demeaned = rlang::syms(static_housing_data_demeaned)
+        )
+    )
+)
+
+targets_estimation <- rlang::list2(
+    tar_eval(
+        list(
+            tar_fst(
+                estimated_time_effects,
+                estimating_time_effects(
+                    housing_data = housing_cleaned,
+                    housing_type = housing_types 
+                )
+            )
+        ),
+        values = list(
+            housing_types = static_housing_types,
+            housing_cleaned = rlang::syms(static_housing_data_cleaned),
+            estimated_time_effects = rlang::syms(static_estimated_time_effects)
         )
     )
 )
@@ -381,44 +433,44 @@ targets_prep_est <- rlang::list2(
 #--------------------------------------------------
 # Testing output
 
-targets_test <- rlang::list2(
-    tar_eval(
-        list(
-            tar_fst(
-                output_data_current,
-                reading_output_file(
-                    housing_type_label = housing_type_labels,
-                    housing_type = housing_types,
-                    delivery = config_globals()[["current_delivery"]],
-                    version = config_globals()[["current_version"]]
-                )
-            ),
-            tar_fst(
-                output_data_previous,
-                reading_output_file(
-                    housing_type_label = housing_type_labels,
-                    housing_type = housing_types,
-                    delivery = config_globals()[["previous_delivery"]],
-                    version = config_globals()[["previous_version"]]
-                )
-            ),
-            tar_fst(
-                output_data_tests,
-                testing_output_data(
-                    output_data_current = output_data_current,
-                    output_data_previous = output_data_previous
-                )
-            )
-        ),
-        values = list(
-            housing_type_labels = static_housing_types_labels,
-            housing_types = static_housing_types,
-            output_data_current = rlang::syms(static_output_names_current),
-            output_data_previous = rlang::syms(static_output_names_previous),
-            output_data_tests = rlang::syms(static_output_test_names)
-        )
-    )
-)
+# targets_test <- rlang::list2(
+#     tar_eval(
+#         list(
+#             tar_fst(
+#                 output_data_current,
+#                 reading_output_file(
+#                     housing_type_label = housing_type_labels,
+#                     housing_type = housing_types,
+#                     delivery = config_globals()[["current_delivery"]],
+#                     version = config_globals()[["current_version"]]
+#                 )
+#             ),
+#             tar_fst(
+#                 output_data_previous,
+#                 reading_output_file(
+#                     housing_type_label = housing_type_labels,
+#                     housing_type = housing_types,
+#                     delivery = config_globals()[["previous_delivery"]],
+#                     version = config_globals()[["previous_version"]]
+#                 )
+#             ),
+#             tar_fst(
+#                 output_data_tests,
+#                 testing_output_data(
+#                     output_data_current = output_data_current,
+#                     output_data_previous = output_data_previous
+#                 )
+#             )
+#         ),
+#         values = list(
+#             housing_type_labels = static_housing_types_labels,
+#             housing_types = static_housing_types,
+#             output_data_current = rlang::syms(static_output_names_current),
+#             output_data_previous = rlang::syms(static_output_names_previous),
+#             output_data_tests = rlang::syms(static_output_test_names)
+#         )
+#     )
+# )
 
 #----------------------------------------------
 # combine all
@@ -427,6 +479,6 @@ rlang::list2(
     targets_preparation_geo,
     targets_preparation_housing,
     # targets_prep_est,
-    #targets_estimation,
+    targets_estimation,
     #targets_test
 )
