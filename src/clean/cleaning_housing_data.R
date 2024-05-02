@@ -139,7 +139,9 @@ cleaning_housing_data <- function(
                 # add logarithmic rent
                 ln_rent = log(mietekalt),
                 # add rent per sqm
-                rent_sqmeter = mietekalt / wohnflaeche
+                rent_sqmeter = mietekalt / wohnflaeche,
+                # add logarithmic rent per sqm
+                ln_rent_sqm = log(rent_sqmeter)
             )
 
     # House sales
@@ -480,6 +482,14 @@ cleaning_housing_data <- function(
             ) |>
             dplyr::ungroup()
     }
+
+    #--------------------------------------------------
+    # drop 2007 because not used in estimation
+
+    org_data <- org_data |>
+        dplyr::filter(
+            ejahr != 2007
+        )
 
     #----------------------------------------------
     # return
