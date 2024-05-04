@@ -2,6 +2,16 @@ estimating_time_effects <- function(
     housing_data = NA,
     housing_type = NA
 ) {
+    #' @title Estimating time effects
+    #' 
+    #' @description This function estimates time effects for a given housing type.
+    #' 
+    #' @param housing_data Data frame with housing data
+    #' @param housing_type Housing type
+    #' 
+    #' @note This refers to regression 1 in the former Stata coding.
+    #' 
+    #' @return NULL, estimation output
 
     #--------------------------------------------------
     # select dependent and independent variables from global definition
@@ -41,9 +51,6 @@ estimating_time_effects <- function(
 
     #--------------------------------------------------
     # perform estimation
-
-    # define formula
-    # TODO: Adjust to loop to allow for various time FE
 
     for (time_fe in time_fes) {
         # NOTE: analysis not performed at monthly level because the number
@@ -92,24 +99,4 @@ estimating_time_effects <- function(
     # return
     
     return(NULL)
-
-
-    # etable(tst_mod)
-
-
-    # df = extracting_time_effects(model = tst_mod, time = "ejahr")
-
-
 }
-# unique(housing_data_cleaned$ejahr)
-# housing_data_cleaned = HK_cleaned
-
-# housing_data_cleaned <- housing_data_cleaned |>
-#     mutate(
-#         ln_houseprice_sqm = log(houseprice_sqmeter)
-#     ) |>
-#     filter(ejahr != 2007)
-
-# names(HK_cleaned)
-
-# names(housing_data_cleaned)
