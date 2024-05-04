@@ -491,6 +491,20 @@ cleaning_housing_data <- function(
             ejahr != 2007
         )
 
+    #--------------------------------------------------
+    # drop last month in data to prevent look ahead bias
+
+    max_month <- paste0(
+        config_globals()[["max_year"]],
+        "-",
+        config_globals()[["max_month"]]
+    )
+    
+    org_data <- org_data |>
+        dplyr::filter(
+            e_year_mon != max_month
+        )
+
     #----------------------------------------------
     # return
 
