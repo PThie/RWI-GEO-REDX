@@ -52,6 +52,7 @@ estimating_time_effects <- function(
     #--------------------------------------------------
     # perform estimation
 
+    results_list <- list()
     for (time_fe in time_fes) {
         # NOTE: analysis not performed at monthly level because the number
         # of observations is too low
@@ -79,24 +80,56 @@ estimating_time_effects <- function(
                 fixef = regional_fes[1]
             )
 
+            # used sample
+            indices_include_obs <- fixest::obs(base_mod)
+            used_sample <- housing_data[indices_include_obs, ]
+
+            # number of observations
+            if (time_fe == "ejahr") {
+                time_label <- "year"
+            } else {
+                time_label <- "quarter"
+            }
+
+            mean_name <- paste0("mean_", depvar)
+            
+            nobs <- used_sample |>
+                dplyr::group_by(!!rlang::sym(time_fe)) |>
+                dplyr::summarise(
+                    nobs = n(),
+                    !!mean_name := mean(.data[[depvar]], na.rm = TRUE)
+                ) |>
+                dplyr::rename(!!time_label := 1) |>
+                as.data.frame()
+
             # extract time coefficients (coefficients on years or quarters)
             time_coefs <- extracting_time_effects(model = base_mod, time = time_fe)
 
+            # merge with number of observations
+            time_coefs <- merge(
+                time_coefs,
+                nobs,
+                by = time_label,
+                all.x = TRUE
+            )
+
             # export findings
-            data.table::fwrite(
+            openxlsx::write.xlsx(
                 time_coefs,
                 file.path(
                     config_paths()[["output_path"]],
                     paste0(housing_type, "_rebuild"),
-                    paste0("time_effects_grids_", time_fe, ".csv")
-                ),
-                sep = ";"
+                    paste0("time_effects_grids_", time_fe, ".xlsx")
+                )
             )
+            
+            # store results
+            results_list[[time_fe]] <- time_coefs
         }
     }
 
     #--------------------------------------------------
     # return
     
-    return(NULL)
+    return(results_list)
 }
