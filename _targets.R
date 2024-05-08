@@ -341,7 +341,7 @@ targets_preparation_housing <- rlang::list2(
 targets_estimation <- rlang::list2(
     tar_eval(
         list(
-            tar_fst(
+            tar_target(
                 estimated_time_effects,
                 estimating_time_effects(
                     housing_data = housing_cleaned,
@@ -353,6 +353,14 @@ targets_estimation <- rlang::list2(
             housing_types = static_housing_types,
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
             estimated_time_effects = rlang::syms(static_estimated_time_effects)
+        )
+    ),
+    tar_target(
+        combined_time_effects,
+        combining_time_effects(
+            WM_estimated_time_effects = WM_estimated_time_effects,
+            HK_estimated_time_effects = HK_estimated_time_effects,
+            WK_estimated_time_effects = WK_estimated_time_effects
         )
     )
 )
@@ -386,30 +394,30 @@ targets_estimation <- rlang::list2(
 #     names = housing_type
 # )
 
-# Preparation and estimation
-targets_prep_est <- rlang::list2(
-    tar_eval(
-        list(
-            # define paths orginal data
-            tar_target(
-                housing_data_org_file_names,
-                making_housing_data_org_file_names(
-                    data_type = housing_types
-                )
-            ),
-            tar_file_read(
-                housing_data_org_names,
-                housing_data_org_file_names,
-                reading_housing_data_org(!!.x)
-            )
-        ),
-        values = list(
-            housing_types = static_housing_types,
-            housing_org_file_names = rlang::syms(static_housing_org_file_names),
-            housing_data_org_names = rlang::syms(static_housing_data_org_names)
-        )
-    )
-)
+# # Preparation and estimation
+# targets_prep_est <- rlang::list2(
+#     tar_eval(
+#         list(
+#             # define paths orginal data
+#             tar_target(
+#                 housing_data_org_file_names,
+#                 making_housing_data_org_file_names(
+#                     data_type = housing_types
+#                 )
+#             ),
+#             tar_file_read(
+#                 housing_data_org_names,
+#                 housing_data_org_file_names,
+#                 reading_housing_data_org(!!.x)
+#             )
+#         ),
+#         values = list(
+#             housing_types = static_housing_types,
+#             housing_org_file_names = rlang::syms(static_housing_org_file_names),
+#             housing_data_org_names = rlang::syms(static_housing_data_org_names)
+#         )
+#     )
+# )
 
 
 
