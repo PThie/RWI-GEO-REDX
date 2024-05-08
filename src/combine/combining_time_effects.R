@@ -103,7 +103,7 @@ combining_time_effects <- function(
             dplyr::select(-nobs) |>
             merge(
                 nobs,
-                by = c(!!rlang::sym(time), "housing_type")
+                by = c(time, "housing_type")
             ) |>
             dplyr::mutate(
                 timeeff = timeeff * weight,
