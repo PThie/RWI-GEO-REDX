@@ -146,7 +146,7 @@ combining_time_effects <- function(
             file.path(
                 config_paths()[["output_path"]],
                 "Combined_rebuild",
-                paste0("combined_time_effects_grids_", result, ".xlsx")
+                paste0("combined_time_effects_grids_", time, ".xlsx")
             )
         )
 
