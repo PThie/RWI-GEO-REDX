@@ -110,7 +110,7 @@ combining_time_effects <- function(
                 timeeff_p025 = timeeff_p025 * weight,
                 timeeff_p975 = timeeff_p975 * weight
             ) |>
-            dplyr::group_by(year) |>
+            dplyr::group_by(!!rlang::sym(time)) |>
             dplyr::summarise(
                 timeeff = sum(timeeff),
                 timeeff_p025 = sum(timeeff_p025),
@@ -119,7 +119,7 @@ combining_time_effects <- function(
 
         # reshape the NOBS data to wide format
         nobs_wide <- nobs |>
-            dplyr::select(year, housing_type, nobs_type) |>
+            dplyr::select(!!rlang::sym(time), housing_type, nobs_type) |>
             tidyr::pivot_wider(
                 names_from = housing_type,
                 values_from = nobs_type
@@ -137,7 +137,7 @@ combining_time_effects <- function(
         dta_weighted <- dta_weighted |>
             merge(
                 nobs_wide,
-                by = "year"
+                by = time
             )
 
         # export
