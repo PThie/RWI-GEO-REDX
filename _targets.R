@@ -1,7 +1,7 @@
 #----------------------------------------------
 # description
 
-# Thhis fule is the main file that orchestrates the other coding files. It
+# This file is the main file that orchestrates the other coding files. It
 # controls the data pipeline and defines the global settings.
 
 #----------------------------------------------
