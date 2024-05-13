@@ -320,25 +320,17 @@ targets_preparation_housing <- rlang::list2(
                     grids_lmr = grids_lmr
                 )
             )
-            # tar_fst(
-            #     housing_demeaned,
-            #     demeaning_housing_data(
-            #         housing_data_cleaned = housing_cleaned,
-            #         housing_type = housing_types
-            #     )
-            # )
         ),
         values = list(
             housing_types = static_housing_types,
             housing_data_org_file_names = rlang::syms(static_housing_org_file_names),
             housing_data_org_names = rlang::syms(static_housing_data_org_names),
             housing_cleaned = rlang::syms(static_housing_data_cleaned)
-            # housing_demeaned = rlang::syms(static_housing_data_demeaned)
         )
     )
 )
 
-targets_estimation <- rlang::list2(
+targets_estimation_time <- rlang::list2(
     tar_eval(
         list(
             tar_target(
@@ -365,78 +357,7 @@ targets_estimation <- rlang::list2(
     )
 )
 
-
-# Preparation of the housing data
-# targets_preparation_housing <- tar_map(list(
-#     tar_fst(
-#         housing_data,
-#         prepare_housing(
-#             housing_file = housing_type_file_name,
-#             data_type = substring(
-#                 housing_type_file_name, 1, 2
-#             ),
-#             grids_municipalities = grids_municipalities,
-#             grids_lmr = grids_lmr
-#         )
-#     ),
-#     tar_target(
-#         estimated_time_effects,
-#         estimate_time_effects(
-#             housing_data = housing_type_processed,
-#             data_type = substring(
-#                 housing_type_processed,
-#                 nchar(housing_type_processed) - 1,
-#                 nchar(housing_type_processed)
-#             )
-#         )
-#     )),
-#     values = housing_data_info,
-#     names = housing_type
-# )
-
-# # Preparation and estimation
-# targets_prep_est <- rlang::list2(
-#     tar_eval(
-#         list(
-#             # define paths orginal data
-#             tar_target(
-#                 housing_data_org_file_names,
-#                 making_housing_data_org_file_names(
-#                     data_type = housing_types
-#                 )
-#             ),
-#             tar_file_read(
-#                 housing_data_org_names,
-#                 housing_data_org_file_names,
-#                 reading_housing_data_org(!!.x)
-#             )
-#         ),
-#         values = list(
-#             housing_types = static_housing_types,
-#             housing_org_file_names = rlang::syms(static_housing_org_file_names),
-#             housing_data_org_names = rlang::syms(static_housing_data_org_names)
-#         )
-#     )
-# )
-
-
-
-# Estimation
-# targets_estimation <- tar_map(
-#     tar_target(
-#         estimated_time_effects,
-#         estimate_time_effects(
-#             housing_data = housing_type_processed,
-#             data_type = substring(
-#                 housing_type_processed,
-#                 nchar(housing_type_processed) - 1,
-#                 nchar(housing_type_processed)
-#             )
-#         )
-#     ),
-#     values = housing_data_info,
-#     names = housing_type
-# )
+targets_estimation_region <- rlang::list2()
 
 #--------------------------------------------------
 # Testing output
@@ -486,7 +407,6 @@ targets_estimation <- rlang::list2(
 rlang::list2(
     targets_preparation_geo,
     targets_preparation_housing,
-    # targets_prep_est,
-    targets_estimation,
+    targets_estimation_time,
     #targets_test
 )
