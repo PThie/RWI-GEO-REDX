@@ -58,7 +58,18 @@ estimating_time_effects <- function(
         # NOTE: analysis not performed at monthly level because the number
         # of observations is too low
         if (time_fe != "e_year_mon") {
+            #--------------------------------------------------
+            # set up for different time periods
+
+            if (time_fe == "ejahr") {
+                time_label <- "year"
+            } else {
+                time_label <- "quarter"
+            }
+
+            #--------------------------------------------------
             # define formula
+
             form <- as.formula(
                 paste(
                     depvar,
@@ -73,7 +84,9 @@ estimating_time_effects <- function(
                 )
             )
 
+            #--------------------------------------------------
             # estimate the model
+
             base_mod <- fixest::feols(
                 fml = form,
                 data = housing_data,
@@ -81,16 +94,14 @@ estimating_time_effects <- function(
                 fixef = regional_fes[1]
             )
 
+            #--------------------------------------------------
             # used sample
+
             indices_include_obs <- fixest::obs(base_mod)
             used_sample <- housing_data[indices_include_obs, ]
 
+            #--------------------------------------------------
             # number of observations
-            if (time_fe == "ejahr") {
-                time_label <- "year"
-            } else {
-                time_label <- "quarter"
-            }
 
             mean_name <- paste0("mean_", depvar)
             
@@ -103,10 +114,17 @@ estimating_time_effects <- function(
                 dplyr::rename(!!time_label := 1) |>
                 as.data.frame()
 
+            #--------------------------------------------------
             # extract time coefficients (coefficients on years or quarters)
-            time_coefs <- extracting_time_effects(model = base_mod, time = time_fe)
 
+            time_coefs <- extracting_time_effects(
+                model = base_mod,
+                time = time_fe
+            )
+
+            #--------------------------------------------------
             # merge with number of observations
+
             time_coefs <- merge(
                 time_coefs,
                 nobs,
@@ -114,7 +132,9 @@ estimating_time_effects <- function(
                 all.x = TRUE
             )
 
+            #--------------------------------------------------
             # export findings
+            
             openxlsx::write.xlsx(
                 time_coefs,
                 file.path(
@@ -123,8 +143,9 @@ estimating_time_effects <- function(
                     paste0("time_effects_grids_", time_fe, ".xlsx")
                 )
             )
-            
+            #--------------------------------------------------
             # store results
+            
             results_list[[time_fe]] <- time_coefs
         }
     }
