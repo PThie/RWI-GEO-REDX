@@ -218,7 +218,7 @@ estimating_regional_effects <- function(
                 file.path(
                     config_paths()[["output_path"]],
                     paste0(housing_type, "_rebuild"),
-                    paste0("regional_effects_grids_", time_fe, ".xlsx")
+                    paste0("regional_effects_grids_", time_label, ".xlsx")
                 )
             )
 
