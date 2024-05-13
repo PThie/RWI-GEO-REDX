@@ -62,7 +62,7 @@ helpers_var_definition <- function(housing_type = NA) {
 
     if (housing_type %in% c("HK", "WM", "WK")) {
         var_list[["regional_fe"]] <- c("ergg_1km")
-        var_list[["time_fe"]] <- c("ejahr", "e_year_quarter", "e_year_mon")
+        var_list[["time_fe"]] <- c("ejahr", "e_year_quarter")
     }
 
     #--------------------------------------------------
