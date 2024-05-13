@@ -437,51 +437,51 @@ cleaning_housing_data <- function(
     #----------------------------------------------
     # add variables for regression
 
-    for (region in c("kid2019", "gid2019", "amr", "ergg_1km")) {
-        for (time in c("ejahr", "e_year_mon", "e_year_quarter")) {
-            org_data <- org_data |>
-                dplyr::mutate(
-                    # add region-time variable
-                    !!paste0("id_", region, "_", time) := paste0(
-                        .data[[region]], "_", .data[[time]]
-                    )
-                )
-        }
-    }
+    # for (region in c("kid2019", "gid2019", "amr", "ergg_1km")) {
+    #     for (time in c("ejahr", "e_year_mon", "e_year_quarter")) {
+    #         org_data <- org_data |>
+    #             dplyr::mutate(
+    #                 # add region-time variable
+    #                 !!paste0("id_", region, "_", time) := paste0(
+    #                     .data[[region]], "_", .data[[time]]
+    #                 )
+    #             )
+    #     }
+    # }
 
     #----------------------------------------------
     # add average price per sqm for the region and time
 
-    grouping_vars <- org_data |>
-        dplyr::select(
-            dplyr::starts_with("id_")
-        ) |>
-        names()
+    # grouping_vars <- org_data |>
+    #     dplyr::select(
+    #         dplyr::starts_with("id_")
+    #     ) |>
+    #     names()
 
-    for (var in grouping_vars) {
-        # define price variable
-        if (housing_type == "WK") {
-            price_var <- "flatprice_sqmeter"
-        } else if (housing_type == "WM") {
-            price_var <- "rent_sqmeter"
-        } else {
-            price_var <- "houseprice_sqmeter"
-        }
+    # for (var in grouping_vars) {
+    #     # define price variable
+    #     if (housing_type == "WK") {
+    #         price_var <- "flatprice_sqmeter"
+    #     } else if (housing_type == "WM") {
+    #         price_var <- "rent_sqmeter"
+    #     } else {
+    #         price_var <- "houseprice_sqmeter"
+    #     }
 
-        # define name of overaged price
-        name_var <- paste0("avg_", price_var, "_", substring(var, 4, nchar(var)))
+    #     # define name of overaged price
+    #     name_var <- paste0("avg_", price_var, "_", substring(var, 4, nchar(var)))
 
-        # average price by time and region
-        org_data <- org_data |>
-            dplyr::group_by(
-                .data[[var]]
-            ) |>
-            dplyr::mutate(
-                # add average price per sqm for the region and time
-                !!name_var := mean(.data[[price_var]], na.rm = TRUE)
-            ) |>
-            dplyr::ungroup()
-    }
+    #     # average price by time and region
+    #     org_data <- org_data |>
+    #         dplyr::group_by(
+    #             .data[[var]]
+    #         ) |>
+    #         dplyr::mutate(
+    #             # add average price per sqm for the region and time
+    #             !!name_var := mean(.data[[price_var]], na.rm = TRUE)
+    #         ) |>
+    #         dplyr::ungroup()
+    # }
 
     #--------------------------------------------------
     # drop 2007 because not used in estimation
