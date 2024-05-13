@@ -389,6 +389,14 @@ targets_estimation_region <- rlang::list2(
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
             estimated_region_effects = rlang::syms(static_estimated_region_effects),
             aggregated_region_effects = rlang::syms(static_aggregated_region_effects)
+        ),
+        tar_target(
+            combined_region_effects,
+            combining_regional_effects(
+                HK_estimated_region_effects = HK_estimated_region_effects,
+                WK_estimated_region_effects = WK_estimated_region_effects,
+                WM_estimated_region_effects = WM_estimated_region_effects
+            )
         )
     )
 )
