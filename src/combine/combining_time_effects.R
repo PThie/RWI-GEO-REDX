@@ -75,17 +75,21 @@ combining_time_effects <- function(
     for (result in names(combined_results_list)) {
         dta <- combined_results_list[[result]]
 
+        #--------------------------------------------------
         # define time variable
+
         if (result == "ejahr") {
             time <- "year"
         } else {
             time <- "quarter"
         }
         
+        #--------------------------------------------------
         # calculate the number of observations for each year and type
         # and then the total number of observations for each year
         # This gives the weight for each type in each year.
         # Same approach for quarters
+
         nobs <- dta |>
             dplyr::group_by(!!rlang::sym(time), housing_type) |>
             dplyr::summarise(
@@ -98,7 +102,9 @@ combining_time_effects <- function(
                 weight = nobs_type / total_nobs
             )
 
+        #--------------------------------------------------
         # calculate weighted coefficients
+
         dta_weighted <- dta |>
             dplyr::select(-nobs) |>
             merge(
@@ -117,7 +123,9 @@ combining_time_effects <- function(
                 timeeff_p975 = sum(timeeff_p975)
             )
 
+        #--------------------------------------------------
         # reshape the NOBS data to wide format
+
         nobs_wide <- nobs |>
             dplyr::select(!!rlang::sym(time), housing_type, nobs_type) |>
             tidyr::pivot_wider(
@@ -133,14 +141,18 @@ combining_time_effects <- function(
                 total_nobs = HK_nobs + WK_nobs + WM_nobs
             )
 
+        #--------------------------------------------------
         # merge number of observations and combined indices
+
         dta_weighted <- dta_weighted |>
             merge(
                 nobs_wide,
                 by = time
             )
 
+        #--------------------------------------------------
         # export
+
         openxlsx::write.xlsx(
             dta_weighted,
             file.path(
@@ -150,7 +162,9 @@ combining_time_effects <- function(
             )
         )
 
+        #--------------------------------------------------
         # store output
+        
         results_list[[result]] <- dta_weighted
     }
 
