@@ -225,7 +225,7 @@ estimating_regional_effects <- function(
             #--------------------------------------------------
             # store results
 
-            results_list[[time_fe]] <- time_coefs
+            results_list[[time_fe]] <- regional_coef
         }
     }
 
