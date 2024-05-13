@@ -366,7 +366,7 @@ targets_estimation_region <- rlang::list2(
         list(
             tar_target(
                 estimated_region_effects,
-                estimating_region_effects(
+                estimating_regional_effects(
                     housing_data = housing_cleaned,
                     housing_type = housing_types,
                     grids_municipalities = grids_municipalities
