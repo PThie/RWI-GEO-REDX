@@ -79,9 +79,9 @@ combining_time_effects <- function(
         # define time variable
 
         if (result == "ejahr") {
-            time <- "year"
+            time_label <- "year"
         } else {
-            time <- "quarter"
+            time_label <- "quarter"
         }
         
         #--------------------------------------------------
@@ -91,12 +91,12 @@ combining_time_effects <- function(
         # Same approach for quarters
 
         nobs <- dta |>
-            dplyr::group_by(!!rlang::sym(time), housing_type) |>
+            dplyr::group_by(!!rlang::sym(time_label), housing_type) |>
             dplyr::summarise(
                 nobs_type = sum(nobs)
             ) |>
             dplyr::ungroup() |>
-            dplyr::group_by(!!rlang::sym(time)) |>
+            dplyr::group_by(!!rlang::sym(time_label)) |>
             dplyr::mutate(
                 total_nobs = sum(nobs_type),
                 weight = nobs_type / total_nobs
@@ -109,14 +109,14 @@ combining_time_effects <- function(
             dplyr::select(-nobs) |>
             merge(
                 nobs,
-                by = c(time, "housing_type")
+                by = c(time_label, "housing_type")
             ) |>
             dplyr::mutate(
                 timeeff = timeeff * weight,
                 timeeff_p025 = timeeff_p025 * weight,
                 timeeff_p975 = timeeff_p975 * weight
             ) |>
-            dplyr::group_by(!!rlang::sym(time)) |>
+            dplyr::group_by(!!rlang::sym(time_label)) |>
             dplyr::summarise(
                 timeeff = sum(timeeff),
                 timeeff_p025 = sum(timeeff_p025),
@@ -127,7 +127,7 @@ combining_time_effects <- function(
         # reshape the NOBS data to wide format
 
         nobs_wide <- nobs |>
-            dplyr::select(!!rlang::sym(time), housing_type, nobs_type) |>
+            dplyr::select(!!rlang::sym(time_label), housing_type, nobs_type) |>
             tidyr::pivot_wider(
                 names_from = housing_type,
                 values_from = nobs_type
@@ -147,7 +147,7 @@ combining_time_effects <- function(
         dta_weighted <- dta_weighted |>
             merge(
                 nobs_wide,
-                by = time
+                by = time_label
             )
 
         #--------------------------------------------------
@@ -158,13 +158,13 @@ combining_time_effects <- function(
             file.path(
                 config_paths()[["output_path"]],
                 "Combined_rebuild",
-                paste0("combined_time_effects_grids_", time, ".xlsx")
+                paste0("combined_time_effects_grids_", time_label, ".xlsx")
             )
         )
 
         #--------------------------------------------------
         # store output
-        
+
         results_list[[result]] <- dta_weighted
     }
 
