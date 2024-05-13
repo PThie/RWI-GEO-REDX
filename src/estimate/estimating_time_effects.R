@@ -11,7 +11,8 @@ estimating_time_effects <- function(
     #' 
     #' @note This refers to regression 1 in the former Stata coding.
     #' 
-    #' @return NULL, estimation output
+    #' @return List with estimation output
+    #' @author Patrick Thiel
 
     #--------------------------------------------------
     # select dependent and independent variables from global definition
