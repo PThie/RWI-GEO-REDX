@@ -133,6 +133,10 @@ static_estimated_time_effects <- glue::glue(
     "{static_housing_types}_estimated_time_effects"
 )
 
+static_estimated_region_effects <- glue::glue(
+    "{static_housing_types}_estimated_region_effects"
+)
+
 
 
 # static_output_names_current <- glue::glue(
@@ -357,7 +361,25 @@ targets_estimation_time <- rlang::list2(
     )
 )
 
-targets_estimation_region <- rlang::list2()
+targets_estimation_region <- rlang::list2(
+    tar_eval(
+        list(
+            tar_target(
+                estimated_region_effects,
+                estimating_region_effects(
+                    housing_data = housing_cleaned,
+                    housing_type = housing_types,
+                    grids_municipalities = grids_municipalities
+                )
+            )
+        ),
+        values = list(
+            housing_types = static_housing_types,
+            housing_cleaned = rlang::syms(static_housing_data_cleaned),
+            estimated_region_effects = rlang::syms(static_estimated_region_effects)
+        )
+    )
+)
 
 #--------------------------------------------------
 # Testing output
@@ -408,5 +430,5 @@ rlang::list2(
     targets_preparation_geo,
     targets_preparation_housing,
     targets_estimation_time,
-    #targets_test
+    targets_estimation_region
 )
