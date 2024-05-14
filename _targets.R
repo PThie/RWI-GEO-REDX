@@ -398,6 +398,13 @@ targets_estimation_region <- rlang::list2(
             WK_estimated_region_effects = WK_estimated_region_effects,
             WM_estimated_region_effects = WM_estimated_region_effects
         )
+    ),
+    tar_target(
+        aggregated_combined_region_effects,
+        aggregating_combined_regional_effects(
+            combined_region_effects = combined_region_effects,
+            grids_municipalities = grids_municipalities
+        )
     )
 )
 
