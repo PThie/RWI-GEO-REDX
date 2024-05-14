@@ -52,6 +52,9 @@ aggregating_combined_regional_effects <- function(
                     by.x = "grid",
                     by.y = "ergg_1km",
                     all.x = TRUE
+                ) |>
+                dplyr::mutate(
+                    kid2019 = substring(gid2019, 1, 5)
                 )
 
             #--------------------------------------------------
