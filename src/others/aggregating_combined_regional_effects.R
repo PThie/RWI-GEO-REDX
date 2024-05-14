@@ -34,11 +34,9 @@ aggregating_combined_regional_effects <- function(
                 region_label <- "district"
             }
 
-            if (result == "ejahr") {
-                time_label <- "year"
-            } else {
-                time_label <- "quarter"
-            }
+            # assign time label (can be done directly since I renamed the list
+            # elements previously)
+            time_label <- result
 
             #--------------------------------------------------
             # prepare combined regional effects
