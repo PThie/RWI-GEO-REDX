@@ -16,7 +16,7 @@ aggregating_regional_effects <- function(
     #--------------------------------------------------
     # loop through time levels on grid level (previously estimated effects)
 
-    result_list <- list()
+    results_list <- list()
     for (result in names(estimated_effects_list)) {
         for (agg_level in c("munic", "district")) {
             #--------------------------------------------------
@@ -88,12 +88,12 @@ aggregating_regional_effects <- function(
             #--------------------------------------------------
             # store results
 
-            result_list[[paste0(region_label, "_", time_label)]] <- estimated_effects_agg
+            results_list[[paste0(region_label, "_", time_label)]] <- estimated_effects_agg
         }
     }
 
     #--------------------------------------------------
     # return
 
-    return(result_list)
+    return(results_list)
 }
