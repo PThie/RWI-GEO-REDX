@@ -4,6 +4,19 @@ reading_output_file <- function(
     time_effects = NA,
     region_effects = NA
 ) {
+    #' @title Reading output file
+    #' 
+    #' @description This function reads the output file of the old (Stata)
+    #' estimation process and merges the new estimates.
+    #' 
+    #' @param housing_type_label Housing type label
+    #' @param sheet_names Names of the sheets in the output file
+    #' @param time_effects List with time effects
+    #' @param region_effects List with regional effects
+    #' 
+    #' @return List with data frames (combined estimates)
+    #' @author Patrick Thiel
+    
     #--------------------------------------------------
     # define path to output data
 
