@@ -23,6 +23,7 @@ suppressPackageStartupMessages({
     library(openxlsx)
     library(future)
     library(future.callr)
+    library(MetBrewer)
 })
 
 #----------------------------------------------
@@ -143,6 +144,10 @@ static_aggregated_region_effects <- glue::glue(
 
 static_outputs <- glue::glue(
     "{static_housing_types}_output_data"
+)
+
+static_time_effects_test_plot <- glue::glue(
+    "{static_housing_types}_time_effects_test_plot"
 )
 
 
@@ -403,13 +408,21 @@ targets_test <- rlang::list2(
                     time_effects = estimated_time_effects,
                     region_effects = aggregated_region_effects
                 )
+            ),
+            # Plotting time effects
+            tar_target(
+                time_effects_test_plot,
+                test_plotting_time_effects(
+                    output_data = output_data
+                )
             )
         ),
         values = list(
             output_data = rlang::syms(static_outputs),
             housing_type_labels = static_housing_types_labels,
             estimated_time_effects = rlang::syms(static_estimated_time_effects),
-            aggregated_region_effects = rlang::syms(static_aggregated_region_effects)
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects),
+            time_effects_test_plot = rlang::syms(static_time_effects_test_plot)
         )
     )
 )
