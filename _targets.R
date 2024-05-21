@@ -141,37 +141,17 @@ static_aggregated_region_effects <- glue::glue(
     "{static_housing_types}_aggregated_region_effects"
 )
 
+static_outputs <- glue::glue(
+    "{static_housing_types}_output_data"
+)
 
 
-# static_output_names_current <- glue::glue(
-#     "{static_housing_types_labels}_output_data_{config_globals()[['current_version']]}"
-# )
-
-# static_output_names_previous <- glue::glue(
-#     "{static_housing_types_labels}_output_data_{config_globals()[['previous_version']]}"
-# )
-
-# static_output_test_names <- glue::glue(
-#     "{static_housing_types_labels}_output_test"
-# )
-
-
-# housing_data_info <- data.frame(
-#     cbind(
-#         #housing_type = c("HK", "WK", "WM")
-#         housing_type = c("WK") # for testing DELETE later
-#     )
-# ) |>
-#     dplyr::mutate(
-#         housing_type_file_name = rlang::syms(paste0(
-#             housing_type,
-#             "_allVersions_ohneText"
-#         )),
-#         housing_type_processed = rlang::syms(paste0(
-#             "housing_data_",
-#             housing_type
-#         ))
-#     )
+sheet_names <- c(
+    "1__District_TimeEff_yearly",
+    "1__District_TimeEff_quarterly",
+    "2__District_Pindex_yearly",
+    "4__Municip_Pindex_yearly"
+)
 
 #----------------------------------------------
 # Preparation of the geo information
@@ -411,44 +391,30 @@ targets_estimation_region <- rlang::list2(
 #--------------------------------------------------
 # Testing output
 
-# targets_test <- rlang::list2(
-#     tar_eval(
-#         list(
-#             tar_fst(
-#                 output_data_current,
-#                 reading_output_file(
-#                     housing_type_label = housing_type_labels,
-#                     housing_type = housing_types,
-#                     delivery = config_globals()[["current_delivery"]],
-#                     version = config_globals()[["current_version"]]
-#                 )
-#             ),
-#             tar_fst(
-#                 output_data_previous,
-#                 reading_output_file(
-#                     housing_type_label = housing_type_labels,
-#                     housing_type = housing_types,
-#                     delivery = config_globals()[["previous_delivery"]],
-#                     version = config_globals()[["previous_version"]]
-#                 )
-#             ),
-#             tar_fst(
-#                 output_data_tests,
-#                 testing_output_data(
-#                     output_data_current = output_data_current,
-#                     output_data_previous = output_data_previous
-#                 )
-#             )
-#         ),
-#         values = list(
-#             housing_type_labels = static_housing_types_labels,
-#             housing_types = static_housing_types,
-#             output_data_current = rlang::syms(static_output_names_current),
-#             output_data_previous = rlang::syms(static_output_names_previous),
-#             output_data_tests = rlang::syms(static_output_test_names)
-#         )
-#     )
-# )
+targets_test <- rlang::list2(
+    tar_eval(
+        list(
+            # Reading old data output
+            tar_target(
+                output_data,
+                reading_output_file(
+                    housing_type_label = housing_type_labels,
+                    sheet_names = sheet_names,
+                    time_effects = estimated_time_effects,
+                    region_effects = aggregated_region_effects
+                )
+            )
+        ),
+        values = list(
+            output_data = rlang::syms(static_outputs),
+            housing_type_labels = static_housing_types_labels,
+            estimated_time_effects = rlang::syms(static_estimated_time_effects),
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects)
+        )
+    )
+)
+
+
 
 #----------------------------------------------
 # combine all
@@ -457,5 +423,6 @@ rlang::list2(
     targets_preparation_geo,
     targets_preparation_housing,
     targets_estimation_time,
-    targets_estimation_region
+    targets_estimation_region,
+    targets_test
 )
