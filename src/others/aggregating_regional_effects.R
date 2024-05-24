@@ -35,8 +35,10 @@ aggregating_regional_effects <- function(
 
             if (result == "ejahr") {
                 time_label <- "year"
+                reference_period <- "2008"
             } else {
                 time_label <- "quarter"
+                reference_period <- "2008-01"
             }
 
             #--------------------------------------------------
@@ -65,8 +67,31 @@ aggregating_regional_effects <- function(
                 dplyr::summarise(
                     weighted_pindex = sum(weighted_pindex, na.rm = TRUE),
                     !!nobs_var := dplyr::first(.data[[nobs_var]])
-                )
+                ) |>
+                dplyr::ungroup()
 
+            #--------------------------------------------------
+            # calculate the change between District_Year - District_2008
+
+            estimated_effects_agg <- estimated_effects_agg |>
+                merge(
+                    estimated_effects_agg |>
+                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
+                        dplyr::rename(weighted_pindex_ref = weighted_pindex) |>
+                        dplyr::select(-c(time_label, nobs_var)),
+                    by = region_id,
+                    all.x = TRUE
+                ) |>
+                dplyr::mutate(
+                    weighted_pindex_change = dplyr::case_when(
+                        !is.na(weighted_pindex) ~ (
+                            (weighted_pindex - weighted_pindex_ref) / weighted_pindex_ref
+                        ) * 100,
+                        TRUE ~ NA_real_
+                    )
+                ) |>
+                dplyr::select(-c(weighted_pindex_ref))
+            
             #--------------------------------------------------
             # export
 

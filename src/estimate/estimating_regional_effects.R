@@ -69,10 +69,12 @@ estimating_regional_effects <- function(
                 time_fe_id <- 1
                 string_cutoff <- 4
                 time_label <- "year"
+                reference_period <- "2008"
             } else {
                 time_fe_id <- 2
                 string_cutoff <- 7
                 time_label <- "quarter"
+                reference_period <- "2008-01"
             }
 
             #--------------------------------------------------
@@ -130,7 +132,7 @@ estimating_regional_effects <- function(
             # But it is not clear why this is necessary. Should we use the mean
             # of the FE instead: mean(fixed_effects$pindex_FE)?
 
-            constant <- mean(base_mod$sumFE)
+            #constant <- mean(base_mod$sumFE)
 
             #--------------------------------------------------
             # calculate deviation from overall mean (= constant)
@@ -140,7 +142,7 @@ estimating_regional_effects <- function(
 
             fixed_effects <- fixed_effects |>
                 dplyr::mutate(
-                    pindex_FE = pindex_FE - constant,
+                    #pindex_FE = pindex_FE - constant,
                     pindex = (exp(pindex_FE) - 1) * 100,
                     # separate region and time into separate columns
                     !!time_label := substring(id_fe, 1, string_cutoff),
@@ -148,6 +150,28 @@ estimating_regional_effects <- function(
                 ) |>
                 dplyr::select(-c(pindex_FE, id_fe))
 
+            #--------------------------------------------------
+            # calculate the change between District_Year - District_2008
+
+            fixed_effects <- fixed_effects |>
+                merge(
+                    fixed_effects |>
+                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
+                        dplyr::rename(pindex_ref = pindex) |>
+                        dplyr::select(-time_label),
+                    by = "grid",
+                    all.x = TRUE
+                ) |>
+                dplyr::mutate(
+                    pindex_change = dplyr::case_when(
+                        !is.na(pindex_ref) ~ (
+                            (pindex - pindex_ref) / pindex_ref
+                        ) * 100,
+                        TRUE ~ NA_real_
+                    )
+                ) |>
+                dplyr::select(-c(pindex_ref))
+            
             #--------------------------------------------------
             # used sample
 
@@ -157,9 +181,9 @@ estimating_regional_effects <- function(
             #--------------------------------------------------
             # calculate number of observations and mean of dependent variable
 
-            mean_name_grid <- paste0("mean_", depvar, "_grid")
-            mean_name_munic <- paste0("mean_", depvar, "_munic")
-            mean_name_district <- paste0("mean_", depvar, "_district")
+            # mean_name_grid <- paste0("mean_", depvar, "_grid")
+            # mean_name_munic <- paste0("mean_", depvar, "_munic")
+            # mean_name_district <- paste0("mean_", depvar, "_district")
 
             nobs <- used_sample |>
                 dplyr::group_by(
@@ -167,8 +191,8 @@ estimating_regional_effects <- function(
                     !!rlang::sym(regional_fes[1])
                 ) |>
                 dplyr::summarise(
-                    nobs_grid = n(),
-                    !!mean_name_grid := mean(.data[[depvar]], na.rm = TRUE)
+                    nobs_grid = n()
+                    #!!mean_name_grid := mean(.data[[depvar]], na.rm = TRUE)
                 ) |>
                 dplyr::rename(!!time_label := 1) |>
                 dplyr::ungroup() |>
@@ -184,7 +208,7 @@ estimating_regional_effects <- function(
                 ) |>
                 dplyr::mutate(
                     nobs_munic = sum(nobs_grid, na.rm = TRUE),
-                    !!mean_name_munic := mean(.data[[mean_name_grid]], na.rm = TRUE),
+                    #!!mean_name_munic := mean(.data[[mean_name_grid]], na.rm = TRUE),
                     kid2019 = substring(gid2019, 1, 5)
                 ) |>
                 dplyr::ungroup() |>
@@ -193,8 +217,8 @@ estimating_regional_effects <- function(
                     kid2019
                 ) |>
                 dplyr::mutate(
-                    nobs_district = sum(nobs_grid, na.rm = TRUE),
-                    !!mean_name_district := mean(.data[[mean_name_grid]], na.rm = TRUE)
+                    nobs_district = sum(nobs_grid, na.rm = TRUE)
+                    #!!mean_name_district := mean(.data[[mean_name_grid]], na.rm = TRUE)
                 ) |>
                 dplyr::filter(!is.na(!!rlang::sym(regional_fes[1]))) |>
                 dplyr::rename(grid = ergg_1km) |>

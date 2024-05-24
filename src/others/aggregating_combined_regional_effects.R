@@ -34,9 +34,13 @@ aggregating_combined_regional_effects <- function(
                 region_label <- "district"
             }
 
-            # assign time label (can be done directly since I renamed the list
-            # elements previously)
-            time_label <- result
+            if (result == "ejahr") {
+                time_label <- "year"
+                reference_period <- "2008"
+            } else {
+                time_label <- "quarter"
+                reference_period <- "2008-01"
+            }
 
             #--------------------------------------------------
             # prepare combined regional effects
@@ -93,6 +97,28 @@ aggregating_combined_regional_effects <- function(
                     weighted_pindex = sum(weighted_pindex, na.rm = TRUE),
                     !!nobs_var := dplyr::first(.data[[nobs_var]])
                 )
+            
+            #--------------------------------------------------
+            # calculate the change between District_Year - District_2008
+
+            combined_effects_agg <- combined_effects_agg |>
+                merge(
+                    combined_effects_agg |>
+                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
+                        dplyr::rename(weighted_pindex_ref = weighted_pindex) |>
+                        dplyr::select(-c(time_label, nobs_var)),
+                    by = region_id,
+                    all.x = TRUE
+                ) |>
+                dplyr::mutate(
+                    weighted_pindex_change = dplyr::case_when(
+                        !is.na(weighted_pindex) ~ (
+                            (weighted_pindex - weighted_pindex_ref) / weighted_pindex_ref
+                        ) * 100,
+                        TRUE ~ NA_real_
+                    )
+                ) |>
+                dplyr::select(-c(weighted_pindex_ref))
 
             #--------------------------------------------------
             # export
