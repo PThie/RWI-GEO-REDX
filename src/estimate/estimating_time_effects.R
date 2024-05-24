@@ -102,21 +102,24 @@ estimating_time_effects <- function(
 
             #--------------------------------------------------
             # number of observations
-
-            mean_name <- paste0("mean_", depvar)
             
             nobs <- used_sample |>
                 dplyr::group_by(!!rlang::sym(time_fe)) |>
                 dplyr::summarise(
-                    nobs = n(),
-                    !!mean_name := mean(.data[[depvar]], na.rm = TRUE)
+                    nobs = dplyr::n()
                 ) |>
                 dplyr::rename(!!time_label := 1) |>
                 as.data.frame()
 
             #--------------------------------------------------
             # extract time coefficients (coefficients on years or quarters)
-
+            # NOTE: on why no de-logging is necessary:
+            # What we are measuring is the effect relative to 2008 measured
+            # directly in percent (if multiplied by 100). Not measured in units
+            # of the dependent variable (i.e. logged price/ rent).
+            # In the other settings where we use the FE, these are measured in 
+            # units of the dependent variable (i.e. logged price/ rent).
+            
             time_coefs <- extracting_time_effects(
                 model = base_mod,
                 time = time_fe
