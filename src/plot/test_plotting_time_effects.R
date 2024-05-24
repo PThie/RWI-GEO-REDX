@@ -1,5 +1,6 @@
 test_plotting_time_effects <- function(
-    output_data = NA
+    output_data = NA,
+    housing_type = NA
 ) {
     #' @title Plotting time effects
     #' 
@@ -13,6 +14,10 @@ test_plotting_time_effects <- function(
     
     #--------------------------------------------------
     # loop through time estimates
+    results <- c(
+        "1__District_TimeEff_yearly",
+        "1__District_TimeEff_quarterly"
+    )
     
     for (result in results) {
         #--------------------------------------------------
@@ -34,6 +39,15 @@ test_plotting_time_effects <- function(
                 names_to = "coef_origin",
                 values_to = "timeeff"
             )
+
+        #--------------------------------------------------
+        # calculate the differences by year
+
+        time_diff <- output_data[[result]] |>
+            dplyr::select(1, c("timeeff", "new_timeeff")) |>
+            dplyr::mutate(
+                diff = timeeff - new_timeeff
+            )
     
         #--------------------------------------------------
         # base plot which is identical for both time periods (year and quarters)
@@ -43,7 +57,8 @@ test_plotting_time_effects <- function(
             aes(
                 x = .data[[time_label]],
                 y = timeeff,
-                col = coef_origin
+                col = as.factor(coef_origin),
+                group = as.factor(coef_origin)
             )
         )+
             geom_line(linewidth = 1.2)+
@@ -53,6 +68,10 @@ test_plotting_time_effects <- function(
                 linewidth = 0.6,
                 linetype = "solid",
                 col = "grey80"
+            )+
+            scale_y_continuous(
+                breaks = seq(-0.1, 1, 0.1),
+                limits = c(-0.1, 1.1)
             )+
             scale_color_manual(
                 values = c(
@@ -81,6 +100,45 @@ test_plotting_time_effects <- function(
             legend.position = "bottom"
         )+
         guides(legend_guide = guide_legend(nrow = 2))
+    
+        #--------------------------------------------------
+        # plot differences
+
+        diff_plot <- ggplot(
+            data = time_diff,
+            aes(
+                x = .data[[time_label]],
+                y = diff,
+                group = 1
+            )
+        )+
+            geom_line(linewidth = 1.2)+
+            geom_point(size = 3)+
+            geom_hline(
+                yintercept = 0,
+                linewidth = 0.6,
+                linetype = "solid",
+                col = "grey80"
+            )+
+            scale_y_continuous(
+                breaks = seq(-0.2, 0.2, 0.1),
+                limits = c(-0.2, 0.2)
+            )+
+            labs(
+                y = "Differnce in estimated effect (V12 - VGrids)",
+                x = ""
+            )+
+            theme_classic()+
+            theme(
+                panel.border = element_rect(linewidth = 1, fill = NA),
+                axis.text = element_text(size = 17),
+                axis.title = element_text(size = 19),
+                legend.key.size = unit(1, "cm"),
+                legend.title = element_text(size = 18),
+                legend.text = element_text(size = 16),
+                axis.text.x = element_text(angle = 90),
+                legend.position = "bottom"
+            )
 
         #--------------------------------------------------
         # add time labels for specific periods
@@ -88,15 +146,25 @@ test_plotting_time_effects <- function(
         if (grepl("yearly", result)) {
             expanded_plot <- base_plot+
                 scale_x_continuous(
-                    breaks = seq(2007, 2023, 2)
+                    breaks = seq(2008, 2023, 1)
+                )
+
+            expanded_diff <- diff_plot+
+                scale_x_continuous(
+                    breaks = seq(2008, 2023, 1)
                 )
         } else {
-            unique_times <- unique(construction_costs_long$yearquart)
+            unique_times <- unique(time_effects[[time_label]])
             breaks_to_show <- unique_times[grepl("-01$", unique_times)]
             breaks_to_show <- breaks_to_show[seq(1, length(breaks_to_show), 2)]
 
             expanded_plot <- base_plot+
-                scale_x_continuous(
+                scale_x_discrete(
+                    breaks = breaks_to_show
+                )
+
+            expanded_diff <- diff_plot+
+                scale_x_discrete(
                     breaks = breaks_to_show
                 )
         }
@@ -104,16 +172,27 @@ test_plotting_time_effects <- function(
         #--------------------------------------------------
         # export
 
-        ggsave(
-            expanded_plot,
-            file.path(
+        suppressMessages(ggsave(
+            plot = expanded_plot,
+            filename = file.path(
                 config_paths()[["output_path"]],
                 "Combined_rebuild",
                 "graphs",
-                paste0("combined_time_effects_", time_label, ".png")
+                paste0(housing_type, "_combined_time_effects_", time_label, ".png")
             ),
-            dpi = owndpi
-        )
+            dpi = config_globals()[["owndpi"]]
+        ))
+
+        suppressMessages(ggsave(
+            plot = expanded_diff,
+            filename = file.path(
+                config_paths()[["output_path"]],
+                "Combined_rebuild",
+                "graphs",
+                paste0(housing_type, "_combined_time_effects_", time_label, "_difference.png")
+            ),
+            dpi = config_globals()[["owndpi"]]
+        ))      
     }
 
     #--------------------------------------------------
