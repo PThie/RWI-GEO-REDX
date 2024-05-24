@@ -27,9 +27,6 @@ combining_time_effects <- function(
         estimated_effects <- estimated_effects |>
             dplyr::mutate(
                 housing_type = housing_type
-            ) |>
-            dplyr::rename(
-                mean_ln_price_sqm = ncol(estimated_effects)
             )
 
         return(estimated_effects)
