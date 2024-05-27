@@ -34,7 +34,7 @@ aggregating_combined_regional_effects <- function(
                 region_label <- "district"
             }
 
-            if (result == "ejahr") {
+            if (result == "year") {
                 time_label <- "year"
                 reference_period <- "2008"
             } else {
@@ -96,7 +96,8 @@ aggregating_combined_regional_effects <- function(
                 dplyr::summarise(
                     weighted_pindex = sum(weighted_pindex, na.rm = TRUE),
                     !!nobs_var := dplyr::first(.data[[nobs_var]])
-                )
+                ) |>
+                dplyr::ungroup()
             
             #--------------------------------------------------
             # calculate the change between District_Year - District_2008
