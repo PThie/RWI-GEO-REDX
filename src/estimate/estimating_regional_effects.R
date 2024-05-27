@@ -1,4 +1,4 @@
-estimating_regional_effects <- function(
+estimating_regional_effects_change <- function(
     housing_data = NA,
     housing_type = NA,
     grids_municipalities = NA

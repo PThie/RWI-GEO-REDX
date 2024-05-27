@@ -1,4 +1,4 @@
-combining_regional_effects <- function(
+combining_regional_effects_change <- function(
     HK_estimated_region_effects = NA,
     WK_estimated_region_effects = NA,
     WM_estimated_region_effects = NA

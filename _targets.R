@@ -97,7 +97,7 @@ for (sub_directory in sub_directories) {
         files <- files[
             stringr::str_detect(
                 files,
-                "config"
+                "config.R$"
             ) == FALSE
         ]
         lapply(files, source)
@@ -107,14 +107,11 @@ for (sub_directory in sub_directories) {
 #----------------------------------------------
 # data frame for loop through the housing data
 
-# define housing types
+##### General names
 static_housing_types <- c("WK", "HK", "WM")
-
-# define housing types labels as in output data
 static_housing_types_labels <- c("ApPurc", "HouPurc", "ApRent")
 
-# for branching in tar_eval
-# defines the names of the target objects
+##### Names for preparation of housing data
 static_housing_org_file_names <- glue::glue(
     "{static_housing_types}_allVersions_ohneText"
 )
@@ -127,20 +124,28 @@ static_housing_data_cleaned <- glue::glue(
     "{static_housing_types}_cleaned"
 )
 
-static_housing_data_demeaned <- glue::glue(
-    "{static_housing_types}_demeaned"
-)
-
+##### Names for estimation of time effects
+# NOTE: This reflects regression 1 in the Stata routine.
 static_estimated_time_effects <- glue::glue(
     "{static_housing_types}_estimated_time_effects"
 )
 
-static_estimated_region_effects <- glue::glue(
-    "{static_housing_types}_estimated_region_effects"
+##### Names for estimation of regional effects (change)
+# NOTE: This reflects regression 3 in the Stata routine.
+static_estimated_region_effects_change <- glue::glue(
+    "{static_housing_types}_estimated_region_effects_change"
 )
 
-static_aggregated_region_effects <- glue::glue(
-    "{static_housing_types}_aggregated_region_effects"
+static_aggregated_region_effects_change <- glue::glue(
+    "{static_housing_types}_aggregated_region_effects_change"
+)
+
+##### names for testing
+sheet_names <- c(
+    "1__District_TimeEff_yearly",
+    "1__District_TimeEff_quarterly",
+    "2__District_Pindex_yearly",
+    "4__Municip_Pindex_yearly"
 )
 
 static_outputs <- glue::glue(
@@ -149,14 +154,6 @@ static_outputs <- glue::glue(
 
 static_time_effects_test_plot <- glue::glue(
     "{static_housing_types}_time_effects_test_plot"
-)
-
-
-sheet_names <- c(
-    "1__District_TimeEff_yearly",
-    "1__District_TimeEff_quarterly",
-    "2__District_Pindex_yearly",
-    "4__Municip_Pindex_yearly"
 )
 
 #----------------------------------------------
@@ -360,6 +357,15 @@ targets_estimation_time <- rlang::list2(
 # Estimation of regional effects
 # NOTE: This reflects regression 2 in the Stata routine.
 
+# targets_estimation_region <- rlang::list2(
+#     tar_eval(
+#         list(
+#             tar_target()
+#         ),
+#         values = list()
+#     )
+# )
+
 #--------------------------------------------------
 # Estimation of regional effects and calculating their change
 # NOTE: This reflects regression 3 in the Stata routine.
@@ -368,17 +374,17 @@ targets_estimation_change_region <- rlang::list2(
     tar_eval(
         list(
             tar_target(
-                estimated_region_effects,
-                estimating_regional_effects(
+                estimated_region_effects_change,
+                estimating_regional_effects_change(
                     housing_data = housing_cleaned,
                     housing_type = housing_types,
                     grids_municipalities = grids_municipalities
                 )
             ),
             tar_target(
-                aggregated_region_effects,
-                aggregating_regional_effects(
-                    estimated_effects_list = estimated_region_effects,
+                aggregated_region_effects_change,
+                aggregating_regional_effects_change(
+                    estimated_effects_list = estimated_region_effects_change,
                     housing_type = housing_types
                 )
             )
@@ -386,13 +392,13 @@ targets_estimation_change_region <- rlang::list2(
         values = list(
             housing_types = static_housing_types,
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
-            estimated_region_effects = rlang::syms(static_estimated_region_effects),
-            aggregated_region_effects = rlang::syms(static_aggregated_region_effects)
+            estimated_region_effects_change = rlang::syms(static_estimated_region_effects_change),
+            aggregated_region_effects_change = rlang::syms(static_aggregated_region_effects_change)
         )
     ),
     tar_target(
         combined_region_effects,
-        combining_regional_effects(
+        combining_regional_effects_change(
             HK_estimated_region_effects = HK_estimated_region_effects,
             WK_estimated_region_effects = WK_estimated_region_effects,
             WM_estimated_region_effects = WM_estimated_region_effects
@@ -400,7 +406,7 @@ targets_estimation_change_region <- rlang::list2(
     ),
     tar_target(
         aggregated_combined_region_effects,
-        aggregating_combined_regional_effects(
+        aggregating_combined_regional_effects_change(
             combined_region_effects = combined_region_effects,
             grids_municipalities = grids_municipalities
         )
@@ -409,6 +415,7 @@ targets_estimation_change_region <- rlang::list2(
 
 #--------------------------------------------------
 # Testing output
+# Needs rework since regression 3 changed
 
 targets_test <- rlang::list2(
     tar_eval(
@@ -437,13 +444,11 @@ targets_test <- rlang::list2(
             output_data = rlang::syms(static_outputs),
             housing_type_labels = static_housing_types_labels,
             estimated_time_effects = rlang::syms(static_estimated_time_effects),
-            aggregated_region_effects = rlang::syms(static_aggregated_region_effects),
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects_change),
             time_effects_test_plot = rlang::syms(static_time_effects_test_plot)
         )
     )
 )
-
-
 
 #----------------------------------------------
 # combine all
