@@ -324,6 +324,11 @@ targets_preparation_housing <- rlang::list2(
     )
 )
 
+#--------------------------------------------------
+# Estimation of time effects
+# Currently done for: years and quarters
+# NOTE: This reflects regression 1 in the Stata routine.
+
 targets_estimation_time <- rlang::list2(
     tar_eval(
         list(
@@ -350,6 +355,14 @@ targets_estimation_time <- rlang::list2(
         )
     )
 )
+
+#--------------------------------------------------
+# Estimation of regional effects
+# NOTE: This reflects regression 2 in the Stata routine.
+
+#--------------------------------------------------
+# Estimation of regional effects and calculating their change
+# NOTE: This reflects regression 3 in the Stata routine.
 
 targets_estimation_change_region <- rlang::list2(
     tar_eval(
