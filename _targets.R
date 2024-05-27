@@ -24,6 +24,7 @@ suppressPackageStartupMessages({
     library(future)
     library(future.callr)
     library(MetBrewer)
+    library(ggplot2)
 })
 
 #----------------------------------------------
@@ -350,7 +351,7 @@ targets_estimation_time <- rlang::list2(
     )
 )
 
-targets_estimation_region <- rlang::list2(
+targets_estimation_change_region <- rlang::list2(
     tar_eval(
         list(
             tar_target(
@@ -413,11 +414,13 @@ targets_test <- rlang::list2(
             tar_target(
                 time_effects_test_plot,
                 test_plotting_time_effects(
-                    output_data = output_data
+                    output_data = output_data,
+                    housing_type = housing_types
                 )
             )
         ),
         values = list(
+            housing_types = static_housing_types,
             output_data = rlang::syms(static_outputs),
             housing_type_labels = static_housing_types_labels,
             estimated_time_effects = rlang::syms(static_estimated_time_effects),
@@ -436,6 +439,6 @@ rlang::list2(
     targets_preparation_geo,
     targets_preparation_housing,
     targets_estimation_time,
-    targets_estimation_region,
-    targets_test
+    targets_estimation_change_region,
+    # targets_test
 )
