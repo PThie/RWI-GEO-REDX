@@ -397,15 +397,15 @@ targets_estimation_change_region <- rlang::list2(
         )
     ),
     tar_target(
-        combined_region_effects,
+        combined_region_effects_change,
         combining_regional_effects_change(
-            HK_estimated_region_effects = HK_estimated_region_effects,
-            WK_estimated_region_effects = WK_estimated_region_effects,
-            WM_estimated_region_effects = WM_estimated_region_effects
+            HK_estimated_region_effects = HK_estimated_region_effects_change,
+            WK_estimated_region_effects = WK_estimated_region_effects_change,
+            WM_estimated_region_effects = WM_estimated_region_effects_change
         )
     ),
     tar_target(
-        aggregated_combined_region_effects,
+        aggregated_combined_region_effects_change,
         aggregating_combined_regional_effects_change(
             combined_region_effects = combined_region_effects,
             grids_municipalities = grids_municipalities
