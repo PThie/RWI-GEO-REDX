@@ -98,7 +98,7 @@ estimating_regional_effects_change <- function(
             )
 
             #--------------------------------------------------
-            # extreact fixed effects
+            # extract fixed effects
 
             fixed_effects <- fixest::fixef(base_mod) |>
                 as.data.frame() |>
@@ -224,7 +224,7 @@ estimating_regional_effects_change <- function(
                 file.path(
                     config_paths()[["output_path"]],
                     paste0(housing_type, "_rebuild"),
-                    paste0("regional_effects_grids_", time_label, ".xlsx")
+                    paste0("regional_effects_grids_", time_label, "_change.xlsx")
                 )
             )
 

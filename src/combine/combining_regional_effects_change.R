@@ -143,7 +143,7 @@ combining_regional_effects_change <- function(
             file.path(
                 config_paths()[["output_path"]],
                 "Combined_rebuild",
-                paste0("combined_regional_effects_grids_", time_label, ".xlsx")
+                paste0("combined_regional_effects_grids_", time_label, "_change.xlsx")
             )
         )
 

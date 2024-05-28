@@ -134,7 +134,7 @@ aggregating_combined_regional_effects_change <- function(
                         region_label,
                         "_",
                         time_label,
-                        ".xlsx"
+                        "_change.xlsx"
                     )
                 )
             )
