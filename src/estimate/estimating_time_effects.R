@@ -118,6 +118,17 @@ estimating_time_effects <- function(
             )
 
             #--------------------------------------------------
+            # multiple by 100 to get the percentage change
+
+            time_coefs <- time_coefs |>
+                dplyr::mutate(
+                    dplyr::across(
+                        .cols = dplyr::contains("timeeff"),
+                        ~ .x * 100
+                    )
+                )
+
+            #--------------------------------------------------
             # export findings
             
             openxlsx::write.xlsx(
