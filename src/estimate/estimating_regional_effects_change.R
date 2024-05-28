@@ -3,10 +3,10 @@ estimating_regional_effects_change <- function(
     housing_type = NA,
     grids_municipalities = NA
 ) {
-    #' @title Estimating regional effects
+    #' @title Estimating regional effects change
     #' 
     #' @description This function estimates regional effects for a given housing
-    #' type.
+    #' type and computes the change relative to the first time period.
     #' 
     #' @param housing_data Data frame with housing data
     #' @param housing_type Housing type
@@ -38,8 +38,6 @@ estimating_regional_effects_change <- function(
     
     #--------------------------------------------------
     # perform estimation
-
-    time_fes <- helpers_var_definition(housing_type = housing_type)[["time_fe"]]
 
     results_list <- list()
     for (time_fe in time_fes) {
