@@ -130,6 +130,13 @@ static_estimated_time_effects <- glue::glue(
     "{static_housing_types}_estimated_time_effects"
 )
 
+##### Names for estimation of regional effects
+# NOTE: This reflects regression 2 in the Stata routine.
+
+static_estimated_region_effects <- glue::glue(
+    "{static_housing_types}_estimated_region_effects"
+)
+
 ##### Names for estimation of regional effects (change)
 # NOTE: This reflects regression 3 in the Stata routine.
 static_estimated_region_effects_change <- glue::glue(
@@ -357,14 +364,25 @@ targets_estimation_time <- rlang::list2(
 # Estimation of regional effects
 # NOTE: This reflects regression 2 in the Stata routine.
 
-# targets_estimation_region <- rlang::list2(
-#     tar_eval(
-#         list(
-#             tar_target()
-#         ),
-#         values = list()
-#     )
-# )
+targets_estimation_region <- rlang::list2(
+    tar_eval(
+        list(
+            tar_target(
+                estimated_region_effects,
+                estimating_regional_effects(
+                    housing_data = housing_cleaned,
+                    housing_type = housing_types,
+                    grids_municipalities = grids_municipalities
+                )
+            )
+        ),
+        values = list(
+            housing_types = static_housing_types,
+            housing_cleaned = rlang::syms(static_housing_data_cleaned),
+            estimated_region_effects = rlang::syms(static_estimated_region_effects)
+        )
+    )
+)
 
 #--------------------------------------------------
 # Estimation of regional effects and calculating their change
@@ -407,7 +425,7 @@ targets_estimation_change_region <- rlang::list2(
     tar_target(
         aggregated_combined_region_effects_change,
         aggregating_combined_regional_effects_change(
-            combined_region_effects = combined_region_effects,
+            combined_region_effects = combined_region_effects_change,
             grids_municipalities = grids_municipalities
         )
     )
@@ -457,6 +475,7 @@ rlang::list2(
     targets_preparation_geo,
     targets_preparation_housing,
     targets_estimation_time,
+    targets_estimation_region,
     targets_estimation_change_region,
     # targets_test
 )
