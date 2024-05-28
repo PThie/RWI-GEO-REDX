@@ -48,7 +48,6 @@ helpers_var_definition <- function(housing_type = NA) {
             "as.factor(gaestewc)",
             "as.factor(aufzug)",
             "as.factor(keller)",
-            "as.factor(betreut)",
             "as.factor(ausstattung)",
             "as.factor(declared_wohngeld)",
             "as.factor(zimmeranzahl_full)",
