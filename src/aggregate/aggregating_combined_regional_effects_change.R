@@ -2,10 +2,11 @@ aggregating_combined_regional_effects_change <- function(
     combined_region_effects_change = NA,
     grids_municipalities = NA
 ) {
-    #' @title Aggregating combined regional effects
+    #' @title Aggregating combined regional effects (change values)
     #' 
     #' @description This function aggregates combined regional effects to a larger
-    #' regional level (municipality and districts).
+    #' regional level (municipality and districts). It also calculates the change
+    #' to the reference period.
     #' 
     #' @param combined_region_effects_change List with combined regional effects (with
     #' change values)
