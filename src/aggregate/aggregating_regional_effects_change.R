@@ -2,13 +2,16 @@ aggregating_regional_effects_change <- function(
     estimated_effects_list = NA,
     housing_type = NA
 ) {
-    #' @title Aggregating regional effects
+    #' @title Aggregating regional effects (change)
     #' 
     #' @description This function aggregates regional effects for a given housing
-    #' type to a larger regional level (municipality and districts).
+    #' type to a larger regional level (municipality and districts). It also
+    #' calculates the change between the reference period and the current period.
     #' 
     #' @param estimated_effects_list List with estimated regional effects
     #' @param housing_type Housing type
+    #' 
+    #' @note Based on regression 3 in the former Stata coding.
     #' 
     #' @return List with aggregated regional effects
     #' @author Patrick Thiel
