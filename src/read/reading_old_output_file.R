@@ -2,7 +2,8 @@ reading_old_output_file <- function(
     housing_type_label = NA,
     sheet_names = NA,
     time_effects = NA,
-    region_effects = NA
+    region_effects = NA,
+    region_effects_change = NA
 ) {
     #' @title Reading output file
     #' 
@@ -13,6 +14,11 @@ reading_old_output_file <- function(
     #' @param sheet_names Names of the sheets in the output file
     #' @param time_effects List with time effects
     #' @param region_effects List with regional effects
+    #' @param region_effects_change List with regional effects (change)
+    #' 
+    #' @note Only look at districts because in the old version of REDX, we use
+    #' Gemeindeverband and now Gemeinde. So, a comparison is not directly
+    #' possible.
     #' 
     #' @return List with data frames (combined estimates)
     #' @author Patrick Thiel
@@ -54,6 +60,10 @@ reading_old_output_file <- function(
                     dplyr::across(
                         .cols = dplyr::everything(),
                         ~ as.numeric(.x)
+                    ),
+                    dplyr::across(
+                        .cols = -year,
+                        ~ .x * 100
                     )
                 )
 
@@ -80,6 +90,10 @@ reading_old_output_file <- function(
                     dplyr::across(
                         .cols = -quarter,
                         ~ as.numeric(.x)
+                    ),
+                    dplyr::across(
+                        .cols = -quarter,
+                        ~ .x * 100
                     ),
                     # modify quarter to take the form "YYYY-01"
                     quarter = as.character(zoo::as.yearqtr(quarter, format = "%Y.%Q")),
@@ -125,7 +139,7 @@ reading_old_output_file <- function(
                 dplyr::rename(kid2019 = AGS_District)
 
             # extract newly estimated regional effects
-            district_effects <- region_effects[["district_year"]] |>
+            district_effects <- region_effects[["district"]] |>
                 dplyr::select(-nobs_district) |>
                 dplyr::rename(new_pindex = weighted_pindex)
 
@@ -151,23 +165,24 @@ reading_old_output_file <- function(
                 tidyr::pivot_longer(
                     cols = -1,
                     names_to = "year",
-                    values_to = "pindex"
+                    values_to = "pindex_change"
                 ) |>
                 dplyr::mutate(
-                    year = stringr::str_replace_all(year, "pindex", "")
+                    year = stringr::str_replace_all(year, "pindex_change", ""),
+                    year = as.numeric(year)
                 ) |>
-                dplyr::rename(gid2019 = AGS_Municip)
+                dplyr::rename(kid2019 = AGS_District)
 
             # extract newly estimated regional effects
-            munic_effects <- region_effects[["municipality_year"]] |>
-                dplyr::select(-nobs_munic) |>
+            district_effects <- region_effects_change[["district_year"]] |>
+                dplyr::select(-nobs_district) |>
                 dplyr::rename(new_pindex = weighted_pindex)
 
             # merge with old effects
             dta_merged <- merge(
                 dta_prep,
-                munic_effects,
-                by = c("gid2019", "year")
+                district_effects,
+                by = c("kid2019", "year")
             )
         }
 

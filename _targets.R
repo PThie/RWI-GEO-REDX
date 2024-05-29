@@ -156,9 +156,7 @@ sheet_names <- c(
     "1__District_TimeEff_yearly",
     "1__District_TimeEff_quarterly",
     "2__District_Pindex_yearly",
-    "4__Municip_Pindex_yearly",
-    "2__District_Change_yearly",
-    "5__Municip_Change_yearly"
+    "3__District_Change_yearly"
 )
 
 static_old_outputs <- glue::glue(
@@ -474,7 +472,8 @@ targets_test <- rlang::list2(
                     housing_type_label = housing_type_labels,
                     sheet_names = sheet_names,
                     time_effects = estimated_time_effects,
-                    region_effects = aggregated_region_effects
+                    region_effects = aggregated_region_effects,
+                    region_effects_change = aggregated_region_effects_change
                 )
             )
             # Plotting time effects
@@ -491,7 +490,8 @@ targets_test <- rlang::list2(
             old_output_data = rlang::syms(static_old_outputs),
             housing_type_labels = static_housing_types_labels,
             estimated_time_effects = rlang::syms(static_estimated_time_effects),
-            aggregated_region_effects = rlang::syms(static_aggregated_region_effects_change)
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects),
+            aggregated_region_effects_change = rlang::syms(static_aggregated_region_effects_change)
             # time_effects_test_plot = rlang::syms(static_time_effects_test_plot)
         )
     )
@@ -506,5 +506,5 @@ rlang::list2(
     targets_estimation_time,
     targets_estimation_region,
     targets_estimation_change_region,
-    # targets_test
+    targets_test
 )
