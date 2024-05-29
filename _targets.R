@@ -137,7 +137,7 @@ static_estimated_region_effects <- glue::glue(
     "{static_housing_types}_estimated_region_effects"
 )
 
-statict_aggregated_region_effects <- glue::glue(
+static_aggregated_region_effects <- glue::glue(
     "{static_housing_types}_aggregated_region_effects"
 )
 
@@ -391,7 +391,7 @@ targets_estimation_region <- rlang::list2(
             housing_types = static_housing_types,
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
             estimated_region_effects = rlang::syms(static_estimated_region_effects),
-            aggregated_region_effects = rlang::syms(statict_aggregated_region_effects)
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects)
         )
     ),
     tar_target(
