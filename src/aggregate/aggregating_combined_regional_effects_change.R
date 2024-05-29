@@ -1,5 +1,5 @@
 aggregating_combined_regional_effects_change <- function(
-    combined_region_effects = NA,
+    combined_region_effects_change = NA,
     grids_municipalities = NA
 ) {
     #' @title Aggregating combined regional effects
@@ -7,7 +7,8 @@ aggregating_combined_regional_effects_change <- function(
     #' @description This function aggregates combined regional effects to a larger
     #' regional level (municipality and districts).
     #' 
-    #' @param combined_region_effects List with combined regional effects
+    #' @param combined_region_effects_change List with combined regional effects (with
+    #' change values)
     #' @param grids_municipalities Data frame with connection between grids and
     #' municipalities
     #' 

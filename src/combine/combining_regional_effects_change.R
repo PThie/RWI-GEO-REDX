@@ -1,17 +1,20 @@
 combining_regional_effects_change <- function(
-    HK_estimated_region_effects = NA,
-    WK_estimated_region_effects = NA,
-    WM_estimated_region_effects = NA
+    HK_estimated_region_effects_change = NA,
+    WK_estimated_region_effects_change = NA,
+    WM_estimated_region_effects_change = NA
 ) {
-    #' @title Combining regional effects
+    #' @title Combining regional effects (with change values)
     #' 
     #' @description This function combines regional effects for all housing types
     #' by weighting the individual housing type results by the number of
-    #' observations.
+    #' observations. It also calculates the change to the reference period.
     #' 
-    #' @param HK_estimated_region_effects Estimated regional effects for HK
-    #' @param WK_estimated_region_effects Estimated regional effects for WK
-    #' @param WM_estimated_region_effects Estimated regional effects for WM
+    #' @param HK_estimated_region_effects_change Estimated regional effects for
+    #' HK (with change values)
+    #' @param WK_estimated_region_effects_change Estimated regional effects for
+    #' WK (with change values)
+    #' @param WM_estimated_region_effects_change Estimated regional effects for
+    #' WM (with change values)
     #' 
     #' @return List with combined regional effects
     #' @author Patrick Thiel    
