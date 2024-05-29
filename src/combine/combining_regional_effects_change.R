@@ -38,17 +38,17 @@ combining_regional_effects_change <- function(
         #--------------------------------------------------
         # extract all individual effects
 
-        HK_effects <- HK_estimated_region_effects[[result]] |>
+        HK_effects <- HK_estimated_region_effects_change[[result]] |>
             dplyr::mutate(
                 housing_type = "HK"
             )
 
-        WK_effects <- WK_estimated_region_effects[[result]] |>
+        WK_effects <- WK_estimated_region_effects_change[[result]] |>
             dplyr::mutate(
                 housing_type = "WK"
             )
         
-        WM_effects <- WM_estimated_region_effects[[result]] |>
+        WM_effects <- WM_estimated_region_effects_change[[result]] |>
             dplyr::mutate(
                 housing_type = "WM"
             )
