@@ -52,6 +52,44 @@ estimating_regional_effects <- function(
             dplyr::filter(ejahr == year)
 
         #--------------------------------------------------
+        # make sure that all factor variables actually have more than one level
+
+        # remove factor declaration for the sake of filtering the data
+        clean_indepvars <- stringr::str_replace_all(
+            indepvars, "as\\.factor\\(([^)]+)\\)", "\\1"
+        )
+
+        # get number of levels for each independent variable
+        num_levels <- sapply(
+            lapply(
+                est_data |>
+                    dplyr::select(dplyr::all_of(clean_indepvars)),
+                unique
+            ),
+            length
+        ) |>
+            as.data.frame()
+
+        # rename and reshape
+        colnames(num_levels) <- c("number_of_levels")
+        num_levels$indepvar <- rownames(num_levels)
+        rownames(num_levels) <- NULL
+
+        # get independent variables with only one level
+        solo_indepvars <- num_levels |>
+            dplyr::filter(number_of_levels == 1) |>
+            dplyr::pull(indepvar)
+
+        if (length(solo_indepvars) > 0) {
+            # remove independent variables with only one level
+            complete_indepvars <- indepvars[
+                stringr::str_detect(indepvars, solo_indepvars) == FALSE
+            ]
+        } else {
+            complete_indepvars <- indepvars
+        }
+
+        #--------------------------------------------------
         # define formula
 
         form <- as.formula(
@@ -59,7 +97,7 @@ estimating_regional_effects <- function(
                 depvar,
                 paste(
                     c(
-                        paste(indepvars, collapse = " + ")
+                        paste(complete_indepvars, collapse = " + ")
                     ),
                     collapse = " + "
                 ),
