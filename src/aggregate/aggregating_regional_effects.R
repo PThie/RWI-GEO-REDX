@@ -1,5 +1,5 @@
 aggregating_regional_effects <- function(
-    estimated_effects = NA,
+    estimated_region_effects = NA,
     housing_type = NA
 ) {
     #' @title Aggregating regional effects
@@ -7,7 +7,7 @@ aggregating_regional_effects <- function(
     #' @description This function aggregates regional effects for a given housing
     #' type to a larger regional level (municipality and districts).
     #' 
-    #' @param estimated_effects_list List with estimated regional effects
+    #' @param estimated_effects List with estimated regional effects
     #' @param housing_type Housing type
     #' 
     #' @note Based on regression 2 in the former Stata coding.
@@ -42,7 +42,7 @@ aggregating_regional_effects <- function(
         # (year) and because of the cross-sectional approach each grid already
         # has time specific NOBS
 
-        estimated_effects <- estimated_effects |>
+        estimated_effects <- estimated_region_effects |>
             dplyr::mutate(
                 weight = nobs_grid / .data[[nobs_var]],
                 weighted_pindex = pindex * weight
