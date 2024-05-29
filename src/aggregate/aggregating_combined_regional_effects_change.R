@@ -19,7 +19,7 @@ aggregating_combined_regional_effects_change <- function(
     # loop through results and aggregation levels
 
     results_list <- list()
-    for (result in names(combined_region_effects)) {
+    for (result in names(combined_region_effects_change)) {
         for (agg_level in c("munic", "district")) {
             #--------------------------------------------------
             # set up for specific regional level
@@ -46,7 +46,7 @@ aggregating_combined_regional_effects_change <- function(
             #--------------------------------------------------
             # prepare combined regional effects
 
-            combined_effects_prep <- combined_region_effects[[result]] |>
+            combined_effects_prep <- combined_region_effects_change[[result]] |>
                 dplyr::select(-c("HK_nobs", "WK_nobs", "WM_nobs")) |>
                 dplyr::rename(
                     nobs_grid = total_nobs,
