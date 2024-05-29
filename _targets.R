@@ -156,11 +156,13 @@ sheet_names <- c(
     "1__District_TimeEff_yearly",
     "1__District_TimeEff_quarterly",
     "2__District_Pindex_yearly",
-    "4__Municip_Pindex_yearly"
+    "4__Municip_Pindex_yearly",
+    "2__District_Change_yearly",
+    "5__Municip_Change_yearly"
 )
 
-static_outputs <- glue::glue(
-    "{static_housing_types}_output_data"
+static_old_outputs <- glue::glue(
+    "{static_housing_types}_old_output_data"
 )
 
 static_time_effects_test_plot <- glue::glue(
@@ -467,30 +469,30 @@ targets_test <- rlang::list2(
         list(
             # Reading old data output
             tar_target(
-                output_data,
-                reading_output_file(
+                old_output_data,
+                reading_old_output_file(
                     housing_type_label = housing_type_labels,
                     sheet_names = sheet_names,
                     time_effects = estimated_time_effects,
                     region_effects = aggregated_region_effects
                 )
-            ),
-            # Plotting time effects
-            tar_target(
-                time_effects_test_plot,
-                test_plotting_time_effects(
-                    output_data = output_data,
-                    housing_type = housing_types
-                )
             )
+            # Plotting time effects
+            # tar_target(
+            #     time_effects_test_plot,
+            #     test_plotting_time_effects(
+            #         output_data = output_data,
+            #         housing_type = housing_types
+            #     )
+            # )
         ),
         values = list(
             housing_types = static_housing_types,
-            output_data = rlang::syms(static_outputs),
+            old_output_data = rlang::syms(static_old_outputs),
             housing_type_labels = static_housing_types_labels,
             estimated_time_effects = rlang::syms(static_estimated_time_effects),
-            aggregated_region_effects = rlang::syms(static_aggregated_region_effects_change),
-            time_effects_test_plot = rlang::syms(static_time_effects_test_plot)
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects_change)
+            # time_effects_test_plot = rlang::syms(static_time_effects_test_plot)
         )
     )
 )
