@@ -1,5 +1,5 @@
-test_plotting_time_effects <- function(
-    output_data = NA,
+testing_time_effects <- function(
+    old_output_data = NA,
     housing_type = NA
 ) {
     #' @title Plotting time effects
@@ -7,7 +7,8 @@ test_plotting_time_effects <- function(
     #' @description This function plots time effects for all housing types and
     #' comparing the estimates based on the original data and the grid data.
     #' 
-    #' @param output_data List with estimated time effects
+    #' @param old_output_data List with estimated time effects
+    #' @param housing_type Housing type
     #' 
     #' @return NULL, graphs
     #' @author Patrick Thiel
@@ -32,7 +33,7 @@ test_plotting_time_effects <- function(
         #--------------------------------------------------
         # extract and reshape data
 
-        time_effects <- output_data[[result]] |>
+        time_effects <- old_output_data[[result]] |>
             dplyr::select(1, c("timeeff", "new_timeeff")) |>
             tidyr::pivot_longer(
                 cols = -1,
@@ -43,7 +44,7 @@ test_plotting_time_effects <- function(
         #--------------------------------------------------
         # calculate the differences by year
 
-        time_diff <- output_data[[result]] |>
+        time_diff <- old_output_data[[result]] |>
             dplyr::select(1, c("timeeff", "new_timeeff")) |>
             dplyr::mutate(
                 diff = timeeff - new_timeeff
@@ -70,8 +71,8 @@ test_plotting_time_effects <- function(
                 col = "grey80"
             )+
             scale_y_continuous(
-                breaks = seq(-0.1, 1, 0.1),
-                limits = c(-0.1, 1.1)
+                breaks = seq(-5, 100, 10),
+                limits = c(-7, 100)
             )+
             scale_color_manual(
                 values = c(
@@ -121,8 +122,8 @@ test_plotting_time_effects <- function(
                 col = "grey80"
             )+
             scale_y_continuous(
-                breaks = seq(-0.2, 0.2, 0.1),
-                limits = c(-0.2, 0.2)
+                breaks = seq(-8, 2, 1),
+                limits = c(-9, 2)
             )+
             labs(
                 y = "Differnce in estimated effect (V12 - VGrids)",
