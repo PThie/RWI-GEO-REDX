@@ -171,6 +171,10 @@ static_regional_effects_pattern_test_plot <- glue::glue(
     "{static_housing_types}_regional_effects_pattern_test_plot"
 )
 
+static_regional_effects_time_test_plot <- glue::glue(
+    "{static_housing_types}_regional_effects_time_test_plot"
+)
+
 #----------------------------------------------
 # Preparation of the geo information
 
@@ -496,6 +500,14 @@ targets_test <- rlang::list2(
                     housing_type = housing_types,
                     districts_cleaned = districts_cleaned
                 )
+            ),
+            # Plotting regional effects (focus on time) 
+            tar_target(
+                regional_effects_time_test_plot,
+                testing_regional_effects_time(
+                    old_output_data = old_output_data,
+                    housing_type = housing_types
+                )
             )
         ),
         values = list(
@@ -506,7 +518,8 @@ targets_test <- rlang::list2(
             aggregated_region_effects = rlang::syms(static_aggregated_region_effects),
             aggregated_region_effects_change = rlang::syms(static_aggregated_region_effects_change),
             time_effects_test_plot = rlang::syms(static_time_effects_test_plot),
-            regional_effects_pattern_test_plot = rlang::syms(static_regional_effects_pattern_test_plot)
+            regional_effects_pattern_test_plot = rlang::syms(static_regional_effects_pattern_test_plot),
+            regional_effects_time_test_plot = rlang::syms(static_regional_effects_time_test_plot)
         )
     )
 )
