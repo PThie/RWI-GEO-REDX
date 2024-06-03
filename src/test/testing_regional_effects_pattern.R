@@ -86,7 +86,7 @@ testing_regional_effects_pattern <- function(
             theme_void()+
             theme(
                 legend.key.size = unit(1, "cm"),
-                legend.title = element_text(size = 18, vjust = 0),
+                legend.title = element_text(size = 18, vjust = 0.8),
                 legend.text = element_text(size = 16, angle = 90),
                 legend.position = "bottom"
             )
@@ -103,7 +103,6 @@ testing_regional_effects_pattern <- function(
             dpi = config_globals()[["owndpi"]]
         )
     }
-    
 
     #--------------------------------------------------
     # plotting change

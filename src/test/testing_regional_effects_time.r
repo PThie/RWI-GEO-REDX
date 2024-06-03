@@ -34,6 +34,7 @@ testing_regional_effects_time <- function(
             names_to = "coef_origin",
             values_to = "pindex"
         ) |>
+        dplyr::mutate(year = as.numeric(year)) |>
         as.data.frame()
 
     year_effects_change <- output_data_change |>
@@ -47,6 +48,7 @@ testing_regional_effects_time <- function(
             names_to = "coef_origin",
             values_to = "pindex"
         ) |>
+        dplyr::mutate(year = as.numeric(year)) |>
         as.data.frame()
 
     #--------------------------------------------------
@@ -58,13 +60,13 @@ testing_regional_effects_time <- function(
             new_pindex_name <- "weighted_pindex_change"
             br <- seq(-10, 130, 50)
             lim <- c(-10, 130)
-            figure_add_name <- "_change_"
+            figure_add_name <- "_change"
         } else {
             old_pindex_name <- "pindex"
             new_pindex_name <- "new_pindex"
-            br <- seq(-30, -1, 10)
-            lim <- c(-30, -1)
-            figure_add_name <- "_level_"
+            br <- seq(-30, 5, 10)
+            lim <- c(-30, 5)
+            figure_add_name <- "_level"
         }
 
         # generate plot
@@ -85,15 +87,15 @@ testing_regional_effects_time <- function(
                 )+
                 scale_x_continuous(
                     breaks = seq(2008, 2023, 1)
-                )
+                )+
                 scale_color_manual(
-                    values = c(
-                        old_pindex_name = config_globals()[["java_five_colors"]][3],
-                        new_pindex_name = config_globals()[["java_five_colors"]][5]
+                    values = setNames(
+                        c(config_globals()[["java_five_colors"]][3], config_globals()[["java_five_colors"]][5]),
+                        c(old_pindex_name, new_pindex_name)
                     ),
-                    labels = c(
-                        old_pindex_name = "Estimates (V12)",
-                        new_pindex_name = "Estimates based on grids (aggregated)"
+                    labels = setNames(
+                        c("Estimates (V12)", "Estimates based on grids (aggregated)"),
+                        c(old_pindex_name, new_pindex_name)
                     ),
                     name = ""
                 )+
@@ -112,11 +114,11 @@ testing_regional_effects_time <- function(
                 axis.text.x = element_text(angle = 90),
                 legend.position = "bottom"
             )+
-            guides(legend_guide = guide_legend(nrow = 2))
+            guides(col = guide_legend(nrow = 2, byrow = TRUE))
 
         # export
         ggsave(
-            plot = pindex_plot,
+            plot = base_plot,
             file.path(
                 config_paths()[["output_path"]],
                 paste0(housing_type, "_rebuild"),
@@ -138,7 +140,7 @@ testing_regional_effects_time <- function(
     plotting_function(
         year_effects_change,
         change = TRUE,
-        figure_name = "District_time_regional_effects_change"
+        figure_name = "District_time_regional_effects"
     )
 
     #--------------------------------------------------

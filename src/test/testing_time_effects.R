@@ -100,7 +100,7 @@ testing_time_effects <- function(
             axis.text.x = element_text(angle = 90),
             legend.position = "bottom"
         )+
-        guides(legend_guide = guide_legend(nrow = 2))
+        guides(col = guide_legend(nrow = 2, byrow = TRUE))
     
         #--------------------------------------------------
         # plot differences
