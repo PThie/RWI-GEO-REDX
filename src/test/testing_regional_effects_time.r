@@ -64,8 +64,8 @@ testing_regional_effects_time <- function(
         } else {
             old_pindex_name <- "pindex"
             new_pindex_name <- "new_pindex"
-            br <- seq(-30, 5, 10)
-            lim <- c(-30, 5)
+            br <- seq(-30, 15, 10)
+            lim <- c(-30, 15)
             figure_add_name <- "_level"
         }
 
