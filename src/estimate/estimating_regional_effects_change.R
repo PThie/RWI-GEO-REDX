@@ -109,14 +109,6 @@ estimating_regional_effects_change <- function(
             rownames(fixed_effects) <- seq(1, nrow(fixed_effects))
 
             #--------------------------------------------------
-            # determine constant
-            # NOTE: Needed? Stata does this when using predict, u
-            # But it is not clear why this is necessary. Should we use the mean
-            # of the FE instead: mean(fixed_effects$pindex_FE)?
-
-            #constant <- mean(base_mod$sumFE)
-
-            #--------------------------------------------------
             # calculate deviation from overall mean (= constant)
             # calculate price index, i.e. delogarithmize the fixed effect deviation
             # NOTE:: replace orginal fixed effects with deviation (as Stata does
@@ -124,7 +116,6 @@ estimating_regional_effects_change <- function(
 
             fixed_effects <- fixed_effects |>
                 dplyr::mutate(
-                    #pindex_FE = pindex_FE - constant,
                     pindex = (exp(pindex_FE) - 1) * 100,
                     # separate region and time into separate columns
                     !!time_label := substring(id_fe, 1, string_cutoff),
@@ -162,10 +153,6 @@ estimating_regional_effects_change <- function(
 
             #--------------------------------------------------
             # calculate number of observations and mean of dependent variable
-
-            # mean_name_grid <- paste0("mean_", depvar, "_grid")
-            # mean_name_munic <- paste0("mean_", depvar, "_munic")
-            # mean_name_district <- paste0("mean_", depvar, "_district")
 
             nobs <- used_sample |>
                 dplyr::group_by(
