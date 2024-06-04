@@ -177,9 +177,9 @@ testing_time_effects <- function(
             plot = expanded_plot,
             filename = file.path(
                 config_paths()[["output_path"]],
-                "Combined_rebuild",
+                paste0(housing_type, "_rebuild"),
                 "graphs",
-                paste0(housing_type, "_combined_time_effects_", time_label, ".png")
+                paste0(housing_type, "_time_effects_", time_label, ".png")
             ),
             dpi = config_globals()[["owndpi"]]
         ))
@@ -188,9 +188,9 @@ testing_time_effects <- function(
             plot = expanded_diff,
             filename = file.path(
                 config_paths()[["output_path"]],
-                "Combined_rebuild",
+                paste0(housing_type, "_rebuild"),
                 "graphs",
-                paste0(housing_type, "_combined_time_effects_", time_label, "_difference.png")
+                paste0(housing_type, "_time_effects_", time_label, "_difference.png")
             ),
             dpi = config_globals()[["owndpi"]]
         ))      
