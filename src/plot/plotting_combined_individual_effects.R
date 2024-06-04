@@ -55,6 +55,13 @@ plotting_combined_individual_effects <- function(
             cleaning_function(combined_time_effects[[result]], "combined")
         )
 
+        if (result == "ejahr") {
+            time_effects <- time_effects |>
+                dplyr::mutate(
+                    year = as.numeric(.data[[time_label]])
+                )
+        }
+
         #--------------------------------------------------
         # generate plot
 
@@ -109,12 +116,12 @@ plotting_combined_individual_effects <- function(
             axis.text.x = element_text(angle = 90),
             legend.position = "bottom"
         )+
-        guides(col = guide_legend(nrow = 4, byrow = TRUE))
+        guides(col = guide_legend(nrow = 2, byrow = TRUE))
 
         #--------------------------------------------------
         # add time labels for specific periods
 
-        if (grepl("yearly", result)) {
+        if (grepl("ejahr", result)) {
             expanded_plot <- base_plot+
                 scale_x_continuous(
                     breaks = seq(2008, 2023, 1)
@@ -132,8 +139,9 @@ plotting_combined_individual_effects <- function(
 
         #--------------------------------------------------
         # export
+
         suppressMessages(ggsave(
-            plot = base_plot,
+            plot = expanded_plot,
             filename = file.path(
                 config_paths()[["output_path"]],
                 "Combined_rebuild",
