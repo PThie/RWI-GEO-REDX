@@ -378,6 +378,14 @@ targets_estimation_time <- rlang::list2(
             WK_estimated_time_effects = WK_estimated_time_effects,
             combined_time_effects = combined_time_effects
         )
+    ),
+    tar_target(
+        export_combined_time_effects,
+        exporting_time_effects(
+            time_effects = combined_time_effects,
+            housing_type = "Combined",
+            housing_type_label = "CombInd"
+        )
     )
 )
 
