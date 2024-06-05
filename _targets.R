@@ -130,6 +130,10 @@ static_estimated_time_effects <- glue::glue(
     "{static_housing_types}_estimated_time_effects"
 )
 
+static_exported_time_effects <- glue::glue(
+    "{static_housing_types}_exported_time_effects"
+)
+
 ##### Names for estimation of regional effects
 # NOTE: This reflects regression 2 in the Stata routine.
 
@@ -354,12 +358,22 @@ targets_estimation_time <- rlang::list2(
                     housing_data = housing_cleaned,
                     housing_type = housing_types 
                 )
+            ),
+            tar_target(
+                exported_time_effects,
+                exporting_time_effects(
+                    time_effects = estimated_time_effects,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels
+                )
             )
         ),
         values = list(
             housing_types = static_housing_types,
+            housing_type_labels = static_housing_types_labels,
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
-            estimated_time_effects = rlang::syms(static_estimated_time_effects)
+            estimated_time_effects = rlang::syms(static_estimated_time_effects),
+            exported_time_effects = rlang::syms(static_exported_time_effects)
         )
     ),
     tar_target(
@@ -380,7 +394,7 @@ targets_estimation_time <- rlang::list2(
         )
     ),
     tar_target(
-        export_combined_time_effects,
+        exported_combined_time_effects,
         exporting_time_effects(
             time_effects = combined_time_effects,
             housing_type = "Combined",
