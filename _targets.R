@@ -25,6 +25,7 @@ suppressPackageStartupMessages({
     library(future.callr)
     library(MetBrewer)
     library(ggplot2)
+    library(docstring)
 })
 
 #----------------------------------------------
@@ -446,6 +447,15 @@ targets_estimation_region <- rlang::list2(
         aggregating_combined_regional_effects(
             combined_region_effects = combined_region_effects,
             grids_municipalities = grids_municipalities
+        )
+    ),
+    tar_target(
+        exported_region_effects,
+        exporting_region_effects(
+            HK_estimated_region_effects = HK_estimated_region_effects,
+            WK_estimated_region_effects = WK_estimated_region_effects,
+            WM_estimated_region_effects = WM_estimated_region_effects,
+            combined_region_effects = combined_region_effects
         )
     )
 )
