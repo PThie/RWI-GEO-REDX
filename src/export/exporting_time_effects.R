@@ -13,46 +13,37 @@ exporting_time_effects <- function(
     #' @author Patrick Thiel
     
     #--------------------------------------------------
-    # keep only time and effects
+    # prepare data
 
-    results_list <- list()
-    for (result in names(time_effects)) {
-        if (result == "ejahr") {
-            time_label <- "year"
-        } else {
-            time_label <- "quarter"
-        }
-
-        time_effects_prep <- time_effects[[result]] |>
-            dplyr::select(
-                !!rlang::sym(time_label),
-                dplyr::contains("timeeff")
-            )
-
-        results_list[[result]] <- time_effects_prep
-    }
+    results_list <- helpers_preparing_time_effects_export(
+        time_effects_data = time_effects
+    )
 
     #--------------------------------------------------
     # export
 
-    openxlsx::write.xlsx(
-        list(
-            "Grids_TimeEff_yearly" = results_list[["ejahr"]],
-            "Grids_TimeEff_quarterly" = results_list[["e_year_quarter"]]
-        ),
-        file.path(
-            config_paths()[["output_path"]],
-            paste0(housing_type, "_rebuild"),
-            paste0(
-                "RWIGEOREDX_",
-                housing_type_label,
-                "_",
-                config_globals()[["next_version"]],
-                ".xlsx"
-            )
-        ),
-        rowNames = FALSE
-    )
+    for (file_type in c("PUF", "SUF")) {
+        openxlsx::write.xlsx(
+            list(
+                "Grids_TimeEff_yearly" = results_list[["ejahr"]],
+                "Grids_TimeEff_quarterly" = results_list[["e_year_quarter"]]
+            ),
+            file.path(
+                config_paths()[["output_path"]],
+                "Temp_Export",
+                paste0(
+                    "RWIGEOREDX_",
+                    housing_type_label,
+                    "_",
+                    config_globals()[["next_version"]],
+                    "_",
+                    file_type,
+                    ".xlsx"
+                )
+            ),
+            rowNames = FALSE
+        )
+    }
 
     #--------------------------------------------------
     # return
