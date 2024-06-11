@@ -1,4 +1,4 @@
-exporting_region_effects <- function(
+exporting_region_effects_grids <- function(
     HK_estimated_region_effects = NA,
     WK_estimated_region_effects = NA,
     WM_estimated_region_effects = NA,
@@ -27,28 +27,28 @@ exporting_region_effects <- function(
     # group all data frames into a list
 
     data_list <- list(
-        HK_estimated_region_effects,
-        WK_estimated_region_effects,
-        WM_estimated_region_effects,
-        combined_region_effects
+        HK = HK_estimated_region_effects,
+        WK = WK_estimated_region_effects,
+        WM = WM_estimated_region_effects,
+        CI = combined_region_effects
     )
-
-    names(data_list) <- c("HK", "WK", "WM", "combined")
 
     #--------------------------------------------------
     # reshape columns
 
     reshaped_data_list <- list()
     for (dta in names(data_list)) {
-        if (dta == "combined") {
+        if (dta == "CI") {
             rehaped <- helpers_reshaping_region_effects(
                 region_effects_data = data_list[[dta]],
+                regional_col = "grid",
                 pindex_col = "weighted_pindex",
                 nobs_col = "total_nobs"
             )
         } else {
             reshaped <- helpers_reshaping_region_effects(
                 region_effects_data = data_list[[dta]],
+                regional_col = "grid",
                 pindex_col = "pindex",
                 nobs_col = "nobs_grid"
             )
@@ -103,55 +103,78 @@ exporting_region_effects <- function(
         data.table::rbindlist(anonymized_data_list[
             c("HK_SUF", "WK_SUF", "WM_SUF")
         ]),
-        sorted_data_list[["combined"]]
+        sorted_data_list[["CI"]]
     )
     
     all_data_PUF <- rbind(
         data.table::rbindlist(anonymized_data_list[
             c("HK_PUF", "WK_PUF", "WM_PUF")
         ]),
-        sorted_data_list[["combined"]]
+        sorted_data_list[["CI"]]
+    )
+
+    # pool together for export
+    all_data_list <- list(
+        "SUF" = all_data_SUF,
+        "PUF" = all_data_PUF
     )
 
     #--------------------------------------------------
     # export
     # TODO: change output folder (shouldn't be Temp_Export)
 
-    data.table::fwrite(
-        all_data_SUF,
-        file.path(
-            config_paths()[["output_path"]],
-            "Temp_Export",
-            paste0(
-                "RWIGEOREDX_regional_effects_grids_",
-                config_globals()[["next_version"]],
-                "_SUF.csv"
-            )
-        ),
-        sep = ";"
-    )
+    for (dta_name in names(all_data_list)) {
+        dta <- all_data_list[[dta_name]]
 
-    data.table::fwrite(
-        all_data_PUF,
-        file.path(
-            config_paths()[["output_path"]],
-            "Temp_Export",
-            paste0(
-                "RWIGEOREDX_regional_effects_grids_",
-                config_globals()[["next_version"]],
-                "_PUF.csv"
+        # load workbook
+        complete_wb <- openxlsx::loadWorkbook(
+            file.path(
+                config_paths()[["output_path"]],
+                "Temp_Export",
+                paste0(
+                    "RWIGEOREDX_GRIDS_",
+                    config_globals()[["next_version"]],
+                    "_",
+                    dta_name,
+                    ".xlsx"
+                )
             )
-        ),
-        sep = ";",
-        na = "NA"
-    )
+        )
+
+        # add sheet
+        openxlsx::addWorksheet(
+            complete_wb,
+            "Grids_RegionEff_yearly"
+        )
+
+        # write data
+        openxlsx::writeData(
+            wb = complete_wb,
+            sheet = "Grids_RegionEff_yearly",
+            x = dta
+        )
+
+        # export workbook
+        openxlsx::saveWorkbook(
+            complete_wb,
+            file = file.path(
+                config_paths()[["output_path"]],
+                "Temp_Export",
+                paste0(
+                    "RWIGEOREDX_",
+                    "GRIDS_",
+                    config_globals()[["next_version"]],
+                    "_",
+                    dta_name,
+                    ".xlsx"
+                )
+            ),
+            overwrite = TRUE
+        )
+    }
 
     #--------------------------------------------------
     # return
 
-    all_data_list <- list(
-        "SUF" = all_data_SUF,
-        "PUF" = all_data_PUF
-    )
     return(all_data_list)
 }
