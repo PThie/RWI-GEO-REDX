@@ -394,12 +394,22 @@ targets_estimation_time <- rlang::list2(
             combined_time_effects = combined_time_effects
         )
     ),
+    # TODO: For documentation add to which output file this leads
     tar_target(
         exported_combined_time_effects,
         exporting_time_effects(
             time_effects = combined_time_effects,
             housing_type = "Combined",
             housing_type_label = "CombInd"
+        )
+    ),
+    tar_target(
+        exported_time_effects_grids,
+        exporting_time_effects_grids(
+            HK_estimated_time_effects = HK_estimated_time_effects,
+            WK_estimated_time_effects = WK_estimated_time_effects,
+            WM_estimated_time_effects = WM_estimated_time_effects,
+            combined_time_effects = combined_time_effects
         )
     )
 )
@@ -450,8 +460,8 @@ targets_estimation_region <- rlang::list2(
         )
     ),
     tar_target(
-        exported_region_effects,
-        exporting_region_effects(
+        exported_region_effects_grids,
+        exporting_region_effects_grids(
             HK_estimated_region_effects = HK_estimated_region_effects,
             WK_estimated_region_effects = WK_estimated_region_effects,
             WM_estimated_region_effects = WM_estimated_region_effects,
@@ -503,6 +513,15 @@ targets_estimation_change_region <- rlang::list2(
         aggregating_combined_regional_effects_change(
             combined_region_effects_change = combined_region_effects_change,
             grids_municipalities = grids_municipalities
+        )
+    ),
+    tar_target(
+        exported_region_effects_change_grids,
+        exporting_region_effects_change_grids(
+            HK_estimated_region_effects_change = HK_estimated_region_effects_change,
+            WK_estimated_region_effects_change = WK_estimated_region_effects_change,
+            WM_estimated_region_effects_change = WM_estimated_region_effects_change,
+            combined_region_effects_change = combined_region_effects_change
         )
     )
 )
