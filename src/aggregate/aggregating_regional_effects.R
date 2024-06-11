@@ -41,6 +41,8 @@ aggregating_regional_effects <- function(
         # NOTE: no grouping by time because there is only one time definition
         # (year) and because of the cross-sectional approach each grid already
         # has time specific NOBS
+        # same holds for NOBS on higher aggregation level (is already time
+        # specific)
 
         estimated_effects <- estimated_region_effects |>
             dplyr::mutate(
