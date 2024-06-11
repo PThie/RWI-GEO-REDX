@@ -36,7 +36,7 @@ aggregating_regional_effects_change <- function(
                 region_label <- "district"
             }
 
-            if (result == "ejahr") {
+            if (result == "year") {
                 time_label <- "year"
                 reference_period <- "2008"
             } else {

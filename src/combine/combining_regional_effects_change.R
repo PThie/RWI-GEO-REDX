@@ -23,11 +23,11 @@ combining_regional_effects_change <- function(
     # combine all indices
 
     results_list <- list()
-    for (result in c("ejahr", "e_year_quarter")) {
+    for (result in c("year", "quarter")) {
         #--------------------------------------------------
         # set up for specific time levels
 
-        if (result == "ejahr") {
+        if (result == "year") {
             time_label <- "year"
             reference_period <- "2008"
         } else {
