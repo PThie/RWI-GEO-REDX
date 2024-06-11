@@ -41,6 +41,10 @@ helpers_sorting_columns_region_effects <- function(
 
     region_effects_data$housing_type <- housing_type
 
+    # move a second position
+    region_effects_data <- region_effects_data |>
+        dplyr::relocate(housing_type, .after = "grid")
+
     #--------------------------------------------------
     # return
 
