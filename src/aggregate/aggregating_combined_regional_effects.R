@@ -113,7 +113,7 @@ aggregating_combined_regional_effects <- function(
         #--------------------------------------------------
         # store results
 
-        results_list[[paste0(region_label, "_", time_label)]] <- combined_effects_agg
+        results_list[[region_label]] <- combined_effects_agg
     }
 
     #--------------------------------------------------
