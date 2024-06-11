@@ -453,13 +453,6 @@ targets_estimation_region <- rlang::list2(
         )
     ),
     tar_target(
-        aggregated_combined_region_effects,
-        aggregating_combined_regional_effects(
-            combined_region_effects = combined_region_effects,
-            grids_municipalities = grids_municipalities
-        )
-    ),
-    tar_target(
         exported_region_effects_grids,
         exporting_region_effects_grids(
             HK_estimated_region_effects = HK_estimated_region_effects,
@@ -467,7 +460,14 @@ targets_estimation_region <- rlang::list2(
             WM_estimated_region_effects = WM_estimated_region_effects,
             combined_region_effects = combined_region_effects
         )
-    )
+    ),
+    tar_target(
+        aggregated_combined_region_effects,
+        aggregating_combined_regional_effects(
+            combined_region_effects = combined_region_effects,
+            grids_municipalities = grids_municipalities
+        )
+    ),
 )
 
 #--------------------------------------------------
@@ -509,13 +509,6 @@ targets_estimation_change_region <- rlang::list2(
         )
     ),
     tar_target(
-        aggregated_combined_region_effects_change,
-        aggregating_combined_regional_effects_change(
-            combined_region_effects_change = combined_region_effects_change,
-            grids_municipalities = grids_municipalities
-        )
-    ),
-    tar_target(
         exported_region_effects_change_grids,
         exporting_region_effects_change_grids(
             HK_estimated_region_effects_change = HK_estimated_region_effects_change,
@@ -523,7 +516,14 @@ targets_estimation_change_region <- rlang::list2(
             WM_estimated_region_effects_change = WM_estimated_region_effects_change,
             combined_region_effects_change = combined_region_effects_change
         )
-    )
+    ),
+    tar_target(
+        aggregated_combined_region_effects_change,
+        aggregating_combined_regional_effects_change(
+            combined_region_effects_change = combined_region_effects_change,
+            grids_municipalities = grids_municipalities
+        )
+    ),
 )
 
 #--------------------------------------------------
