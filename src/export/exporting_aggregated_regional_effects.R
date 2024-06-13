@@ -28,7 +28,7 @@ exporting_aggregated_regional_effects <- function(
         if (region == "district") {
             nobs_col <- "nobs_district"
             regional_col <- "kid2019"
-            sheet_name <- "District"
+            sheet_name <- "Distr"
         } else {
             nobs_col <- "nobs_munic"
             regional_col <- "gid2019"
