@@ -372,7 +372,6 @@ targets_estimation_time <- rlang::list2(
                 exported_time_effects,
                 exporting_time_effects(
                     time_effects = estimated_time_effects,
-                    #housing_type = housing_types,
                     housing_type_label = housing_type_labels
                 )
             )
@@ -407,7 +406,6 @@ targets_estimation_time <- rlang::list2(
         exported_combined_time_effects,
         exporting_time_effects(
             time_effects = combined_time_effects,
-            #housing_type = "Combined",
             housing_type_label = "CombInd"
         )
     ),
