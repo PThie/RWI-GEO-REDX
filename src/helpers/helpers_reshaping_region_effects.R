@@ -10,6 +10,7 @@ helpers_reshaping_region_effects <- function(
     #' a wide format (both for price indices and NOBS).
     #' 
     #' @param region_effects_data Data frame with region effects
+    #' @param regional_col Column names for regional identifier
     #' @param pindex_col Column names for price indices
     #' @param nobs_col Column names for NOBS
     #' 
