@@ -74,6 +74,7 @@ exporting_region_effects_change_grids <- function(
                 helpers_sorting_columns_region_effects,
                 reshaped_data_list,
                 c("HK", "WK", "WM", "CI"),
+                "grid",
                 SIMPLIFY = FALSE
             )
 
@@ -180,6 +181,7 @@ exporting_region_effects_change_grids <- function(
             }
         }
     }
+    
     #--------------------------------------------------
     # return
 
