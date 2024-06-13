@@ -146,6 +146,10 @@ static_aggregated_region_effects <- glue::glue(
     "{static_housing_types}_aggregated_region_effects"
 )
 
+static_exported_aggregated_region_effects <- glue::glue(
+    "{static_housing_types}_exported_aggregated_region_effects"
+)
+
 ##### Names for estimation of regional effects (change)
 # NOTE: This reflects regression 3 in the Stata routine.
 static_estimated_region_effects_change <- glue::glue(
@@ -154,6 +158,10 @@ static_estimated_region_effects_change <- glue::glue(
 
 static_aggregated_region_effects_change <- glue::glue(
     "{static_housing_types}_aggregated_region_effects_change"
+)
+
+static_exported_aggregated_region_effects_change <- glue::glue(
+    "{static_housing_types}_exported_aggregated_region_effects_change"
 )
 
 ##### names for testing
@@ -364,7 +372,7 @@ targets_estimation_time <- rlang::list2(
                 exported_time_effects,
                 exporting_time_effects(
                     time_effects = estimated_time_effects,
-                    housing_type = housing_types,
+                    #housing_type = housing_types,
                     housing_type_label = housing_type_labels
                 )
             )
@@ -399,7 +407,7 @@ targets_estimation_time <- rlang::list2(
         exported_combined_time_effects,
         exporting_time_effects(
             time_effects = combined_time_effects,
-            housing_type = "Combined",
+            #housing_type = "Combined",
             housing_type_label = "CombInd"
         )
     ),
@@ -435,13 +443,23 @@ targets_estimation_region <- rlang::list2(
                     estimated_region_effects = estimated_region_effects,
                     housing_type = housing_types
                 )
+            ),
+            tar_target(
+                exported_aggregated_region_effects,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects = aggregated_region_effects,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels
+                )
             )
         ),
         values = list(
             housing_types = static_housing_types,
+            housing_type_labels = static_housing_types_labels,
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
             estimated_region_effects = rlang::syms(static_estimated_region_effects),
-            aggregated_region_effects = rlang::syms(static_aggregated_region_effects)
+            aggregated_region_effects = rlang::syms(static_aggregated_region_effects),
+            exported_aggregated_region_effects = rlang::syms(static_exported_aggregated_region_effects)
         )
     ),
     tar_target(
@@ -468,6 +486,14 @@ targets_estimation_region <- rlang::list2(
             grids_municipalities = grids_municipalities
         )
     ),
+    tar_target(
+        exported_aggregated_combined_region_effects,
+        exporting_aggregated_regional_effects(
+            aggregated_region_effects = aggregated_combined_region_effects,
+            housing_type = "CI",
+            housing_type_label = "CombInd"
+        )
+    )
 )
 
 #--------------------------------------------------
@@ -491,13 +517,23 @@ targets_estimation_change_region <- rlang::list2(
                     estimated_effects_list = estimated_region_effects_change,
                     housing_type = housing_types
                 )
+            ),
+            tar_target(
+                exported_aggregated_region_effects_change,
+                exporting_aggregated_regional_effects_change(
+                    aggregated_region_effects_change = aggregated_region_effects_change,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels
+                )
             )
         ),
         values = list(
             housing_types = static_housing_types,
+            housing_type_labels = static_housing_types_labels,
             housing_cleaned = rlang::syms(static_housing_data_cleaned),
             estimated_region_effects_change = rlang::syms(static_estimated_region_effects_change),
-            aggregated_region_effects_change = rlang::syms(static_aggregated_region_effects_change)
+            aggregated_region_effects_change = rlang::syms(static_aggregated_region_effects_change),
+            exported_aggregated_region_effects_change = rlang::syms(static_exported_aggregated_region_effects_change)
         )
     ),
     tar_target(
@@ -524,6 +560,14 @@ targets_estimation_change_region <- rlang::list2(
             grids_municipalities = grids_municipalities
         )
     ),
+    tar_target(
+        exported_aggregated_combined_region_effects_change,
+        exporting_aggregated_regional_effects_change(
+            aggregated_region_effects_change = aggregated_combined_region_effects_change,
+            housing_type = "CI",
+            housing_type_label = "CombInd"
+        )
+    )
 )
 
 #--------------------------------------------------
