@@ -26,6 +26,7 @@ suppressPackageStartupMessages({
     library(MetBrewer)
     library(ggplot2)
     library(docstring)
+    library(arrow)
 })
 
 #----------------------------------------------
