@@ -77,7 +77,7 @@ exporting_region_effects_grids <- function(
     # Only applied to individual housing types (not to the combined index)
 
     anonymized_data_list <- list()
-    for (housing_type in c("HK", "WK", "WM")) {
+    for (housing_type in c("HK", "WK", "WM", "CI")) {
         dta <- sorted_data_list[[housing_type]]
 
         # apply anonymization function
@@ -104,14 +104,14 @@ exporting_region_effects_grids <- function(
         data.table::rbindlist(anonymized_data_list[
             c("HK_SUF", "WK_SUF", "WM_SUF")
         ]),
-        sorted_data_list[["CI"]]
+        anonymized_data_list[["CI_SUF"]]
     )
     
     all_data_PUF <- rbind(
         data.table::rbindlist(anonymized_data_list[
             c("HK_PUF", "WK_PUF", "WM_PUF")
         ]),
-        sorted_data_list[["CI"]]
+        anonymized_data_list[["CI_PUF"]]
     )
 
     # pool together for export
@@ -142,11 +142,16 @@ exporting_region_effects_grids <- function(
             )
         )
 
-        # add sheet
-        openxlsx::addWorksheet(
-            complete_wb,
-            "Grids_RegionEff_yearly"
-        )
+        # add sheet if not existent
+        if (
+            !"Grids_RegionEff_yearly" %in%
+            names(complete_wb)
+        ) {
+            openxlsx::addWorksheet(
+                complete_wb,
+                "Grids_RegionEff_yearly"
+            )
+        }
 
         # write data
         openxlsx::writeData(

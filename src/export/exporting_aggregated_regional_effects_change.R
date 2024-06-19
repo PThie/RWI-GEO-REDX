@@ -73,25 +73,20 @@ exporting_aggregated_regional_effects_change <- function(
             # Only applied to individual housing types (not to the combined index)
 
             anonymized_data_list <- list()
-            if (housing_type %in% c("HK", "WK", "WM")) {
-                # apply anonymization function
-                dta_suf <- helpers_anonymizing_region_effects(
-                    region_effects_data = sorted_data,
-                    SUF = TRUE
-                )
+            # apply anonymization function
+            dta_suf <- helpers_anonymizing_region_effects(
+                region_effects_data = sorted_data,
+                SUF = TRUE
+            )
 
-                dta_puf <- helpers_anonymizing_region_effects(
-                    region_effects_data = sorted_data,
-                    SUF = FALSE
-                )
+            dta_puf <- helpers_anonymizing_region_effects(
+                region_effects_data = sorted_data,
+                SUF = FALSE
+            )
 
-                # store anonymized data
-                anonymized_data_list[[paste0(housing_type, "_SUF")]] <- dta_suf
-                anonymized_data_list[[paste0(housing_type, "_PUF")]] <- dta_puf
-            } else {
-                anonymized_data_list[[paste0(housing_type, "_SUF")]] <- sorted_data
-                anonymized_data_list[[paste0(housing_type, "_PUF")]] <- sorted_data
-            }
+            # store anonymized data
+            anonymized_data_list[[paste0(housing_type, "_SUF")]] <- dta_suf
+            anonymized_data_list[[paste0(housing_type, "_PUF")]] <- dta_puf
 
             #--------------------------------------------------
             # export
