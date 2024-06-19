@@ -2,26 +2,36 @@
 
 This repository shows the detailed preparation and generation of RWI-GEO-REDX price index.
 
-## Abstract Data Description (v11)
+## Abstract Data Description (v13)
 
-The FDZ Ruhr at RWI provides price indices for apartments and houses (rentals and sales) in
-Germany starting in 2008. The price indices are based on the real estate dataset RWI-GEO-RED,
-which combines real estate listings from ImmoScout24. We perform three types of hedonic regressions to allow comparisons across time (annual or quarterly), across regions (labor market regions, counties, or municipalities), and in combination across time and regions. The data are publicly available and can be requested from the FDZ Ruhr website. A weakly anonymized version is also available for researchers on request. This data report is an updated version of previous reports and refers to RWI-GEO-REDX v11,
-which covers data until May 2023.
+The FDZ Ruhr at RWI offers price indices for apartments and houses (rentals and sales) in Germany, commencing in 2008. The price indices are derived from the RWI-GEO-RED real estate dataset, which integrates real estate listings from ImmoScout24. Three types of hedonic regressions are performed to allow for comparisons across time (annual or quarterly), across regions (1 x 1 km, municipality, and district), and in combination across time and regions. Furthermore, starting with V13, we also offer a combined index, whereby all three data sources (apartment rents and sales, and house sales) are combined into a single index. The data are publicly available (PUF) and can be requested from the FDZ Ruhr website. A weakly anonymized version (SUF) is also available for researchers upon request.
+
+This data report constitutes an updated version of previous reports and refers to RWI-GEOREDX v13, which encompasses data up to November 2023.
 
 ## Access
 
-The dataset RWI-GEO-REDX is available as Public Use File free of charge for all. Researchers can also be provided with the dataset as a Scientific Use File. The SUF differs from the PUF in the number of observations needed to calculate the price index. Only after a minimum number of 50 observations (per municipality) the price index is shown in the PUF. For the SUF already 5 observations are sufficient.
+The data can be obtained as a Public Use File (PUF) or a Scientific Use File (SUF) from the FDZ Ruhr at RWI. The FDZ Ruhr is the research data center of the RWI - Leibniz Institute for Economic Research. In order to ensure that the indices are not driven by small sample sizes, the PUF dataset includes only those indices that are based on at least 50 observations per year and region. The indices based on less than 50 observations per year and region are also available on request as an SUF for scientific research purposes only. It is up to the researcher to decide whether this lower threshold is reliable in the considered research design. Since the RWI-GEO-REDX subsumes aggregated information, it does not contain any information that is restricted for data security reasons. The indices presented here are available as Excel (.xlsx) files.
+
+Data access does not require a data use agreement, but users must register to access the data. Interested users should visit our website https://www.rwi-essen.de/en/research-advice/further/research-data-center-ruhr-fdz/data-access.
+
+It is not permitted for users to undertake any action that might result in the re-identification of individual homes or apartments.
+
+Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2024): RWIGEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2023 (V13). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v13. Further, we recommend citing this data description.
 
 ## More Information
 
 - [General information on RWI-GEO-RED/X](https://www.rwi-essen.de/en/research-advice/further/research-data-center-ruhr-fdz/data-sets/rwi-geo-red/x-real-estate-data-and-price-indices)
-- [Data report RWI-GEO-REDX v11](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDXv11.pdf). Please cite the data report as: Schaffner, Sandra & Thiel, Patrick (2023), FDZ Data description: Regional Real Estate Price Index for Germany, 2008-06/2023, RWI Projektberichte, Essen
+<!-- - [Data report RWI-GEO-REDX v13](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDXv11.pdf). Please cite the data report as: Thiel (2024), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-06/2023 (V13), RWI Projektberichte, Essen -->
+
+## DOI
+- Repository:
+- RWI-GEO-REDX V13 (PUF): http://doi.org/10.7807/immo:redx:puf:v13
+- RWI-GEO-REDX V13 (SUF): http://doi.org/10.7807/immo:redx:suf:v13
 
 ## Contact Person
 
-Please contact [Patrick Thiel](https://www.rwi-essen.de/rwi/team/person/patrick-thiel) in case of questions.
+Please contact [Dr. Patrick Thiel](https://www.rwi-essen.de/rwi/team/person/patrick-thiel) in case of questions.
 
 ## Disclaimer
 
-All rights reserved to RWI and the author of the code, Patrick Thiel.
+All rights reserved to RWI and the author of the code, Dr. Patrick Thiel.
