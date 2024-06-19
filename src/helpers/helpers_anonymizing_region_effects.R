@@ -41,6 +41,18 @@ helpers_anonymizing_region_effects <- function(
                     TRUE ~ .x
                 )
             ),
+            # replace NOBS with NA if there is no pindex
+            dplyr::across(
+                .cols = dplyr::starts_with("NOBS"),
+                ~ dplyr::case_when(
+                    is.na(
+                        get(
+                            gsub("NOBS", "pindex", dplyr::cur_column())
+                        )
+                    ) ~ NA_integer_,
+                    TRUE ~ .x
+                )
+            ),
             dplyr::across(
                 .cols = dplyr::starts_with("NOBS"),
                 ~ dplyr::case_when(
