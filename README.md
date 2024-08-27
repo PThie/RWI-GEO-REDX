@@ -21,7 +21,7 @@ Users are requested to cite the source correctly and to inform the FDZ Ruhr abou
 ## More Information
 
 - [General information on RWI-GEO-RED/X](https://www.rwi-essen.de/en/research-advice/further/research-data-center-ruhr-fdz/data-sets/rwi-geo-red/x-real-estate-data-and-price-indices)
-<!-- - [Data report RWI-GEO-REDX v13](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDXv11.pdf). Please cite the data report as: Thiel (2024), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-06/2023 (V13), RWI Projektberichte, Essen -->
+- [Data report RWI-GEO-REDX v13](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v13.pdf). Please cite the data report as: Thiel (2024), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-06/2023 (V13), RWI Projektberichte, Essen
 
 ## DOI
 - Repository for V13.0: [![DOI:10.5281/zenodo.12166545](http://img.shields.io/badge/DOI-10.5281/zenodo.10812938-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
