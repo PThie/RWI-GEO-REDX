@@ -4,6 +4,10 @@
 # This file is the main file that orchestrates the other coding files. It
 # controls the data pipeline and defines the global settings.
 
+###################################################
+# PIPELINE SETTINGS
+###################################################
+
 #----------------------------------------------
 # load libraries
 
@@ -27,6 +31,7 @@ suppressPackageStartupMessages({
     library(ggplot2)
     library(docstring)
     library(arrow)
+    library(crew)
 })
 
 #----------------------------------------------
@@ -44,12 +49,15 @@ tar_option_set(
     ),
     seed = 1,
     garbage_collection = TRUE,
-    storage = "worker",
-    retrieval = "worker"
+    memory = "transient",
+    controller = crew_controller_local(
+        name = "my_controller",
+        workers = 3,
+        seconds_idle = 10
+    ),
+    retrieval = "worker",
+    storage = "worker"
 )
-
-# tar_make_future() configuration:
-plan(callr)
 
 #----------------------------------------------
 # load configurations
@@ -105,6 +113,10 @@ for (sub_directory in sub_directories) {
         lapply(files, source)
     }
 }
+
+###################################################
+# ACTUAL PIPELINE
+###################################################
 
 #----------------------------------------------
 # Preparation of the geo information
