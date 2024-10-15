@@ -322,15 +322,16 @@ targets_estimation_time <- rlang::list2(
             WK_estimated_time_effects = WK_estimated_time_effects
         )
     ),
-    tar_target(
-        combined_individual_time_plot,
-        plotting_combined_individual_effects(
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects,
-            combined_time_effects = combined_time_effects
-        )
-    ),
+    # TODO: Needs rework because structure changed
+    # tar_target(
+    #     combined_individual_time_plot,
+    #     plotting_combined_individual_effects(
+    #         WM_estimated_time_effects = WM_estimated_time_effects,
+    #         HK_estimated_time_effects = HK_estimated_time_effects,
+    #         WK_estimated_time_effects = WK_estimated_time_effects,
+    #         combined_time_effects = combined_time_effects
+    #     )
+    # ),
     # TODO: For documentation add to which output file this leads
     tar_target(
         exported_combined_time_effects,
@@ -501,6 +502,7 @@ targets_estimation_change_region <- rlang::list2(
 #--------------------------------------------------
 # Testing output
 # Needs rework since regression 3 changed
+# NEEDS REWORK
 
 targets_test <- rlang::list2(
     tar_eval(
@@ -556,6 +558,19 @@ targets_test <- rlang::list2(
     )
 )
 
+#--------------------------------------------------
+# pipeline stats
+
+targets_pipeline_stats <- rlang::list2(
+    # NOTE: targets type has to be tar_file in order to use tar_progress_summary
+    # and tar_crew within the pipeline
+    tar_file(
+        pipeline_stats,
+        helpers_monitoring_pipeline(),
+        cue = tar_cue(mode = "always")
+    )
+)
+
 #----------------------------------------------
 # combine all
 
@@ -565,5 +580,6 @@ rlang::list2(
     targets_estimation_time,
     targets_estimation_region,
     targets_estimation_change_region,
-    targets_test
+    # targets_test,
+    targets_pipeline_stats
 )
