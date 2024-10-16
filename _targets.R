@@ -118,6 +118,17 @@ for (sub_directory in sub_directories) {
 # ACTUAL PIPELINE
 ###################################################
 
+#--------------------------------------------------
+# Folder and file generation
+
+targets_preparation_folders <- rlang::list2(
+    # Creating empty workbooks for the exporting functions
+    tar_target(
+        empty_export_workbooks,
+        creating_export_workbooks()
+    )
+)
+
 #----------------------------------------------
 # Preparation of the geo information
 
@@ -447,6 +458,7 @@ targets_estimation_change_region <- rlang::list2(
                     housing_type = housing_types
                 )
             ),
+            # TODO: in function
             tar_target(
                 exported_aggregated_region_effects_change,
                 exporting_aggregated_regional_effects_change(
@@ -473,6 +485,7 @@ targets_estimation_change_region <- rlang::list2(
             WM_estimated_region_effects_change = WM_estimated_region_effects_change
         )
     ),
+    # TODO: in function
     tar_target(
         exported_region_effects_change_grids,
         exporting_region_effects_change_grids(
@@ -489,6 +502,7 @@ targets_estimation_change_region <- rlang::list2(
             grids_municipalities = grids_municipalities
         )
     ),
+    # TODO: in function
     tar_target(
         exported_aggregated_combined_region_effects_change,
         exporting_aggregated_regional_effects_change(
@@ -503,6 +517,7 @@ targets_estimation_change_region <- rlang::list2(
 # Testing output
 # Needs rework since regression 3 changed
 # NEEDS REWORK
+# TODO: adjust paths
 
 targets_test <- rlang::list2(
     tar_eval(
@@ -575,6 +590,7 @@ targets_pipeline_stats <- rlang::list2(
 # combine all
 
 rlang::list2(
+    targets_preparation_folders,
     targets_preparation_geo,
     targets_preparation_housing,
     targets_estimation_time,
