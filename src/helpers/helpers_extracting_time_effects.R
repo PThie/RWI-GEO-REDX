@@ -1,4 +1,4 @@
-extracting_time_effects <- function(model = NA, time = NA) {
+helpers_extracting_time_effects <- function(model = NA, time = NA) {
     #' @title Extract time effects
     #' 
     #' @description This function extracts time effects from a regression model.

@@ -102,7 +102,7 @@ estimating_time_effects <- function(
             # In the other settings where we use the FE, these are measured in 
             # units of the dependent variable (i.e. logged price/ rent).
             
-            time_coefs <- extracting_time_effects(
+            time_coefs <- helpers_extracting_time_effects(
                 model = base_mod,
                 time = time_fe
             )
