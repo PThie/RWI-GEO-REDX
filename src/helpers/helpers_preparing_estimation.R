@@ -1,4 +1,4 @@
-preparing_estimation <- function(housing_type = NA, data = NA) {
+helpers_preparing_estimation <- function(housing_type = NA, data = NA) {
     #' @title Preparing estimation
     #' 
     #' @description This function prepares the data for estimation.

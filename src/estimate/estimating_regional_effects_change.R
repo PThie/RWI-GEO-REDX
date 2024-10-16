@@ -31,7 +31,7 @@ estimating_regional_effects_change <- function(
     # prepare the housing data
     # includes demeaning of independent variables
 
-    housing_data <- preparing_estimation(
+    housing_data <- helpers_preparing_estimation(
         housing_type = housing_type,
         data = housing_data
     )
