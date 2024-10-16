@@ -126,6 +126,10 @@ targets_preparation_folders <- rlang::list2(
     tar_target(
         empty_export_workbooks,
         creating_export_workbooks()
+    ),
+    tar_target(
+        empty_folders,
+        creating_folder_structure()
     )
 )
 
@@ -591,11 +595,11 @@ targets_pipeline_stats <- rlang::list2(
 
 rlang::list2(
     targets_preparation_folders,
-    targets_preparation_geo,
-    targets_preparation_housing,
-    targets_estimation_time,
-    targets_estimation_region,
-    targets_estimation_change_region,
+    # targets_preparation_geo,
+    # targets_preparation_housing,
+    # targets_estimation_time,
+    # targets_estimation_region,
+    # targets_estimation_change_region,
     # targets_test,
     targets_pipeline_stats
 )
