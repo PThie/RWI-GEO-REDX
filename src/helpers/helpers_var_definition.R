@@ -1,7 +1,16 @@
-helpers_var_definition <- function(housing_type = NA) {
+helpers_var_definition <- function(
+    housing_type = NA
+) {
+    #' @title Define dependent and independent variables
+    #' 
     #' @description The function sets the dependent and independent variables
     #' for the different housing types used in the estimations. Define also
     #' fixed effects.
+    #' 
+    #' @param housing_type Housing type
+    #' 
+    #' @return List with dependent and independent variables
+    #' @author Patrick Thiel
     
     #--------------------------------------------------
     # housing characteristics
