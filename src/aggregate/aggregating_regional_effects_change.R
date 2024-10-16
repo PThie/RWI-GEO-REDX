@@ -102,7 +102,8 @@ aggregating_regional_effects_change <- function(
                 estimated_effects_agg,
                 file.path(
                     config_paths()[["output_path"]],
-                    paste0(housing_type, "_rebuild"),
+                    housing_type,
+                    "estimates",
                     paste0(
                         "regional_effects_",
                         region_label,

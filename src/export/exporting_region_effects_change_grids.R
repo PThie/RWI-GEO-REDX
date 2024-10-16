@@ -128,7 +128,6 @@ exporting_region_effects_change_grids <- function(
 
             #--------------------------------------------------
             # export
-            # TODO: change output folder (shouldn't be Temp_Export)
 
             for (dta_name in names(all_data_list)) {
                 dta <- all_data_list[[dta_name]]
@@ -137,7 +136,7 @@ exporting_region_effects_change_grids <- function(
                 complete_wb <- openxlsx::loadWorkbook(
                     file.path(
                         config_paths()[["output_path"]],
-                        "Temp_Export",
+                        "export",
                         paste0(
                             "RWIGEOREDX_GRIDS_",
                             config_globals()[["next_version"]],
@@ -171,7 +170,7 @@ exporting_region_effects_change_grids <- function(
                     complete_wb,
                     file = file.path(
                         config_paths()[["output_path"]],
-                        "Temp_Export",
+                        "export",
                         paste0(
                             "RWIGEOREDX_",
                             "GRIDS_",

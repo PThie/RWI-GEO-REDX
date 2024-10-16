@@ -210,7 +210,8 @@ estimating_regional_effects_change <- function(
                 regional_coef,
                 file.path(
                     config_paths()[["output_path"]],
-                    paste0(housing_type, "_rebuild"),
+                    housing_type,
+                    "estimates",
                     paste0("regional_effects_grids_", time_label, "_change.xlsx")
                 )
             )

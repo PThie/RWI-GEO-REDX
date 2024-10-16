@@ -130,7 +130,8 @@ aggregating_combined_regional_effects_change <- function(
                 combined_effects_agg,
                 file.path(
                     config_paths()[["output_path"]],
-                    "Combined_rebuild",
+                    "CI",
+                    "estimates",
                     paste0(
                         "combined_regional_effects_",
                         region_label,

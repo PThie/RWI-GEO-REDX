@@ -145,7 +145,8 @@ combining_regional_effects_change <- function(
             weighted_effects,
             file.path(
                 config_paths()[["output_path"]],
-                "Combined_rebuild",
+                "CI",
+                "estimates",
                 paste0("combined_regional_effects_grids_", time_label, "_change.xlsx")
             )
         )

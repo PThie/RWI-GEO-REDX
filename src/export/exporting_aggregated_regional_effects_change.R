@@ -90,7 +90,6 @@ exporting_aggregated_regional_effects_change <- function(
 
             #--------------------------------------------------
             # export
-            # TODO: change output folder (shouldn't be Temp_Export)
 
             for (dta_name in names(anonymized_data_list)) {
                 dta_name_clean <- stringr::str_remove(dta_name, paste0(housing_type, "_"))
@@ -100,7 +99,7 @@ exporting_aggregated_regional_effects_change <- function(
                 complete_wb <- openxlsx::loadWorkbook(
                     file.path(
                         config_paths()[["output_path"]],
-                        "Temp_Export",
+                        "export",
                         paste0(
                             "RWIGEOREDX_",
                             housing_type_label,
@@ -136,7 +135,7 @@ exporting_aggregated_regional_effects_change <- function(
                     complete_wb,
                     file = file.path(
                         config_paths()[["output_path"]],
-                        "Temp_Export",
+                        "export",
                         paste0(
                             "RWIGEOREDX_",
                             housing_type_label,

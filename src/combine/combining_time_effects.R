@@ -154,7 +154,8 @@ combining_time_effects <- function(
             dta_weighted,
             file.path(
                 config_paths()[["output_path"]],
-                "Combined_rebuild",
+                "CI",
+                "estimates",
                 paste0("combined_time_effects_grids_", time_label, ".xlsx")
             )
         )

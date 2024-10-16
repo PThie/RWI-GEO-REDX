@@ -135,7 +135,8 @@ estimating_time_effects <- function(
                 time_coefs,
                 file.path(
                     config_paths()[["output_path"]],
-                    paste0(housing_type, "_rebuild"),
+                    housing_type,
+                    "estimates",
                     paste0("time_effects_grids_", time_label, ".xlsx")
                 )
             )
