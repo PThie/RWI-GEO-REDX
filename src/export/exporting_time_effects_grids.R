@@ -77,44 +77,60 @@ exporting_time_effects_grids <- function(
     #--------------------------------------------------
     # export
 
-    # create empty workbook
-    complete_wb <- openxlsx::createWorkbook()
-
-    # sheet names
-    year_name <- "Grids_TimeEff_yearly"
-    quarter_name <- "Grids_TimeEff_quarterly"
-
-    # create sheets for each time period
-    openxlsx::addWorksheet(
-        complete_wb,
-        year_name
-    )
-    openxlsx::addWorksheet(
-        complete_wb,
-        quarter_name
-    )
-
-    # store data
-    openxlsx::writeData(
-        wb = complete_wb,
-        sheet = year_name,
-        x = results_list[["year"]]
-    )
-    openxlsx::writeData(
-        wb = complete_wb,
-        sheet = quarter_name,
-        x = results_list[["quarter"]]
-    )
-
-    # save workbook
-    # TODO: change output folder (shouldn't be Temp_Export)
-
     for (file_type in c("PUF", "SUF")) {
+        # load workbook
+        complete_wb <- openxlsx::loadWorkbook(
+            file.path(
+                config_paths()[["output_path"]],
+                "export",
+                paste0(
+                    "RWIGEOREDX_",
+                    "GRIDS_",
+                    config_globals()[["next_version"]],
+                    "_",
+                    file_type,
+                    ".xlsx"
+                )
+            )
+        )
+
+        # sheet names
+        year_name <- "Grids_TimeEff_yearly"
+        quarter_name <- "Grids_TimeEff_quarterly"
+
+        # add sheet if not existent
+        if (!year_name %in% names(complete_wb)) {
+            openxlsx::addWorksheet(
+                complete_wb,
+                year_name
+            )
+        }
+
+        if (!quarter_name %in% names(complete_wb)) {
+            openxlsx::addWorksheet(
+                complete_wb,
+                quarter_name
+            )
+        }
+
+        # store data
+        openxlsx::writeData(
+            wb = complete_wb,
+            sheet = year_name,
+            x = results_list[["year"]]
+        )
+        openxlsx::writeData(
+            wb = complete_wb,
+            sheet = quarter_name,
+            x = results_list[["quarter"]]
+        )
+
+        # save workbook
         openxlsx::saveWorkbook(
             complete_wb,
             file = file.path(
                 config_paths()[["output_path"]],
-                "Temp_Export",
+                "export",
                 paste0(
                     "RWIGEOREDX_",
                     "GRIDS_",

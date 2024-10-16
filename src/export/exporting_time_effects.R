@@ -23,14 +23,60 @@ exporting_time_effects <- function(
     # export
 
     for (file_type in c("PUF", "SUF")) {
-        openxlsx::write.xlsx(
-            list(
-                "Grids_TimeEff_yearly" = results_list[["ejahr"]],
-                "Grids_TimeEff_quarterly" = results_list[["e_year_quarter"]]
-            ),
+        # load workbook
+        complete_wb <- openxlsx::loadWorkbook(
             file.path(
                 config_paths()[["output_path"]],
-                "Temp_Export",
+                "export",
+                paste0(
+                    "RWIGEOREDX_",
+                    housing_type_label,
+                    "_",
+                    config_globals()[["next_version"]],
+                    "_",
+                    file_type,
+                    ".xlsx"
+                )
+            )
+        )
+
+        # sheet names
+        year_name <- "Grids_TimeEff_yearly"
+        quarter_name <- "Grids_TimeEff_quarterly"
+
+        # add sheet if not existent
+        if (!year_name %in% names(complete_wb)) {
+            openxlsx::addWorksheet(
+                complete_wb,
+                year_name
+            )
+        }
+
+        if (!quarter_name %in% names(complete_wb)) {
+            openxlsx::addWorksheet(
+                complete_wb,
+                quarter_name
+            )
+        }
+
+        # store data
+        openxlsx::writeData(
+            wb = complete_wb,
+            sheet = year_name,
+            x = results_list[["ejahr"]]
+        )
+        openxlsx::writeData(
+            wb = complete_wb,
+            sheet = quarter_name,
+            x = results_list[["e_year_quarter"]]
+        )
+
+        # save workbook
+        openxlsx::saveWorkbook(
+            complete_wb,
+            file = file.path(
+                config_paths()[["output_path"]],
+                "export",
                 paste0(
                     "RWIGEOREDX_",
                     housing_type_label,
@@ -41,7 +87,7 @@ exporting_time_effects <- function(
                     ".xlsx"
                 )
             ),
-            rowNames = FALSE
+            overwrite = TRUE
         )
     }
 
