@@ -580,6 +580,16 @@ targets_test <- rlang::list2(
 )
 
 #--------------------------------------------------
+# clean up
+
+targets_cleanup <- rlang::list2(
+    tar_target(
+        reorder_worksheets,
+        reordering_worksheets(),
+    )
+)
+
+#--------------------------------------------------
 # pipeline stats
 
 targets_pipeline_stats <- rlang::list2(
@@ -603,5 +613,6 @@ rlang::list2(
     targets_estimation_region,
     targets_estimation_change_region,
     # targets_test,
-    targets_pipeline_stats
+    targets_pipeline_stats,
+    targets_cleanup
 )
