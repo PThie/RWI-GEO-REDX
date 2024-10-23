@@ -312,7 +312,18 @@ targets_estimation_time <- rlang::list2(
                 estimated_time_effects,
                 estimating_time_effects(
                     housing_data = housing_cleaned,
-                    housing_type = housing_types 
+                    housing_type = housing_types,
+                    reference_periods = c("2008", "2008-01"),
+                    export = TRUE
+                )
+            ),
+            tar_target(
+                estimated_time_effects_destatis,
+                estimating_time_effects(
+                    housing_data = housing_cleaned,
+                    housing_type = housing_types,
+                    reference_periods = c("2015", "2015-01"),
+                    export = FALSE
                 )
             ),
             tar_target(
@@ -328,6 +339,7 @@ targets_estimation_time <- rlang::list2(
             housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
             housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
             estimated_time_effects = rlang::syms(helpers_target_names()[["static_estimated_time_effects"]]),
+            estimated_time_effects_destatis = rlang::syms(helpers_target_names()[["static_estimated_time_effects_destatis"]]),
             exported_time_effects = rlang::syms(helpers_target_names()[["static_exported_time_effects"]])
         )
     ),
