@@ -1,10 +1,15 @@
-helpers_extracting_time_effects <- function(model = NA, time = NA) {
+helpers_extracting_time_effects <- function(
+    model = NA,
+    time = NA,
+    reference_period = NA
+) {
     #' @title Extract time effects
     #' 
     #' @description This function extracts time effects from a regression model.
     #' 
     #' @param model Regression model
     #' @param time Time variable
+    #' @param reference_period Reference period for comparison (baseline period)
     #' 
     #' @return Time effects with confidence intervals
     #' @author Patrick Thiel
@@ -26,11 +31,11 @@ helpers_extracting_time_effects <- function(model = NA, time = NA) {
 
     if (time == "ejahr") {
         cutoff <- 3
-        base_time <- "2008"
+        base_time <- reference_period
         time_name <- "year"
     } else if (time == "e_year_quarter") {
         cutoff <- 6
-        base_time <- "2008-01"
+        base_time <- reference_period
         time_name <- "quarter"
     }
 
@@ -54,7 +59,6 @@ helpers_extracting_time_effects <- function(model = NA, time = NA) {
             ) |>
             dplyr::rename(!!time_name := placeholder)
         ) |>
-        # NOTE: Arrange does not work yet
         dplyr::arrange(!!rlang::sym(time_name))
 
     #--------------------------------------------------

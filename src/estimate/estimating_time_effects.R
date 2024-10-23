@@ -1,6 +1,8 @@
 estimating_time_effects <- function(
     housing_data = NA,
-    housing_type = NA
+    housing_type = NA,
+    reference_periods = NA,
+    export = TRUE
 ) {
     #' @title Estimating time effects
     #' 
@@ -8,6 +10,8 @@ estimating_time_effects <- function(
     #' 
     #' @param housing_data Data frame with housing data
     #' @param housing_type Housing type
+    #' @param reference_year List, Reference periods for time effects
+    #' @param export Indicator to export results to Excel, only for non-destatis results
     #' 
     #' @note This refers to regression 1 in the former Stata coding.
     #' 
@@ -45,8 +49,25 @@ estimating_time_effects <- function(
 
             if (time_fe == "ejahr") {
                 time_label <- "year"
+                reference_period <- reference_periods[1]
+
+                # exception for rents: Destatis uses here a different reference period
+                # NOTE: this is only necessary for the Destatis comparison, not the
+                # own data (export = FALSE means comparison with Destatis)
+                if (housing_type == "WM" & export == FALSE) {
+                    reference_period <- "2020"
+                }
             } else {
                 time_label <- "quarter"
+                reference_period <- reference_periods[2]
+
+                # exception for rents: Destatis uses here a different reference period
+                # NOTE: this is only necessary for the Destatis comparison, not the
+                # own data (export = FALSE means comparison with Destatis)
+                # NOTE: sofar destatis does not offer quarterly data
+                if (housing_type == "WM" & export == FALSE) {
+                    reference_period <- "2020-01"
+                }
             }
 
             #--------------------------------------------------
@@ -58,7 +79,7 @@ estimating_time_effects <- function(
                     paste(
                         c(
                             paste(indepvars, collapse = " + "),
-                            paste("as.factor(", time_fe, ")")
+                            paste0("relevel(as.factor(", time_fe, "), '", reference_period,"')")
                         ),
                         collapse = " + "
                     ),
@@ -101,10 +122,10 @@ estimating_time_effects <- function(
             # of the dependent variable (i.e. logged price/ rent).
             # In the other settings where we use the FE, these are measured in 
             # units of the dependent variable (i.e. logged price/ rent).
-            
             time_coefs <- helpers_extracting_time_effects(
                 model = base_mod,
-                time = time_fe
+                time = time_fe,
+                reference_period = reference_period
             )
 
             #--------------------------------------------------
@@ -131,15 +152,18 @@ estimating_time_effects <- function(
             #--------------------------------------------------
             # export findings
             
-            openxlsx::write.xlsx(
-                time_coefs,
-                file.path(
-                    config_paths()[["output_path"]],
-                    housing_type,
-                    "estimates",
-                    paste0("time_effects_grids_", time_label, ".xlsx")
+            if (export == TRUE) {
+                openxlsx::write.xlsx(
+                    time_coefs,
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0("time_effects_grids_", time_label, ".xlsx")
+                    )
                 )
-            )
+            }
+
             #--------------------------------------------------
             # store results
 
