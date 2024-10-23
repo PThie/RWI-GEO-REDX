@@ -124,7 +124,7 @@ plotting_combined_individual_effects <- function(
         if (grepl("ejahr", result)) {
             expanded_plot <- base_plot+
                 scale_x_continuous(
-                    breaks = seq(2008, 2023, 1)
+                    breaks = seq(2008, max(time_effects$year), 1)
                 )
         } else {
             unique_times <- unique(time_effects[[time_label]])
@@ -144,7 +144,7 @@ plotting_combined_individual_effects <- function(
             plot = expanded_plot,
             filename = file.path(
                 config_paths()[["output_path"]],
-                "Combined_rebuild",
+                "CI",
                 "graphs",
                 paste0("Combined_individual_effects_", time_label, ".png")
             ),
