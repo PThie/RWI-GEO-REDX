@@ -34,6 +34,9 @@ helpers_target_names <- function() {
         "static_estimated_time_effects" = glue::glue(
             "{static_housing_types}_estimated_time_effects"
         ),
+        "static_estimated_time_effects_destatis" = glue::glue(
+            "{static_housing_types}_estimated_time_effects_destatis"
+        ),
         "static_exported_time_effects" = glue::glue(
             "{static_housing_types}_exported_time_effects"
         ),
