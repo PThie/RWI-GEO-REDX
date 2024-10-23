@@ -351,16 +351,15 @@ targets_estimation_time <- rlang::list2(
             WK_estimated_time_effects = WK_estimated_time_effects
         )
     ),
-    # TODO: Needs rework because structure changed
-    # tar_target(
-    #     combined_individual_time_plot,
-    #     plotting_combined_individual_effects(
-    #         WM_estimated_time_effects = WM_estimated_time_effects,
-    #         HK_estimated_time_effects = HK_estimated_time_effects,
-    #         WK_estimated_time_effects = WK_estimated_time_effects,
-    #         combined_time_effects = combined_time_effects
-    #     )
-    # ),
+    tar_target(
+        combined_individual_time_plot,
+        plotting_combined_individual_effects(
+            WM_estimated_time_effects = WM_estimated_time_effects,
+            HK_estimated_time_effects = HK_estimated_time_effects,
+            WK_estimated_time_effects = WK_estimated_time_effects,
+            combined_time_effects = combined_time_effects
+        )
+    ),
     # TODO: For documentation add to which output file this leads
     tar_target(
         exported_combined_time_effects,
