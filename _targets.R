@@ -548,9 +548,15 @@ targets_test <- rlang::list2(
         ),
         reading_destatis(!!.x)
     ),
-    # tar_target(
-
-    # )
+    tar_target(
+        time_effects_comparison_plots,
+        plotting_time_differences_destatis(
+            HK_effects = HK_estimated_time_effects_destatis,
+            WK_effects = WK_estimated_time_effects_destatis,
+            WM_effects = WM_estimated_time_effects_destatis,
+            destatis_effects = destatis_time_effects
+        )
+    )
 
 
     # tar_eval(
