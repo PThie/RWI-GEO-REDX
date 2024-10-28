@@ -154,12 +154,13 @@ plotting_time_differences_destatis <- function(
             theme_light()+
             theme(
                 legend.position = "bottom",
-                axis.text = element_text(size = 12),
+                axis.text = element_text(size = 8),
                 axis.title = element_text(size = 14),
                 axis.text.x = element_text(angle = 90),
-                legend.text = element_text(size = 12),
+                legend.text = element_text(size = 11),
                 legend.key.size = unit(1, "cm")
-            )
+            )+
+            guides(color = guide_legend(nrow = 2, byrow = TRUE))
 
         # export figure
         ggsave(
