@@ -25,15 +25,19 @@ creating_folder_structure <- function() {
     }
 
     #--------------------------------------------------
-    # create export folder
+    # create special folders
 
-    directory <- file.path(
-        config_paths()[["output_path"]],
-        "export"
-    )
+    special_folders <- c("export", "testing")
 
-    if (!dir.exists(directory)) {
-        dir.create(directory, recursive = TRUE)
+    for (special_folder in special_folders) {
+        directory <- file.path(
+            config_paths()[["output_path"]],
+            special_folder
+        )
+
+        if (!dir.exists(directory)) {
+            dir.create(directory, recursive = TRUE)
+        }
     }
 
     #--------------------------------------------------
