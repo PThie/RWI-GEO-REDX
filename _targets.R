@@ -537,57 +537,73 @@ targets_estimation_change_region <- rlang::list2(
 # TODO: adjust paths
 
 targets_test <- rlang::list2(
-    tar_eval(
-        list(
-            # Reading old data output
-            tar_target(
-                old_output_data,
-                reading_old_output_file(
-                    housing_type_label = housing_type_labels,
-                    sheet_names = helpers_target_names()[["sheet_names"]],
-                    time_effects = estimated_time_effects,
-                    region_effects = aggregated_region_effects,
-                    region_effects_change = aggregated_region_effects_change
-                )
-            ),
-            # Plotting time effects
-            tar_target(
-                time_effects_test_plot,
-                testing_time_effects(
-                    old_output_data = old_output_data,
-                    housing_type = housing_types
-                )
-            ),
-            # Plotting regional effects (focus on regional pattern)
-            tar_target(
-                regional_effects_pattern_test_plot,
-                testing_regional_effects_pattern(
-                    old_output_data = old_output_data,
-                    housing_type = housing_types,
-                    districts_cleaned = districts_cleaned
-                )
-            ),
-            # Plotting regional effects (focus on time) 
-            tar_target(
-                regional_effects_time_test_plot,
-                testing_regional_effects_time(
-                    old_output_data = old_output_data,
-                    housing_type = housing_types
-                )
-            )
+    #--------------------------------------------------
+    # reading destatis indices
+    tar_file_read(
+        destatis_time_effects,
+        file.path(
+            config_paths()[["data_path"]],
+            "external_data",
+            "destatis_price_index"
         ),
-        values = list(
-            housing_types = helpers_target_names()[["static_housing_types"]],
-            old_output_data = rlang::syms(helpers_target_names()[["static_old_outputs"]]),
-            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
-            estimated_time_effects = rlang::syms(helpers_target_names()[["static_estimated_time_effects"]]),
-            aggregated_region_effects = rlang::syms(helpers_target_names()[["static_aggregated_region_effects"]]),
-            aggregated_region_effects_change = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_change"]]),
-            time_effects_test_plot = rlang::syms(helpers_target_names()[["static_time_effects_test_plot"]]),
-            regional_effects_pattern_test_plot = rlang::syms(helpers_target_names()[["static_regional_effects_pattern_test_plot"]]),
-            regional_effects_time_test_plot = rlang::syms(helpers_target_names()[["static_regional_effects_time_test_plot"]])
-        )
-    )
+        reading_destatis(!!.x)
+    ),
+    # tar_target(
+
+    # )
+
+
+    # tar_eval(
+    #     list(
+    #         # Reading old data output
+    #         tar_target(
+    #             old_output_data,
+    #             reading_old_output_file(
+    #                 housing_type_label = housing_type_labels,
+    #                 sheet_names = helpers_target_names()[["sheet_names"]],
+    #                 time_effects = estimated_time_effects,
+    #                 region_effects = aggregated_region_effects,
+    #                 region_effects_change = aggregated_region_effects_change
+    #             )
+    #         ),
+    #         # Plotting time effects
+    #         tar_target(
+    #             time_effects_test_plot,
+    #             testing_time_effects(
+    #                 old_output_data = old_output_data,
+    #                 housing_type = housing_types
+    #             )
+    #         ),
+    #         # Plotting regional effects (focus on regional pattern)
+    #         tar_target(
+    #             regional_effects_pattern_test_plot,
+    #             testing_regional_effects_pattern(
+    #                 old_output_data = old_output_data,
+    #                 housing_type = housing_types,
+    #                 districts_cleaned = districts_cleaned
+    #             )
+    #         ),
+    #         # Plotting regional effects (focus on time) 
+    #         tar_target(
+    #             regional_effects_time_test_plot,
+    #             testing_regional_effects_time(
+    #                 old_output_data = old_output_data,
+    #                 housing_type = housing_types
+    #             )
+    #         )
+    #     ),
+    #     values = list(
+    #         housing_types = helpers_target_names()[["static_housing_types"]],
+    #         old_output_data = rlang::syms(helpers_target_names()[["static_old_outputs"]]),
+    #         housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
+    #         estimated_time_effects = rlang::syms(helpers_target_names()[["static_estimated_time_effects"]]),
+    #         aggregated_region_effects = rlang::syms(helpers_target_names()[["static_aggregated_region_effects"]]),
+    #         aggregated_region_effects_change = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_change"]]),
+    #         time_effects_test_plot = rlang::syms(helpers_target_names()[["static_time_effects_test_plot"]]),
+    #         regional_effects_pattern_test_plot = rlang::syms(helpers_target_names()[["static_regional_effects_pattern_test_plot"]]),
+    #         regional_effects_time_test_plot = rlang::syms(helpers_target_names()[["static_regional_effects_time_test_plot"]])
+    #     )
+    # )
 )
 
 #--------------------------------------------------
@@ -623,7 +639,7 @@ rlang::list2(
     targets_estimation_time,
     targets_estimation_region,
     targets_estimation_change_region,
-    # targets_test,
+    targets_test,
     targets_pipeline_stats,
     targets_cleanup
 )
