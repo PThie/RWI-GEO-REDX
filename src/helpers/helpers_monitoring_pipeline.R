@@ -13,14 +13,13 @@ helpers_monitoring_pipeline <- function() {
     pipeline_stats <- tar_progress_summary() |>
         as.data.frame()
 
-    write.table(
+    gdata::write.fwf(
         pipeline_stats,
         file.path(
             config_paths()[["logs_path"]],
             "pipeline_stats.txt"
         ),
-        sep = "\t\t|",
-        row.names = FALSE
+        rownames = FALSE
     )
 
     #--------------------------------------------------
@@ -29,14 +28,13 @@ helpers_monitoring_pipeline <- function() {
     worker_stats <- tar_crew() |>
         as.data.frame()
         
-    write.table(
+    gdata::write.fwf(
         worker_stats,
         file.path(
             config_paths()[["logs_path"]],
             "worker_stats.txt"
         ),
-        sep = "\t\t|",
-        row.names = FALSE
+        rownames = FALSE
     )
 
     #--------------------------------------------------
