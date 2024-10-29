@@ -360,7 +360,6 @@ targets_estimation_time <- rlang::list2(
             combined_time_effects = combined_time_effects
         )
     ),
-    # TODO: For documentation add to which output file this leads
     tar_target(
         exported_combined_time_effects,
         exporting_time_effects(
@@ -555,6 +554,15 @@ targets_test <- rlang::list2(
             WK_effects = WK_estimated_time_effects_destatis,
             WM_effects = WM_estimated_time_effects_destatis,
             destatis_effects = destatis_time_effects
+        )
+    ),
+    tar_target(
+        summary_stats_region_test,
+        testing_summaries_region_effects(
+            HK_region_effects = HK_estimated_region_effects,
+            WK_region_effects = WK_estimated_region_effects,
+            WM_region_effects = WM_estimated_region_effects,
+            CI_region_effects = combined_region_effects
         )
     )
 
