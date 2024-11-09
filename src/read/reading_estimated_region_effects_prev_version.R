@@ -1,12 +1,12 @@
 reading_estimated_region_effects_prev_version <- function(data_file_path = NA) {
-    #' @title Read estimated time effects from previous version
+    #' @title Read estimated region effects from previous version
     #' 
-    #' @description This function reads the estimated time effects from the
+    #' @description This function reads the estimated region effects from the
     #' previous version in order to compare the current results to it.
     #' 
     #' @param data_file_path Character string with the path to the data file.
     #' 
-    #' @return Dataframe with the estimated time effects from the previous version.
+    #' @return Dataframe with the estimated region effects from the previous version.
     #' @author Patrick Thiel
 
     #--------------------------------------------------
