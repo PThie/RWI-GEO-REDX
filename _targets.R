@@ -541,7 +541,7 @@ targets_test <- rlang::list2(
     tar_eval(
         list(
             tar_file_read(
-                estimated_time_effects_prev_version,
+                estimated_region_effects_prev_version,
                 file.path(
                     stringr::str_replace(
                         config_paths()[["output_path"]],
@@ -552,17 +552,17 @@ targets_test <- rlang::list2(
                     "estimates",
                     "regional_effects_grids_year.xlsx"
                 ),
-                reading_estimated_time_effects_prev_version(!!.x),
+                reading_estimated_region_effects_prev_version(!!.x),
                 format = "fst"
             )
         ),
         values = list(
             housing_type = helpers_target_names()[["static_housing_types"]],
-            estimated_time_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_time_effects_prev_version"]])
+            estimated_region_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_prev_version"]])
         )
     ),
     tar_file_read(
-        combined_estimated_time_effects_prev_version,
+        combined_estimated_region_effects_prev_version,
         file.path(
             stringr::str_replace(
                 config_paths()[["output_path"]],
@@ -573,7 +573,7 @@ targets_test <- rlang::list2(
             "estimates",
             "combined_regional_effects_grids_year.xlsx"
         ),
-        reading_estimated_time_effects_prev_version(!!.x),
+        reading_estimated_region_effects_prev_version(!!.x),
         format = "fst"
     ),
     #--------------------------------------------------

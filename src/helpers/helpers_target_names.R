@@ -66,8 +66,8 @@ helpers_target_names <- function() {
         ),
         #--------------------------------------------------
         # Names for testing
-        "static_estimated_time_effects_prev_version" = glue::glue(
-            "{static_housing_types}_estimated_time_effects_prev_version"
+        "static_estimated_region_effects_prev_version" = glue::glue(
+            "{static_housing_types}_estimated_region_effects_prev_version"
         )
         #--------------------------------------------------
         # names for testing

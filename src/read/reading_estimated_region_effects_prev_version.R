@@ -1,4 +1,4 @@
-reading_estimated_time_effects_prev_version <- function(data_file_path = NA) {
+reading_estimated_region_effects_prev_version <- function(data_file_path = NA) {
     #' @title Read estimated time effects from previous version
     #' 
     #' @description This function reads the estimated time effects from the
