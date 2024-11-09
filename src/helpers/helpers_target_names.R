@@ -65,25 +65,30 @@ helpers_target_names <- function() {
             "{static_housing_types}_exported_aggregated_region_effects_change"
         ),
         #--------------------------------------------------
-        # names for testing
-        "sheet_names" = c(
-            "1__District_TimeEff_yearly",
-            "1__District_TimeEff_quarterly",
-            "2__District_Pindex_yearly",
-            "3__District_Change_yearly"
-        ),
-        "static_old_outputs" = glue::glue(
-            "{static_housing_types}_old_output_data"
-        ),
-        "static_time_effects_test_plot" = glue::glue(
-            "{static_housing_types}_time_effects_test_plot"
-        ),
-        "static_regional_effects_pattern_test_plot" = glue::glue(
-            "{static_housing_types}_regional_effects_pattern_test_plot"
-        ),
-        "static_regional_effects_time_test_plot" = glue::glue(
-            "{static_housing_types}_regional_effects_time_test_plot"
+        # Names for testing
+        "static_estimated_time_effects_prev_version" = glue::glue(
+            "{static_housing_types}_estimated_time_effects_prev_version"
         )
+        #--------------------------------------------------
+        # names for testing
+        # "sheet_names" = c(
+        #     "1__District_TimeEff_yearly",
+        #     "1__District_TimeEff_quarterly",
+        #     "2__District_Pindex_yearly",
+        #     "3__District_Change_yearly"
+        # ),
+        # "static_old_outputs" = glue::glue(
+        #     "{static_housing_types}_old_output_data"
+        # ),
+        # "static_time_effects_test_plot" = glue::glue(
+        #     "{static_housing_types}_time_effects_test_plot"
+        # ),
+        # "static_regional_effects_pattern_test_plot" = glue::glue(
+        #     "{static_housing_types}_regional_effects_pattern_test_plot"
+        # ),
+        # "static_regional_effects_time_test_plot" = glue::glue(
+        #     "{static_housing_types}_regional_effects_time_test_plot"
+        # )
     )
 
     #--------------------------------------------------
