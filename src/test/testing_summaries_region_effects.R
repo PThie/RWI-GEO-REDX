@@ -2,7 +2,8 @@ testing_summaries_region_effects <- function(
     HK_region_effects = NA,
     WK_region_effects = NA,
     WM_region_effects = NA,
-    CI_region_effects = NA
+    CI_region_effects = NA,
+    output_text_file = NA
 ) {
     #' @title Testing summaries for region effects
     #' 
@@ -13,6 +14,7 @@ testing_summaries_region_effects <- function(
     #' @param WK_region_effects Dataframe with the region effects for the WK region.
     #' @param WM_region_effects Dataframe with the region effects for the WM region.
     #' @param CI_region_effects Dataframe with the region effects for the CI region.
+    #' @param output_text_file Character indicating the storage text file for the summary stats.
     #' 
     #' @note The summary stats function could be expanded to yearly summary
     #' stats by filtering the data by year and applying the summary stats function.
@@ -66,7 +68,7 @@ testing_summaries_region_effects <- function(
     directory <- file.path(
         config_paths()[["output_path"]],
         "testing",
-        "overall_summary_stats.txt"
+        paste0(output_text_file, ".txt")
     )
 
     write("", directory, append = FALSE)
@@ -83,22 +85,14 @@ testing_summaries_region_effects <- function(
         # export header
         write(
             header,
-            file.path(
-                config_paths()[["output_path"]],
-                "testing",
-                "overall_summary_stats.txt"
-            ),
+            directory,
             append = TRUE
         )
 
         # export stats
         gdata::write.fwf(
             overall_summary_stats[[housing_type]],
-            file.path(
-                config_paths()[["output_path"]],
-                "testing",
-                "overall_summary_stats.txt"
-            ),
+            directory,
             append = TRUE,
             rownames = FALSE
         )
