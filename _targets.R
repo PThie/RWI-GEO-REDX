@@ -537,6 +537,46 @@ targets_estimation_change_region <- rlang::list2(
 
 targets_test <- rlang::list2(
     #--------------------------------------------------
+    # reading previous version output
+    tar_eval(
+        list(
+            tar_file_read(
+                estimated_time_effects_prev_version,
+                file.path(
+                    stringr::str_replace(
+                        config_paths()[["output_path"]],
+                        paste0("version_", config_globals()[["next_version"]]),
+                        paste0("version_", config_globals()[["current_version"]])    
+                    ),
+                    housing_type,
+                    "estimates",
+                    "regional_effects_grids_year.xlsx"
+                ),
+                reading_estimated_time_effects_prev_version(!!.x),
+                format = "fst"
+            )
+        ),
+        values = list(
+            housing_type = helpers_target_names()[["static_housing_types"]],
+            estimated_time_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_time_effects_prev_version"]])
+        )
+    ),
+    tar_file_read(
+        combined_estimated_time_effects_prev_version,
+        file.path(
+            stringr::str_replace(
+                config_paths()[["output_path"]],
+                paste0("version_", config_globals()[["next_version"]]),
+                paste0("version_", config_globals()[["current_version"]])    
+            ),
+            "CI",
+            "estimates",
+            "combined_regional_effects_grids_year.xlsx"
+        ),
+        reading_estimated_time_effects_prev_version(!!.x),
+        format = "fst"
+    ),
+    #--------------------------------------------------
     # reading destatis indices
     tar_file_read(
         destatis_time_effects,
