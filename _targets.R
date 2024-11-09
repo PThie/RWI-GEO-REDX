@@ -578,6 +578,7 @@ targets_test <- rlang::list2(
     ),
     #--------------------------------------------------
     # reading destatis indices
+    # comparing RWI-GEO-REDX with Destatis
     tar_file_read(
         destatis_time_effects,
         file.path(
@@ -596,6 +597,8 @@ targets_test <- rlang::list2(
             destatis_effects = destatis_time_effects
         )
     ),
+    #--------------------------------------------------
+    # summarise regional effects (current and previous version)
     tar_target(
         summary_stats_region_test,
         testing_summaries_region_effects(
