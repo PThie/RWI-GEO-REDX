@@ -18,7 +18,7 @@ aggregating_combined_regional_effects <- function(
     # loop through aggregation levels
 
     results_list <- list()
-    for (agg_level in c("munic", "district")) {
+    for (agg_level in c("munic", "district", "lmr")) {
         #--------------------------------------------------
         # set up for specific regional level
         # and time definitions
