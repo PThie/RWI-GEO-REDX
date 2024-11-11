@@ -1,7 +1,8 @@
 estimating_regional_effects <- function(
     housing_data = NA,
     housing_type = NA,
-    grids_municipalities = NA
+    grids_municipalities = NA,
+    grids_lmr = NA
 ) {
     #' @title Estimating regional effects
     #' 
@@ -10,7 +11,10 @@ estimating_regional_effects <- function(
     #' 
     #' @param housing_data Data frame with housing data
     #' @param housing_type Housing type
-    #' @param grids_municipalities Data frame with connection between grids
+    #' @param grids_municipalities Data frame with connection between grids and
+    #' municipalities
+    #' @param grids_lmr Dataframe with connection between grids and labor market
+    #' regions (LMR/AMR)
     #' 
     #' @note This refers to regression 2 in the former Stata coding.
     #' @note Only performed at yearly level (running cross-sections at level
@@ -154,7 +158,7 @@ estimating_regional_effects <- function(
                 !!rlang::sym(regional_fes[1])
             ) |>
             dplyr::summarise(
-                nobs_grid = n()
+                nobs_grid = dplyr::n()
             ) |>
             dplyr::ungroup() |>
             merge(
@@ -181,20 +185,37 @@ estimating_regional_effects <- function(
             dplyr::rename(grid = ergg_1km) |>
             as.data.frame()
 
-            #--------------------------------------------------
-            # merge FE and NOBS data
-
-            regional_coef <- merge(
-                fixed_effects,
-                nobs,
+        # merge LMR identifiers
+        nobs <- nobs |>
+            dplyr::ungroup() |>
+            merge(
+                grids_lmr |>
+                    dplyr::rename(grid = ergg_1km),
                 by = "grid",
                 all.x = TRUE
-            )
+            ) |>
+            dplyr::group_by(amr) |>
+            dplyr::mutate(
+                nobs_lmr = sum(nobs_grid, na.rm = TRUE)
+            ) |>
+            dplyr::rename(lmrid = amr) |>
+            dplyr::ungroup() |>
+            as.data.frame()
 
-            #--------------------------------------------------
-            # store results
+        #--------------------------------------------------
+        # merge FE and NOBS data
 
-            results_list[[year]] <- regional_coef
+        regional_coef <- merge(
+            fixed_effects,
+            nobs,
+            by = "grid",
+            all.x = TRUE
+        )
+
+        #--------------------------------------------------
+        # store results
+
+        results_list[[year]] <- regional_coef
     }
 
     # combine all years
