@@ -605,7 +605,8 @@ targets_test <- rlang::list2(
             HK_region_effects = HK_estimated_region_effects,
             WK_region_effects = WK_estimated_region_effects,
             WM_region_effects = WM_estimated_region_effects,
-            CI_region_effects = combined_region_effects
+            CI_region_effects = combined_region_effects,
+            output_text_file = "overall_summary_stats"
         )
     )
 
