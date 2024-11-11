@@ -465,7 +465,8 @@ targets_estimation_change_region <- rlang::list2(
                 estimating_regional_effects_change(
                     housing_data = housing_cleaned,
                     housing_type = housing_types,
-                    grids_municipalities = grids_municipalities
+                    grids_municipalities = grids_municipalities,
+                    grids_lmr = grids_lmr
                 )
             ),
             tar_target(
@@ -659,7 +660,7 @@ rlang::list2(
     targets_preparation_housing,
     targets_estimation_time,
     targets_estimation_region,
-    # targets_estimation_change_region,
+    targets_estimation_change_region,
     # targets_test,
     targets_pipeline_stats,
     targets_cleanup
