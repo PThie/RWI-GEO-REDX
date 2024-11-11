@@ -21,28 +21,17 @@ aggregating_regional_effects_change <- function(
 
     results_list <- list()
     for (result in names(estimated_effects_list)) {
-        for (agg_level in c("munic", "district")) {
+        for (agg_level in c("munic", "district", "lmr")) {
             #--------------------------------------------------
             # set up for specific regional level
             # and time definitions
             
-            if (agg_level == "munic") {
-                nobs_var <- "nobs_munic"
-                region_id <- "gid2019"
-                region_label <- "municipality"
-            } else {
-                nobs_var <- "nobs_district"
-                region_id <- "kid2019"
-                region_label <- "district"
-            }
+            nobs_var <- helpers_regional_effects_settings(agg_level = agg_level)[["nobs_var"]]
+            region_id <- helpers_regional_effects_settings(agg_level = agg_level)[["region_id"]]
+            region_label <- helpers_regional_effects_settings(agg_level = agg_level)[["region_label"]]
 
-            if (result == "year") {
-                time_label <- "year"
-                reference_period <- "2008"
-            } else {
-                time_label <- "quarter"
-                reference_period <- "2008-01"
-            }
+            time_label <- helpers_regional_effects_change_settings(time_period = result)[["time_label"]]
+            reference_period <- helpers_regional_effects_change_settings(time_period = result)[["reference_period"]]
 
             #--------------------------------------------------
             # calculate weights

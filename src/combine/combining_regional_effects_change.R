@@ -27,13 +27,8 @@ combining_regional_effects_change <- function(
         #--------------------------------------------------
         # set up for specific time levels
 
-        if (result == "year") {
-            time_label <- "year"
-            reference_period <- "2008"
-        } else {
-            time_label <- "quarter"
-            reference_period <- "2008-01"
-        }
+        time_label <- helpers_regional_effects_change_settings(time_period = result)[["time_label"]]
+        reference_period <- helpers_regional_effects_change_settings(time_period = result)[["reference_period"]]
 
         #--------------------------------------------------
         # extract all individual effects
