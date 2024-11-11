@@ -1,7 +1,8 @@
 estimating_regional_effects_change <- function(
     housing_data = NA,
     housing_type = NA,
-    grids_municipalities = NA
+    grids_municipalities = NA,
+    grids_lmr = NA
 ) {
     #' @title Estimating regional effects change
     #' 
@@ -49,17 +50,10 @@ estimating_regional_effects_change <- function(
             #--------------------------------------------------
             # set up for different time periods
 
-            if (time_fe == "ejahr") {
-                time_fe_id <- 1
-                string_cutoff <- 4
-                time_label <- "year"
-                reference_period <- "2008"
-            } else {
-                time_fe_id <- 2
-                string_cutoff <- 7
-                time_label <- "quarter"
-                reference_period <- "2008-01"
-            }
+            time_fe_id <- helpers_regional_effects_change_settings(time_period = time_fe)[["time_fe_id"]]
+            string_cutoff <- helpers_regional_effects_change_settings(time_period = time_fe)[["string_cutoff"]]
+            time_label <- helpers_regional_effects_change_settings(time_period = time_fe)[["time_label"]]
+            reference_period <- helpers_regional_effects_change_settings(time_period = time_fe)[["reference_period"]]
 
             #--------------------------------------------------
             # create fixed effect combination between regional and time fixed effects
@@ -190,6 +184,23 @@ estimating_regional_effects_change <- function(
                 ) |>
                 dplyr::filter(!is.na(!!rlang::sym(regional_fes[1]))) |>
                 dplyr::rename(grid = ergg_1km) |>
+                as.data.frame()
+
+            # merge LMR identifiers
+            nobs <- nobs |>
+                dplyr::ungroup() |>
+                merge(
+                    grids_lmr |>
+                        dplyr::rename(grid = ergg_1km),
+                    by = "grid",
+                    all.x = TRUE
+                ) |>
+                dplyr::group_by(amr) |>
+                dplyr::mutate(
+                    nobs_lmr = sum(nobs_grid, na.rm = TRUE)
+                ) |>
+                dplyr::rename(lmrid = amr) |>
+                dplyr::ungroup() |>
                 as.data.frame()
 
             #--------------------------------------------------
