@@ -23,17 +23,12 @@ aggregating_combined_regional_effects <- function(
         # set up for specific regional level
         # and time definitions
         
-        if (agg_level == "munic") {
-            nobs_var <- "nobs_munic"
-            region_id <- "gid2019"
-            region_label <- "municipality"
-        } else {
-            nobs_var <- "nobs_district"
-            region_id <- "kid2019"
-            region_label <- "district"
-        }
+        nobs_var <- helpers_regional_effects_settings(agg_level = agg_level)[["nobs_var"]]
+        region_id <- helpers_regional_effects_settings(agg_level = agg_level)[["region_id"]]
+        region_label <- helpers_regional_effects_settings(agg_level = agg_level)[["region_label"]]
 
-        time_label <- "year"
+        # NOTE: temporal dimension is not regional level dependent
+        time_label <- helpers_regional_effects_settings(agg_level = agg_level)[["time_label"]]
 
         #--------------------------------------------------
         # prepare combined regional effects

@@ -25,15 +25,9 @@ exporting_aggregated_regional_effects <- function(
         #--------------------------------------------------
         # general setup
 
-        if (region == "district") {
-            nobs_col <- "nobs_district"
-            regional_col <- "kid2019"
-            sheet_name <- "Distr"
-        } else {
-            nobs_col <- "nobs_munic"
-            regional_col <- "gid2019"
-            sheet_name <- "Munic"
-        }
+        nobs_var <- helpers_regional_effects_settings(agg_level = region)[["nobs_var"]]
+        region_id <- helpers_regional_effects_settings(agg_level = region)[["region_id"]]
+        sheet_name <- helpers_regional_effects_settings(agg_level = region)[["sheet_name"]]
 
         #--------------------------------------------------
         # subset data
@@ -41,16 +35,16 @@ exporting_aggregated_regional_effects <- function(
         region_data <- aggregated_region_effects[[region]]
 
         # remove NAs in region identifier
-        region_data <- region_data[!is.na(region_data[[regional_col]]), ]
+        region_data <- region_data[!is.na(region_data[[region_id]]), ]
 
         #--------------------------------------------------
         # reshape columns
 
         reshaped_data <- helpers_reshaping_region_effects(
             region_effects_data = region_data,
-            regional_col = regional_col,
+            regional_col = region_id,
             pindex_col = "weighted_pindex",
-            nobs_col = nobs_col
+            nobs_col = nobs_var
         )
 
         #--------------------------------------------------
@@ -59,7 +53,7 @@ exporting_aggregated_regional_effects <- function(
         sorted_data <- helpers_sorting_columns_region_effects(
             region_effects_data = reshaped_data,
             housing_type = housing_type,
-            regional_col = regional_col,
+            regional_col = region_id,
             grids = FALSE
         )
 

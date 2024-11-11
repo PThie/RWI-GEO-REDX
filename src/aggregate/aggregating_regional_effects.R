@@ -16,22 +16,17 @@ aggregating_regional_effects <- function(
     #' @author Patrick Thiel
 
     results_list <- list()
-    for (agg_level in c("munic", "district")) {
+    for (agg_level in c("munic", "district", "lmr")) {
         #--------------------------------------------------
         # set up for specific regional level
         # and time definitions
-        
-        if (agg_level == "munic") {
-            nobs_var <- "nobs_munic"
-            region_id <- "gid2019"
-            region_label <- "municipality"
-        } else {
-            nobs_var <- "nobs_district"
-            region_id <- "kid2019"
-            region_label <- "district"
-        }
 
-        time_label <- "year"
+        nobs_var <- helpers_regional_effects_settings(agg_level = agg_level)[["nobs_var"]]
+        region_id <- helpers_regional_effects_settings(agg_level = agg_level)[["region_id"]]
+        region_label <- helpers_regional_effects_settings(agg_level = agg_level)[["region_label"]]
+
+        # NOTE: temporal dimension is not regional level dependent
+        time_label <- helpers_regional_effects_settings(agg_level = agg_level)[["time_label"]]
 
         #--------------------------------------------------
         # calculate weights
