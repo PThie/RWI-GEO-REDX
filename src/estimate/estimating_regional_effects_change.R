@@ -12,6 +12,8 @@ estimating_regional_effects_change <- function(
     #' @param housing_type Housing type
     #' @param grids_municipalities Data frame with connection between grids
     #' and municipalities
+    #' @param grids_lmr Dataframe with connection between grids and labor market
+    #' regions (LMR/AMR)
     #' 
     #' @note This refers to regression 3 in the former Stata coding.
     #' 
@@ -152,7 +154,7 @@ estimating_regional_effects_change <- function(
             used_sample <- est_data[indices_include_obs, ]
 
             #--------------------------------------------------
-            # calculate number of observations and mean of dependent variable
+            # calculate number of observations
 
             nobs <- used_sample |>
                 dplyr::group_by(
@@ -161,7 +163,6 @@ estimating_regional_effects_change <- function(
                 ) |>
                 dplyr::summarise(
                     nobs_grid = n()
-                    #!!mean_name_grid := mean(.data[[depvar]], na.rm = TRUE)
                 ) |>
                 dplyr::rename(!!time_label := 1) |>
                 dplyr::ungroup() |>
@@ -177,7 +178,6 @@ estimating_regional_effects_change <- function(
                 ) |>
                 dplyr::mutate(
                     nobs_munic = sum(nobs_grid, na.rm = TRUE),
-                    #!!mean_name_munic := mean(.data[[mean_name_grid]], na.rm = TRUE),
                     kid2019 = substring(gid2019, 1, 5)
                 ) |>
                 dplyr::ungroup() |>
@@ -187,7 +187,6 @@ estimating_regional_effects_change <- function(
                 ) |>
                 dplyr::mutate(
                     nobs_district = sum(nobs_grid, na.rm = TRUE)
-                    #!!mean_name_district := mean(.data[[mean_name_grid]], na.rm = TRUE)
                 ) |>
                 dplyr::filter(!is.na(!!rlang::sym(regional_fes[1]))) |>
                 dplyr::rename(grid = ergg_1km) |>
