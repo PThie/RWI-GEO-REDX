@@ -1,6 +1,7 @@
 aggregating_combined_regional_effects_change <- function(
     combined_region_effects_change = NA,
-    grids_municipalities = NA
+    grids_municipalities = NA,
+    grids_lmr = NA
 ) {
     #' @title Aggregating combined regional effects (change values)
     #' 
@@ -12,6 +13,8 @@ aggregating_combined_regional_effects_change <- function(
     #' change values)
     #' @param grids_municipalities Data frame with connection between grids and
     #' municipalities
+    #' @param grids_lmr Dataframe with connection between grids and labor market
+    #' regions (LMR/AMR)
     #' 
     #' @return List with aggregated combined regional effects
     #' @author Patrick Thiel
@@ -52,6 +55,16 @@ aggregating_combined_regional_effects_change <- function(
                     kid2019 = substring(gid2019, 1, 5)
                 )
 
+            # merge LMR IDs
+            combined_effects_prep <- combined_effects_prep |>
+                merge(
+                    grids_lmr,
+                    by.x = "grid",
+                    by.y = "ergg_1km",
+                    all.x = TRUE
+                ) |>
+                dplyr::rename(lmrid = amr)
+            
             #--------------------------------------------------
             # add number of observations at higher level of aggregation
 
