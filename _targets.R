@@ -440,7 +440,8 @@ targets_estimation_region <- rlang::list2(
         aggregated_combined_region_effects,
         aggregating_combined_regional_effects(
             combined_region_effects = combined_region_effects,
-            grids_municipalities = grids_municipalities
+            grids_municipalities = grids_municipalities,
+            grids_lmr = grids_lmr
         )
     ),
     tar_target(
@@ -517,7 +518,8 @@ targets_estimation_change_region <- rlang::list2(
         aggregated_combined_region_effects_change,
         aggregating_combined_regional_effects_change(
             combined_region_effects_change = combined_region_effects_change,
-            grids_municipalities = grids_municipalities
+            grids_municipalities = grids_municipalities,
+            grids_lmr = grids_lmr
         )
     ),
     # TODO: in function
@@ -661,7 +663,7 @@ rlang::list2(
     targets_estimation_time,
     targets_estimation_region,
     targets_estimation_change_region,
-    # targets_test,
+    targets_test,
     targets_pipeline_stats,
     targets_cleanup
 )
