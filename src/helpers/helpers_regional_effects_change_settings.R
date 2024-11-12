@@ -15,7 +15,7 @@ helpers_regional_effects_change_settings <- function(
     #--------------------------------------------------
     # define settings for different time periods
 
-    if (time_period == "ejahr" | time == "year") {
+    if (time_period == "ejahr" | time_period == "year") {
         time_fe_id <- 1
         string_cutoff <- 4
         time_label <- "year"
