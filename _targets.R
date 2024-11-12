@@ -541,6 +541,7 @@ targets_test <- rlang::list2(
     # reading previous version output
     tar_eval(
         list(
+            # regional effects
             tar_file_read(
                 estimated_region_effects_prev_version,
                 file.path(
@@ -555,13 +556,31 @@ targets_test <- rlang::list2(
                 ),
                 reading_estimated_region_effects_prev_version(!!.x),
                 format = "fst"
+            ),
+            # change in regional effects
+            tar_file_read(
+                estimated_region_effects_change_prev_version,
+                file.path(
+                    stringr::str_replace(
+                        config_paths()[["output_path"]],
+                        paste0("version_", config_globals()[["next_version"]]),
+                        paste0("version_", config_globals()[["current_version"]])    
+                    ),
+                    housing_type,
+                    "estimates",
+                    "regional_effects_grids_year_change.xlsx"
+                ),
+                reading_estimated_region_effects_prev_version(!!.x),
+                format = "fst"
             )
         ),
         values = list(
             housing_type = helpers_target_names()[["static_housing_types"]],
-            estimated_region_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_prev_version"]])
+            estimated_region_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_prev_version"]]),
+            estimated_region_effects_change_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_change_prev_version"]])
         )
     ),
+    # regional effects
     tar_file_read(
         combined_estimated_region_effects_prev_version,
         file.path(
@@ -573,6 +592,21 @@ targets_test <- rlang::list2(
             "CI",
             "estimates",
             "combined_regional_effects_grids_year.xlsx"
+        ),
+        reading_estimated_region_effects_prev_version(!!.x),
+        format = "fst"
+    ),
+    tar_file_read(
+        combined_estimated_region_effects_change_prev_version,
+        file.path(
+            stringr::str_replace(
+                config_paths()[["output_path"]],
+                paste0("version_", config_globals()[["next_version"]]),
+                paste0("version_", config_globals()[["current_version"]])    
+            ),
+            "CI",
+            "estimates",
+            "combined_regional_effects_grids_year_change.xlsx"
         ),
         reading_estimated_region_effects_prev_version(!!.x),
         format = "fst"
