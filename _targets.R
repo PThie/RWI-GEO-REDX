@@ -633,7 +633,8 @@ targets_test <- rlang::list2(
         )
     ),
     #--------------------------------------------------
-    # summarise regional effects (current and previous version)
+    # summarise regional effects (current/upcoming and previous version)
+    # regional effects upcoming version
     tar_target(
         summary_stats_region_test,
         testing_summaries_region_effects(
@@ -641,9 +642,11 @@ targets_test <- rlang::list2(
             WK_region_effects = WK_estimated_region_effects,
             WM_region_effects = WM_estimated_region_effects,
             CI_region_effects = combined_region_effects,
-            output_text_file = "overall_summary_stats"
+            output_text_file = "overall_summary_stats",
+            change_effects = FALSE
         )
     ),
+    # regional effects previous version
     tar_target(
         summary_stats_region_test_prev_version,
         testing_summaries_region_effects(
@@ -651,9 +654,37 @@ targets_test <- rlang::list2(
             WK_region_effects = WK_estimated_region_effects_prev_version,
             WM_region_effects = WM_estimated_region_effects_prev_version,
             CI_region_effects = combined_estimated_region_effects_prev_version,
-            output_text_file = "overall_summary_stats_prev_version"
+            output_text_file = "overall_summary_stats_prev_version",
+            change_effects = FALSE
         )
     ),
+    # regional effects changes upcoming version
+    # NOTE: currently works only for yearly changes. code needs to be adjusted
+    # if quarterly changes should be considered as well
+    tar_target(
+        summary_stats_region_change_test,
+        testing_summaries_region_effects(
+            HK_region_effects = HK_estimated_region_effects_change[["year"]],
+            WK_region_effects = WK_estimated_region_effects_change[["year"]],
+            WM_region_effects = WM_estimated_region_effects_change[["year"]],
+            CI_region_effects = combined_region_effects_change[["year"]],
+            output_text_file = "overall_summary_stats_change",
+            change_effects = TRUE
+        )
+    ),
+    # regional effects changes previous version
+    tar_target(
+        summary_stats_region_change_test_prev_version,
+        testing_summaries_region_effects(
+            HK_region_effects = HK_estimated_region_effects_change_prev_version,
+            WK_region_effects = WK_estimated_region_effects_change_prev_version,
+            WM_region_effects = WM_estimated_region_effects_change_prev_version,
+            CI_region_effects = combined_estimated_region_effects_change_prev_version,
+            output_text_file = "overall_summary_stats_change_prev_version",
+            change_effects = TRUE
+        )
+    ),
+    # comparison regional effects upcoming and previous version
     tar_target(
         summary_stats_region_test_comparison,
         testing_differences_region_effects_versions(
