@@ -1,23 +1,47 @@
-helpers_summary_stats <- function(data = NA, housing_type = NA) {
+helpers_summary_stats <- function(
+    data = NA,
+    housing_type = NA,
+    change_effects = NA
+) {
     #' @title Summary statistics
     #' 
     #' @description This function calculates summary statistics for the pindex variable.
     #' 
     #' @param data Dataframe with the pindex variable (housing type specific).
     #' @param housing_type Character string with the housing type.
+    #' @param change_effects Logical if supplied data contains change in regional
+    #' effects
     #' 
     #' @return Dataframe with summary statistics.
     #' @author Patrick Thiel
     
     #--------------------------------------------------
+    # rename pindex variable for change data
     # rename pindex variable (only for CI)
     # because variable is named differently because its the weighted pindex
 
-    if (housing_type == "CI") {
-        data <- data |>
-            dplyr::rename(
-                pindex = weighted_pindex
-            )
+    if (change_effects == FALSE) {
+        if (housing_type == "CI") {
+            data <- data |>
+                dplyr::rename(
+                    pindex = weighted_pindex
+                )
+        }
+    } else {      
+        if (housing_type == "CI") {
+            # remove original pindex variable which is not change
+            data <- data |>
+                dplyr::select(-weighted_pindex) |>
+                dplyr::rename(
+                    pindex = weighted_pindex_change
+                )
+        } else {
+            data <- data |>
+                dplyr::select(-pindex) |>
+                dplyr::rename(
+                    pindex = pindex_change
+                )
+        }
     }
 
     #--------------------------------------------------
