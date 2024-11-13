@@ -23,6 +23,7 @@ exporting_region_effects_change_grids <- function(
     #' @return List with exported region effects
     #' @author Patrick Thiel
     
+    #--------------------------------------------------
     for (time in names(HK_estimated_region_effects_change)) {
         # TODO: expand to quarterly effects later
         # NOTE: focus for now on yearly effects to generate consistent output
