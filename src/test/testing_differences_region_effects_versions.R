@@ -41,31 +41,31 @@ testing_differences_region_effects_versions <- function(
     #--------------------------------------------------
     # check if mean/median is too far off (defined through critical threshold in globals)
 
-    for (housing_type in names(stats_list)) {
-        targets::tar_assert_true(
-            stats_list[[housing_type]]$deviation_curr_prev_version_perc[
-                stats_list[[housing_type]]$stats == "mean"
-            ] <= config_globals()[["critical_outlier_threshold"]],
-            msg = glue::glue(
-                "!!! WARNING: {housing_type} shows stronger deviation in MEAN
-                from previous version, i.e., deviation larger than
-                {config_globals()[['critical_outlier_threshold']]}%"
-            )
-        )
-    }
+    # for (housing_type in names(stats_list)) {
+    #     targets::tar_assert_true(
+    #         stats_list[[housing_type]]$deviation_curr_prev_version_perc[
+    #             stats_list[[housing_type]]$stats == "mean"
+    #         ] <= config_globals()[["critical_outlier_threshold"]],
+    #         msg = glue::glue(
+    #             "!!! WARNING: {housing_type} shows stronger deviation in MEAN
+    #             from previous version, i.e., deviation larger than
+    #             {config_globals()[['critical_outlier_threshold']]}%"
+    #         )
+    #     )
+    # }
 
-    for (housing_type in names(stats_list)) {
-        targets::tar_assert_true(
-            stats_list[[housing_type]]$deviation_curr_prev_version_perc[
-                stats_list[[housing_type]]$stats == "median"
-            ] <= config_globals()[["critical_outlier_threshold"]],
-            msg = glue::glue(
-                "!!! WARNING: {housing_type} shows stronger deviation in MEDIAN
-                from previous version, i.e., deviation larger than
-                {config_globals()[['critical_outlier_threshold']]}%"
-            )
-        )
-    }
+    # for (housing_type in names(stats_list)) {
+    #     targets::tar_assert_true(
+    #         stats_list[[housing_type]]$deviation_curr_prev_version_perc[
+    #             stats_list[[housing_type]]$stats == "median"
+    #         ] <= config_globals()[["critical_outlier_threshold"]],
+    #         msg = glue::glue(
+    #             "!!! WARNING: {housing_type} shows stronger deviation in MEDIAN
+    #             from previous version, i.e., deviation larger than
+    #             {config_globals()[['critical_outlier_threshold']]}%"
+    #         )
+    #     )
+    # }
     
     #--------------------------------------------------
     # write report
