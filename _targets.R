@@ -692,6 +692,16 @@ targets_test <- rlang::list2(
             summary_stats_prev_version = summary_stats_region_test_prev_version,
             output_text_file = "overall_summary_stats_comparison_versions"
         )
+    ),
+    # comparison regional effects changes upcoming and previos version
+    tar_target(
+        summary_stats_region_change_test_comparison,
+        testing_differences_region_effects_versions(
+            summary_stats = summary_stats_region_change_test,
+            summary_stats_prev_version = summary_stats_region_change_test_prev_version,
+            output_text_file = "overall_summary_stats_change_comparison_versions"
+        )
+        
     )
 )
 
