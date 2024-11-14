@@ -709,6 +709,21 @@ targets_test <- rlang::list2(
 )
 
 #--------------------------------------------------
+# visualization
+# mainly for data report
+
+targets_visualization <- rlang::list2(
+    tar_target(
+        map_regional_effects_district,
+        plotting_regional_effects(
+            HK_regional_effects = HK_aggregated_region_effects[["district_year"]],
+            HK_regional_effects_change = HK_aggregated_region_effects_change[["district_year"]],
+            districts_cleaned = districts_cleaned
+        )
+    )
+)
+
+#--------------------------------------------------
 # clean up
 
 targets_cleanup <- rlang::list2(
@@ -742,6 +757,7 @@ rlang::list2(
     targets_estimation_region,
     targets_estimation_change_region,
     targets_test,
+    targets_visualization,
     targets_pipeline_stats,
     targets_cleanup
 )
