@@ -401,6 +401,7 @@ targets_estimation_region <- rlang::list2(
                     housing_type = housing_types
                 )
             ),
+            # TODO: in function
             tar_target(
                 exported_aggregated_region_effects,
                 exporting_aggregated_regional_effects(
@@ -427,6 +428,7 @@ targets_estimation_region <- rlang::list2(
             WM_estimated_region_effects = WM_estimated_region_effects
         )
     ),
+    # TODO: in function
     tar_target(
         exported_region_effects_grids,
         exporting_region_effects_grids(
@@ -444,6 +446,7 @@ targets_estimation_region <- rlang::list2(
             grids_lmr = grids_lmr
         )
     ),
+    # TODO: in function
     tar_target(
         exported_aggregated_combined_region_effects,
         exporting_aggregated_regional_effects(
@@ -612,7 +615,7 @@ targets_test <- rlang::list2(
         format = "fst"
     ),
     #--------------------------------------------------
-    # reading destatis indices
+    # reading destatis indices (just for time effects)
     # comparing RWI-GEO-REDX with Destatis
     tar_file_read(
         destatis_time_effects,
@@ -638,10 +641,10 @@ targets_test <- rlang::list2(
     tar_target(
         summary_stats_region_test,
         testing_summaries_region_effects(
-            HK_region_effects = HK_estimated_region_effects,
-            WK_region_effects = WK_estimated_region_effects,
-            WM_region_effects = WM_estimated_region_effects,
-            CI_region_effects = combined_region_effects,
+            HK_region_effects = HK_estimated_region_effects[["year"]],
+            WK_region_effects = WK_estimated_region_effects[["year"]],
+            WM_region_effects = WM_estimated_region_effects[["year"]],
+            CI_region_effects = combined_region_effects[["year"]],
             output_text_file = "overall_summary_stats",
             change_effects = FALSE
         )
