@@ -156,7 +156,7 @@ estimating_regional_effects_change <- function(
                     !!rlang::sym(regional_fes[1])
                 ) |>
                 dplyr::summarise(
-                    nobs_grid = n()
+                    nobs_grid = dplyr::n()
                 ) |>
                 dplyr::rename(!!time_label := 1) |>
                 dplyr::ungroup() |>
@@ -195,7 +195,10 @@ estimating_regional_effects_change <- function(
                     by = "grid",
                     all.x = TRUE
                 ) |>
-                dplyr::group_by(amr) |>
+                dplyr::group_by(
+                    !!rlang::sym(time_label),
+                    amr
+                ) |>
                 dplyr::mutate(
                     nobs_lmr = sum(nobs_grid, na.rm = TRUE)
                 ) |>
