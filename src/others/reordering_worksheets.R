@@ -1,8 +1,15 @@
 
-reordering_worksheets <- function() {
+reordering_worksheets <- function(
+    housing_types_labels = NA,
+    dependency = NA
+) {
     #' @title Reordering worksheets in export workbooks
     #' 
     #' @description This function reorders the worksheets in the export workbooks.
+    #' 
+    #' @param housing_types_labels Character with housing types
+    #' @param dependency Placeholder for target object that needs to be created
+    #' before executing this function
     #' 
     #' @return NULL
     #' @author Patrick Thiel
@@ -12,10 +19,14 @@ reordering_worksheets <- function() {
     # reorder worksheets
     # save workbooks
 
+    housing_types_labels_extended <- c(
+        housing_types_labels,
+        "CombInd",
+        "GRIDS"
+    )
+
     for (anonym_type in c("PUF", "SUF")) {
-        for (data_type in c("ApPurc", "ApRent", "CombInd", "GRIDS", "HouPurc")) {
-            print(anonym_type)
-            print(data_type)
+        for (data_type in housing_types_labels_extended) {
             # define directory
             directory <- file.path(
                 config_paths()[["output_path"]],
@@ -35,6 +46,18 @@ reordering_worksheets <- function() {
             workbook <- openxlsx::loadWorkbook(directory)
 
             # get sheet names
+            sheet_names <- names(workbook)
+
+            # remove sheet 1
+            # NOTE: gets created when generating an empty workbook
+            if ("Sheet 1" %in% sheet_names) {
+                openxlsx::removeWorksheet(
+                    workbook,
+                    sheet = "Sheet 1"
+                )
+            }
+
+            # update sheet names (in case "Sheet 1" got removed)
             sheet_names <- names(workbook)
 
             # retrieve desired order
