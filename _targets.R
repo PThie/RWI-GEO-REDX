@@ -728,8 +728,17 @@ targets_visualization <- rlang::list2(
 
 targets_cleanup <- rlang::list2(
     tar_target(
+        copy_information_worksheet,
+        copying_information_worksheet(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]]
+        )
+    ),
+    tar_target(
         reorder_worksheets,
-        reordering_worksheets(),
+        reordering_worksheets(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = copy_information_worksheet
+        )
     )
 )
 
@@ -758,6 +767,6 @@ rlang::list2(
     targets_estimation_change_region,
     targets_test,
     targets_visualization,
-    targets_pipeline_stats,
-    targets_cleanup
+    targets_cleanup,
+    targets_pipeline_stats
 )
