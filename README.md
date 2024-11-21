@@ -43,7 +43,7 @@ For more details, especially on the estimates, please refer to the [data report]
 - [Data report RWI-GEO-REDX v14](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v14.pdf). Please cite the data report as: Thiel (2024), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-05/2024 (V14), RWI Projektberichte, Essen
 
 ## DOI
-- Repository for V14.0: [![DOI:10.5281/zenodo.14167835](http://img.shields.io/badge/DOI-10.5281/zenodo.10812938-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
+- Repository for V14.0: [![DOI:10.5281/zenodo.14167835](http://img.shields.io/badge/DOI-10.5281/zenodo.14167835-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
 - RWI-GEO-REDX V14 (PUF): http://doi.org/10.7807/immo:redx:puf:v14
 - RWI-GEO-REDX V14 (SUF): http://doi.org/10.7807/immo:redx:suf:v14
 
