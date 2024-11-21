@@ -2,11 +2,11 @@
 
 This repository shows the detailed preparation and generation of RWI-GEO-REDX price index.
 
-## Abstract Data Description (v13)
+## Abstract Data Description (v14)
 
-The FDZ Ruhr at RWI offers price indices for apartments and houses (rentals and sales) in Germany, commencing in 2008. The price indices are derived from the RWI-GEO-RED real estate dataset, which integrates real estate listings from ImmoScout24. Three types of hedonic regressions are performed to allow for comparisons across time (annual or quarterly), across regions (1 x 1 km, municipality, and district), and in combination across time and regions. Furthermore, starting with V13, we also offer a combined index, whereby all three data sources (apartment rents and sales, and house sales) are combined into a single index. The data are publicly available (PUF) and can be requested from the FDZ Ruhr website. A weakly anonymized version (SUF) is also available for researchers upon request.
+The FDZ Ruhr at RWI offers price indices for apartments and houses (rentals and sales) in Germany, commencing in 2008. The price indices are derived from the RWI-GEO-RED real estate dataset, which integrates real estate listings from ImmoScout24. Three types of hedonic regressions are performed to allow for comparisons across time (annual or quarterly), across regions (1 x 1 km, municipality, district, and labor market region), and in combination across time and regions. Furthermore, starting with V13, we also offer a combined index, whereby all three data sources (apartment rents and sales, and house sales) are combined into a single index. The data are publicly available (PUF) and can be requested from the FDZ Ruhr website. A weakly anonymized version (SUF) is also available for researchers upon request.
 
-This data report constitutes an updated version of previous reports and refers to RWI-GEOREDX v13, which encompasses data up to November 2023.
+This data report constitutes an updated version of previous reports and refers to RWI-GEOREDX v14, which encompasses data up to May 2024.
 
 ## Access
 
@@ -16,7 +16,7 @@ Data access does not require a data use agreement, but users must register to ac
 
 It is not permitted for users to undertake any action that might result in the re-identification of individual homes or apartments.
 
-Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2024): RWIGEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2023 (V13). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v13. Further, we recommend citing this data description.
+Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2024): RWIGEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2023 (V14). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v14. Further, we recommend citing this data description.
 
 ## Data generating process
 
@@ -40,12 +40,12 @@ For more details, especially on the estimates, please refer to the [data report]
 ## More Information
 
 - [General information on RWI-GEO-RED/X](https://www.rwi-essen.de/en/research-advice/further/research-data-center-ruhr-fdz/data-sets/rwi-geo-red/x-real-estate-data-and-price-indices)
-- [Data report RWI-GEO-REDX v13](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v13.pdf). Please cite the data report as: Thiel (2024), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-06/2023 (V13), RWI Projektberichte, Essen
+- [Data report RWI-GEO-REDX v14](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v14.pdf). Please cite the data report as: Thiel (2024), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-05/2024 (V14), RWI Projektberichte, Essen
 
 ## DOI
-- Repository for V13.0: [![DOI:10.5281/zenodo.12166545](http://img.shields.io/badge/DOI-10.5281/zenodo.10812938-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
-- RWI-GEO-REDX V13 (PUF): http://doi.org/10.7807/immo:redx:puf:v13
-- RWI-GEO-REDX V13 (SUF): http://doi.org/10.7807/immo:redx:suf:v13
+- Repository for V14.0: [![DOI:10.5281/zenodo.14167835](http://img.shields.io/badge/DOI-10.5281/zenodo.10812938-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
+- RWI-GEO-REDX V14 (PUF): http://doi.org/10.7807/immo:redx:puf:v14
+- RWI-GEO-REDX V14 (SUF): http://doi.org/10.7807/immo:redx:suf:v14
 
 ## Contact Person
 
@@ -53,4 +53,4 @@ Please contact [Dr. Patrick Thiel](https://www.rwi-essen.de/rwi/team/person/patr
 
 ## Disclaimer
 
-All rights reserved to RWI and the author of the code, Dr. Patrick Thiel.
+All rights reserved to RWI and the author of the code, [Dr. Patrick Thiel](https://www.rwi-essen.de/rwi/team/person/patrick-thiel).
