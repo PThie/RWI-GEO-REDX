@@ -739,6 +739,13 @@ targets_cleanup <- rlang::list2(
             housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
             dependency = copy_information_worksheet
         )
+    ),
+    tar_target(
+        calculate_num_rows_cols_doi,
+        calculating_num_rows_cols_doi(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = reorder_worksheets
+        )
     )
 )
 
