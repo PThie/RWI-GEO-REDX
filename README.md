@@ -6,7 +6,7 @@ This repository shows the detailed preparation and generation of RWI-GEO-REDX pr
 
 The FDZ Ruhr at RWI offers price indices for apartments and houses (rentals and sales) in Germany, commencing in 2008. The price indices are derived from the RWI-GEO-RED real estate dataset, which integrates real estate listings from ImmoScout24. Three types of hedonic regressions are performed to allow for comparisons across time (annual or quarterly), across regions (1 x 1 km, municipality, district, and labor market region), and in combination across time and regions. Furthermore, starting with V13, we also offer a combined index, whereby all three data sources (apartment rents and sales, and house sales) are combined into a single index. The data are publicly available (PUF) and can be requested from the FDZ Ruhr website. A weakly anonymized version (SUF) is also available for researchers upon request.
 
-This data report constitutes an updated version of previous reports and refers to RWI-GEOREDX v14, which encompasses data up to May 2024.
+This data report constitutes an updated version of previous reports and refers to RWI-GEO-REDX v14, which encompasses data up to May 2024.
 
 ## Access
 
@@ -16,7 +16,7 @@ Data access does not require a data use agreement, but users must register to ac
 
 It is not permitted for users to undertake any action that might result in the re-identification of individual homes or apartments.
 
-Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2024): RWIGEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2023 (V14). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v14. Further, we recommend citing this data description.
+Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2024): RWI-GEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2023 (V14). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v14. Further, we recommend citing this data description.
 
 ## Data generating process
 
