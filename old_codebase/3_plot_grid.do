@@ -26,9 +26,9 @@ foreach TYPE of global TYPES {
 	***************************************************************************
 	* paths
 	
-	global DATA_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/output/`TYPE'/data/$month/" 
-	global LOG_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/output/`TYPE'/log/$month/"
-	global OUTPUT_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/output/`TYPE'/output/$month/"
+	global DATA_PATH "DATA_PATH" 
+	global LOG_PATH "LOG_PATH"
+	global OUTPUT_PATH "OUTPUT_PATH"
 
 	***************************************************************************
 	* set up

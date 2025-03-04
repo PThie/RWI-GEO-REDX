@@ -7,7 +7,7 @@
 #--------------------------------------------------
 # paths
 
-main_path <- "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/"
+main_path <- MAIN_PATH # add if needed
 output_path <- file.path(main_path, "output")
 
 #--------------------------------------------------

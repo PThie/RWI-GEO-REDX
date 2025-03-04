@@ -15,7 +15,7 @@ set matsize 10000
 capture log close
 
 * set directory
-global ROOT "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/"
+global ROOT "ROOT_PATH"
 cd "${ROOT}" 
 
 *******************************************************************************
@@ -58,10 +58,10 @@ global red_version "v10"
 *******************************************************************************
 * paths
 
-global RED_PATH "M:/_FDZ/RWI-GEO/RWI-GEO-RED/"
+global RED_PATH "RED_PATH"
 global ORIG_PATH "${RED_PATH}daten/" 
 global PROG_PATH "${ROOT}daten/aufbereitung/prog/"
-global SHAPE_PATH "M:/_FDZ/interne Daten/Gebietseinheit/"
+global SHAPE_PATH "SHAPE_PATH"
 global REFORM_PATH "${ROOT}output/Gemeindereformen/"
 
 * ado paths
