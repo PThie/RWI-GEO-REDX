@@ -13,7 +13,23 @@ reordering_worksheets <- function(
     #' 
     #' @return NULL
     #' @author Patrick Thiel
+    #' 
+    #' @note Technically, the function is returning the last handled workbook.
+    #' However, this returned object is not used in the pipeline. It is only
+    #' returned to establish dependencies in the next step.
     
+    #--------------------------------------------------
+    # check depdenency
+
+    targets::tar_assert_nonempty(
+        dependency,
+        msg = glue::glue(
+            "!!! WARNING:",
+            "The dependency object is empty.",
+            " (Error code: rw#1)"
+        )
+    )
+
     #--------------------------------------------------
     # open workbooks
     # reorder worksheets
@@ -89,5 +105,5 @@ reordering_worksheets <- function(
     #--------------------------------------------------
     # return
     
-    return(NULL)
+    return(workbook)
 }

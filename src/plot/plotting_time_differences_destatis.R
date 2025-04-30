@@ -269,7 +269,7 @@ plotting_time_differences_destatis <- function(
             )
 
             color_labels <- c(
-                "rwi_index" = "House Sales Index (RWI)",
+                "rwi_index" = "Apartment Rent Index (RWI)",
                 "destatis_index" = "Net Rent Index (Destatis)"
             )
 

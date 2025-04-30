@@ -46,7 +46,7 @@ exporting_region_effects_change_grids <- function(
             reshaped_data_list <- list()
             for (dta in names(data_list)) {
                 if (dta == "CI") {
-                    rehaped <- helpers_reshaping_region_effects(
+                    reshaped <- helpers_reshaping_region_effects(
                         region_effects_data = data_list[[dta]],
                         regional_col = "grid",
                         pindex_col = "weighted_pindex_change",

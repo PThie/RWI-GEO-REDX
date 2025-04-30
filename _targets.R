@@ -220,7 +220,7 @@ targets_preparation_geo <- rlang::list2(
         file.path(
             config_paths()[["gebiete_path"]],
             "Zuordnung",
-            "_Gemeinde",
+            "Raster_Gemeinde",
             "2019_Grids_Municipality_Exact_unambiguous.csv"
         ),
         data.table::fread(!!.x) |>
@@ -730,7 +730,11 @@ targets_cleanup <- rlang::list2(
     tar_target(
         copy_information_worksheet,
         copying_information_worksheet(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]]
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependencies = list(
+                exported_region_effects_grids,
+                exported_region_effects_change_grids
+            )
         )
     ),
     tar_target(

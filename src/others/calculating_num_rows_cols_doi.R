@@ -15,6 +15,18 @@ calculating_num_rows_cols_doi <- function(
     #' @author Patrick Thiel
 
     #--------------------------------------------------
+    # check depdenency
+
+    targets::tar_assert_nonempty(
+        dependency,
+        msg = glue::glue(
+            "!!! WARNING:",
+            "The dependency object is empty.",
+            " (Error code: rw#1)"
+        )
+    )
+    
+    #--------------------------------------------------
     # define export file (for storage)
 
     export_file <- file.path(
