@@ -1,5 +1,6 @@
 copying_information_worksheet <- function(
-    housing_types_labels = NA
+    housing_types_labels = NA,
+    dependencies = NA
 ) {
     #' @title Copying information worksheet
     #' 
@@ -8,10 +9,30 @@ copying_information_worksheet <- function(
     #' to the new version.
     #' 
     #' @param housing_types_labels Character with housing types
+    #' @param dependencies List with dependencies. This should ensure that this
+    #' step gets updated when previous steps change.
     #' 
     #' @return NULL, direct export
     #' @author Patrick Thiel
+    #' 
+    #' @note Technically, the function is returning the last handled workbook.
+    #' However, this returned object is not used in the pipeline. It is only
+    #' returned to establish dependencies in the next step.
     
+    #--------------------------------------------------
+    # check for dependencies
+
+    for (dta in dependencies) {
+        targets::tar_assert_nonempty(
+            dta,
+            msg = glue::glue(
+                "!!! WARNING: ",
+                "One of the dependencies is empty.",
+                " (Error code: ciw#1)"
+            )
+        )
+    }
+
     #--------------------------------------------------
     # define options
 
@@ -528,5 +549,5 @@ copying_information_worksheet <- function(
     #--------------------------------------------------
     # return
 
-    return(NULL)
+    return(workbook)
 }
