@@ -366,7 +366,7 @@ copying_information_worksheet <- function(
 
             data_report_red <- paste0(
                 "Data report RWI-GEO-RED: Thiel (",
-                config_globals()[["max_year"]],
+                config_globals()[["red_data_report_year"]],
                 "): FDZ Data description: Real Estate Data for Germany (RWI-GEO-RED ",
                 config_globals()[["red_version"]],
                 ") - Advertisements on the Internet Platform ImmobilienScout24 2007-",
@@ -377,7 +377,7 @@ copying_information_worksheet <- function(
 
             data_report_redx <- paste0(
                 "Data report RWI-GEO-REDX: Thiel (",
-                config_globals()[["max_year"]],
+                config_globals()[["redx_data_report_year"]],
                 "): FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-",
                 as.numeric(config_globals()[["max_month"]]) - 1,
                 "/",
@@ -488,7 +488,7 @@ copying_information_worksheet <- function(
 
             citation <- paste0(
                 "Thiel, RWI, and ImmobilienScout24 (",
-                config_globals()[["max_year"]],
+                config_globals()[["redx_data_publication_year"]],
                 "): RWI-GEO-REDX: Regional Real Estate Price Index for Germany, ",
                 anonym_type,
                 ", 2008-",
