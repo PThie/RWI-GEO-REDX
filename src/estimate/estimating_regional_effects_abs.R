@@ -7,7 +7,7 @@ estimating_regional_effects_abs <- function(
     #' @title Estimating regional effects change
     #' 
     #' @description This function estimates regional effects for a given housing
-    #' type and computes the change relative to the first time period.
+    #' type and returns the FE as regional premium in absolute terms.
     #' 
     #' @param housing_data Data frame with housing data
     #' @param housing_type Housing type
@@ -16,7 +16,8 @@ estimating_regional_effects_abs <- function(
     #' @param grids_lmr Dataframe with connection between grids and labor market
     #' regions (LMR/AMR)
     #' 
-    #' @note This refers to regression 3 in the former Stata coding.
+    #' @note This refers to regression 3 in the former Stata coding but in
+    #' absolute terms.
     #' 
     #' @return List with estimation output
     #' @author Patrick Thiel
