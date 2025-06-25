@@ -2,11 +2,10 @@ aggregating_regional_effects_change <- function(
     estimated_effects_list = NA,
     housing_type = NA
 ) {
-    #' @title Aggregating regional effects (change)
+    #' @title Aggregating regional effects
     #' 
     #' @description This function aggregates regional effects for a given housing
-    #' type to a larger regional level (municipality and districts). It also
-    #' calculates the change between the reference period and the current period.
+    #' type to a larger regional level (municipality, districts, LMR).
     #' 
     #' @param estimated_effects_list List with estimated regional effects
     #' @param housing_type Housing type
@@ -29,9 +28,7 @@ aggregating_regional_effects_change <- function(
             nobs_var <- helpers_regional_effects_settings(agg_level = agg_level)[["nobs_var"]]
             region_id <- helpers_regional_effects_settings(agg_level = agg_level)[["region_id"]]
             region_label <- helpers_regional_effects_settings(agg_level = agg_level)[["region_label"]]
-
             time_label <- helpers_regional_effects_change_settings(time_period = result)[["time_label"]]
-            reference_period <- helpers_regional_effects_change_settings(time_period = result)[["reference_period"]]
 
             #--------------------------------------------------
             # calculate weights
@@ -49,7 +46,7 @@ aggregating_regional_effects_change <- function(
                 )
 
             #--------------------------------------------------
-            # aggregate to higher level   
+            # aggregate to higher level
 
             estimated_effects_agg <- estimated_effects |>
                 dplyr::group_by(
@@ -61,28 +58,6 @@ aggregating_regional_effects_change <- function(
                     !!nobs_var := dplyr::first(.data[[nobs_var]])
                 ) |>
                 dplyr::ungroup()
-
-            #--------------------------------------------------
-            # calculate the change between District_Year - District_2008
-
-            estimated_effects_agg <- estimated_effects_agg |>
-                merge(
-                    estimated_effects_agg |>
-                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
-                        dplyr::rename(weighted_pindex_ref = weighted_pindex) |>
-                        dplyr::select(-c(time_label, nobs_var)),
-                    by = region_id,
-                    all.x = TRUE
-                ) |>
-                dplyr::mutate(
-                    weighted_pindex_change = dplyr::case_when(
-                        !is.na(weighted_pindex) ~ (
-                            (weighted_pindex - weighted_pindex_ref) / weighted_pindex_ref
-                        ) * 100,
-                        TRUE ~ NA_real_
-                    )
-                ) |>
-                dplyr::select(-c(weighted_pindex_ref))
             
             #--------------------------------------------------
             # export
@@ -98,7 +73,7 @@ aggregating_regional_effects_change <- function(
                         region_label,
                         "_",
                         time_label,
-                        "_change.xlsx"
+                        "_absolute.xlsx"
                     )
                 )
             )
