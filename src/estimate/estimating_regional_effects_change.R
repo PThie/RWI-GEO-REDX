@@ -53,7 +53,6 @@ estimating_regional_effects_change <- function(
             time_fe_id <- helpers_regional_effects_change_settings(time_period = time_fe)[["time_fe_id"]]
             string_cutoff <- helpers_regional_effects_change_settings(time_period = time_fe)[["string_cutoff"]]
             time_label <- helpers_regional_effects_change_settings(time_period = time_fe)[["time_label"]]
-            reference_period <- helpers_regional_effects_change_settings(time_period = time_fe)[["reference_period"]]
 
             #--------------------------------------------------
             # create fixed effect combination between regional and time fixed effects
@@ -105,41 +104,22 @@ estimating_regional_effects_change <- function(
             rownames(fixed_effects) <- seq(1, nrow(fixed_effects))
 
             #--------------------------------------------------
-            # calculate deviation from overall mean (= constant)
-            # calculate price index, i.e. delogarithmize the fixed effect deviation
-            # NOTE:: replace orginal fixed effects with deviation (as Stata does
-            # with predict, u)
+            # get the smearing factor
+
+            residuals_log <- stats::residuals(base_mod, type = "response")
+            smearing_factor <- mean(exp(residuals_log))
+
+            #--------------------------------------------------
+            # calculate price index, i.e. delogarithmize the fixed effect
 
             fixed_effects <- fixed_effects |>
                 dplyr::mutate(
-                    pindex = (exp(pindex_FE) - 1) * 100,
+                    pindex = exp(pindex_FE) * smearing_factor,
                     # separate region and time into separate columns
                     !!time_label := substring(id_fe, 1, string_cutoff),
                     grid = substring(id_fe, string_cutoff + 2, nchar(id_fe))
                 ) |>
                 dplyr::select(-c(pindex_FE, id_fe))
-
-            #--------------------------------------------------
-            # calculate the change between District_Year - District_2008
-
-            fixed_effects <- fixed_effects |>
-                merge(
-                    fixed_effects |>
-                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
-                        dplyr::rename(pindex_ref = pindex) |>
-                        dplyr::select(-time_label),
-                    by = "grid",
-                    all.x = TRUE
-                ) |>
-                dplyr::mutate(
-                    pindex_change = dplyr::case_when(
-                        !is.na(pindex_ref) ~ (
-                            (pindex - pindex_ref) / pindex_ref
-                        ) * 100,
-                        TRUE ~ NA_real_
-                    )
-                ) |>
-                dplyr::select(-c(pindex_ref))
             
             #--------------------------------------------------
             # used sample
@@ -225,7 +205,7 @@ estimating_regional_effects_change <- function(
                     config_paths()[["output_path"]],
                     housing_type,
                     "estimates",
-                    paste0("regional_effects_grids_", time_label, "_change.xlsx")
+                    paste0("regional_effects_grids_", time_label, "_absolute.xlsx")
                 )
             )
 
