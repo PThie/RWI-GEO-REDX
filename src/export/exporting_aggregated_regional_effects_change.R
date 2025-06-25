@@ -1,5 +1,5 @@
 exporting_aggregated_regional_effects_change <- function(
-    aggregated_region_effects_change = NA,
+    aggregated_region_effects_list = NA,
     housing_type = NA,
     housing_type_label = NA
 ) {
@@ -20,8 +20,9 @@ exporting_aggregated_regional_effects_change <- function(
     #--------------------------------------------------
     # loop through different regional delineations
 
+    # TODO: Add export for quarterly effects
     results_list <- list()
-    for (region_time in names(aggregated_region_effects_change)) {
+    for (region_time in names(aggregated_region_effects_list)) {
         # TODO: expand to quarterly effects later
         # NOTE: focus for now on yearly effects to generate consistent output
         # for quarterly data the output has to be different since a column per
@@ -39,7 +40,7 @@ exporting_aggregated_regional_effects_change <- function(
             #--------------------------------------------------
             # subset data
 
-            region_data <- aggregated_region_effects_change[[region_time]]
+            region_data <- aggregated_region_effects_list[[region_time]]
 
             # remove NAs in region identifier
             region_data <- region_data[!is.na(region_data[[region_id]]), ]
@@ -50,7 +51,7 @@ exporting_aggregated_regional_effects_change <- function(
             reshaped_data <- helpers_reshaping_region_effects(
                 region_effects_data = region_data,
                 regional_col = region_id,
-                pindex_col = "weighted_pindex_change",
+                pindex_col = "weighted_pindex",
                 nobs_col = nobs_var
             )
 
@@ -110,19 +111,19 @@ exporting_aggregated_regional_effects_change <- function(
 
                 # add sheet if not existent
                 if (
-                    !paste0(sheet_name, "_RegionEff_Change_yearly") %in%
+                    !paste0(sheet_name, "_RegionEff_abs_yearly") %in%
                     names(complete_wb)
                 ) {
                     openxlsx::addWorksheet(
                         complete_wb,
-                        paste0(sheet_name, "_RegionEff_Change_yearly")
+                        paste0(sheet_name, "_RegionEff_abs_yearly")
                     )
                 }
 
                 # write data
                 openxlsx::writeData(
                     wb = complete_wb,
-                    sheet = paste0(sheet_name, "_RegionEff_Change_yearly"),
+                    sheet = paste0(sheet_name, "_RegionEff_abs_yearly"),
                     x = dta
                 )
 
