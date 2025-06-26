@@ -32,7 +32,7 @@ exporting_aggregated_regional_effects_change <- function(
             # general setup
 
             region <- unlist(stringr::str_split(region_time, "_"))[1]
-
+            time_label <- unlist(stringr::str_split(region_time, "_"))[2]
             nobs_var <- helpers_regional_effects_settings(agg_level = region)[["nobs_var"]]
             region_id <- helpers_regional_effects_settings(agg_level = region)[["region_id"]]
             sheet_name <- helpers_regional_effects_settings(agg_level = region)[["sheet_name"]]
@@ -66,6 +66,62 @@ exporting_aggregated_regional_effects_change <- function(
             )
 
             #--------------------------------------------------
+            # add mean
+
+            weighted_means <- region_data |>
+                dplyr::group_by(
+                    !!rlang::sym(time_label)
+                ) |>
+                dplyr::summarise(
+                    overall_weighted_mean = weighted.mean(
+                        weighted_pindex,
+                        w = .data[[nobs_var]],
+                        na.rm = TRUE
+                    )
+                ) |>
+                dplyr::mutate(
+                    # add name column (needed for row binding to overall data)
+                    var_name = paste0(
+                        "pindex",
+                        .data[[time_label]]
+                    ),
+                    # add empty NOBS column (so you have same structure as the 
+                    # overall/ unmeaned data)
+                    nobs_var = paste0(
+                        "NOBS",
+                        .data[[time_label]]
+                    ),
+                    nobs_value = NA_real_
+                )
+            
+            # make wide table (to resemble sorted data)
+            weighted_means_wide <- cbind(
+                weighted_means |>
+                    dplyr::select(var_name, overall_weighted_mean) |>
+                    tidyr::pivot_wider(
+                        names_from = var_name,
+                        values_from = overall_weighted_mean
+                    ),
+                weighted_means |>
+                    dplyr::select(nobs_var, nobs_value) |>
+                    tidyr::pivot_wider(
+                        names_from = nobs_var,
+                        values_from = nobs_value
+                    )
+            )
+
+            # add region id (for row binding with overall data)
+            weighted_means_wide[[region_id]] <- "Weighted Mean"
+
+            # sort columns
+            weighted_means_wide <- helpers_sorting_columns_region_effects(
+                region_effects_data = weighted_means_wide,
+                housing_type = housing_type,
+                regional_col = region_id,
+                grids = FALSE
+            )
+
+            #--------------------------------------------------
             # anonymize the data
             # Only applied to individual housing types (not to the combined index)
 
@@ -79,6 +135,17 @@ exporting_aggregated_regional_effects_change <- function(
             dta_puf <- helpers_anonymizing_region_effects(
                 region_effects_data = sorted_data,
                 SUF = FALSE
+            )
+
+            # add mean
+            dta_suf <- dplyr::bind_rows(
+                dta_suf,
+                weighted_means_wide
+            )
+
+            dta_puf <- dplyr::bind_rows(
+                dta_puf,
+                weighted_means_wide
             )
 
             # store anonymized data
