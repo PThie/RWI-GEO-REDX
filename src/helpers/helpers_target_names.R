@@ -60,12 +60,12 @@ helpers_target_names <- function() {
         "static_estimated_region_effects_abs" = glue::glue(
             "{static_housing_types}_estimated_region_effects_abs"
         ),
-        # "static_aggregated_region_effects_change" = glue::glue(
-        #     "{static_housing_types}_aggregated_region_effects_change"
-        # ),
-        # "static_exported_aggregated_region_effects_change" = glue::glue(
-        #     "{static_housing_types}_exported_aggregated_region_effects_change"
-        # ),
+        "static_aggregated_region_effects_abs" = glue::glue(
+            "{static_housing_types}_aggregated_region_effects_abs"
+        ),
+        "static_exported_aggregated_region_effects_abs" = glue::glue(
+            "{static_housing_types}_exported_aggregated_region_effects_abs"
+        ),
         #--------------------------------------------------
         # Names for testing
         "static_estimated_region_effects_prev_version" = glue::glue(
