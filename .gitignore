@@ -13,3 +13,4 @@ logs/
 output/Thumbs.db
 info_on_paths.txt
 exploring_alternatives/
+.lintr
