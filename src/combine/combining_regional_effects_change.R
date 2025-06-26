@@ -1,20 +1,20 @@
 combining_regional_effects_change <- function(
-    HK_estimated_region_effects_change = NA,
-    WK_estimated_region_effects_change = NA,
-    WM_estimated_region_effects_change = NA
+    HK_estimated_region_effects_abs = NA,
+    WK_estimated_region_effects_abs = NA,
+    WM_estimated_region_effects_abs = NA
 ) {
-    #' @title Combining regional effects (with change values)
+    #' @title Combining regional effects
     #' 
     #' @description This function combines regional effects for all housing types
     #' by weighting the individual housing type results by the number of
-    #' observations. It also calculates the change to the reference period.
+    #' observations.
     #' 
-    #' @param HK_estimated_region_effects_change Estimated regional effects for
-    #' HK (with change values)
-    #' @param WK_estimated_region_effects_change Estimated regional effects for
-    #' WK (with change values)
-    #' @param WM_estimated_region_effects_change Estimated regional effects for
-    #' WM (with change values)
+    #' @param HK_estimated_region_effects_abs Estimated regional effects for
+    #' HK
+    #' @param WK_estimated_region_effects_abs Estimated regional effects for
+    #' WK
+    #' @param WM_estimated_region_effects_abs Estimated regional effects for
+    #' WM
     #' 
     #' @return List with combined regional effects
     #' @author Patrick Thiel    
@@ -33,17 +33,17 @@ combining_regional_effects_change <- function(
         #--------------------------------------------------
         # extract all individual effects
 
-        HK_effects <- HK_estimated_region_effects_change[[result]] |>
+        HK_effects <- HK_estimated_region_effects_abs[[result]] |>
             dplyr::mutate(
                 housing_type = "HK"
             )
 
-        WK_effects <- WK_estimated_region_effects_change[[result]] |>
+        WK_effects <- WK_estimated_region_effects_abs[[result]] |>
             dplyr::mutate(
                 housing_type = "WK"
             )
         
-        WM_effects <- WM_estimated_region_effects_change[[result]] |>
+        WM_effects <- WM_estimated_region_effects_abs[[result]] |>
             dplyr::mutate(
                 housing_type = "WM"
             )
@@ -77,28 +77,6 @@ combining_regional_effects_change <- function(
                 weighted_pindex = sum(weighted_pindex, na.rm = TRUE)
             ) |>
             dplyr::ungroup()
-
-            #--------------------------------------------------
-            # calculate the change between District_Year - District_2008
-
-            weighted_effects <- weighted_effects |>
-                merge(
-                    weighted_effects |>
-                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
-                        dplyr::rename(weighted_pindex_ref = weighted_pindex) |>
-                        dplyr::select(-c(time_label)),
-                    by = "grid",
-                    all.x = TRUE
-                ) |>
-                dplyr::mutate(
-                    weighted_pindex_change = dplyr::case_when(
-                        !is.na(weighted_pindex) ~ (
-                            (weighted_pindex - weighted_pindex_ref) / weighted_pindex_ref
-                        ) * 100,
-                        TRUE ~ NA_real_
-                    )
-                ) |>
-                dplyr::select(-c(weighted_pindex_ref))
 
         #--------------------------------------------------
         # number of observations
@@ -142,7 +120,11 @@ combining_regional_effects_change <- function(
                 config_paths()[["output_path"]],
                 "CI",
                 "estimates",
-                paste0("combined_regional_effects_grids_", time_label, "_change.xlsx")
+                paste0(
+                    "combined_regional_effects_grids_",
+                    time_label,
+                    "_absolute.xlsx"
+                )
             )
         )
 
