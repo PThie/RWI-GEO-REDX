@@ -356,6 +356,29 @@ targets_estimation_region_abs <- rlang::list2(
 )
 
 # branch: deviation within region (absolute and percent) -> refers to table 2 in notes
+targets_deviation_region <- rlang::list2(
+    tar_eval(
+        list(
+            tar_target(
+                deviations_regions_grids,
+                calculating_deviations_regions(
+                    grid_effects_abs = estimated_region_effects_abs
+                )
+            )
+            # export effects (separate by absolute and percent deviations)
+        ),
+        values = list(
+            deviations_regions_grids = rlang::syms(helpers_target_names()[["static_deviations_regions_grids"]]),
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]])
+        )
+    )
+    # Step: aggregate deviations to larger region (absolute and percent)
+    # Step: export deviations (absolute and percent)
+    # Step: calculate combined deviations (percent) -> CI
+    # Step: Aggregate combined deviations (percent)
+    # Step: export aggregated combined deviations (percent)
+)
+
 # branch: deviation between regions (absolute and percent) -> refers to table 3 in notes
 
 #--------------------------------------------------
@@ -598,6 +621,7 @@ rlang::list2(
     # targets_estimation_time, #TODO: DELETE LATER
     # targets_estimation_region, TODO: DELETE POTENTIALLY LATER
     targets_estimation_region_abs,
+    targets_deviation_region,
     # targets_test, TODO: TURN ON LATER (ADJUST)
     # targets_visualization, TODO: TURN ON LATER (ADJUST)
     # targets_cleanup, TODO: TURN ON LATER (ADJUST)
