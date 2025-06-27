@@ -1,4 +1,4 @@
-exporting_region_effects_change_grids <- function(
+exporting_region_effects_abs_grids <- function(
     HK_estimated_region_effects_abs = NA,
     WK_estimated_region_effects_abs = NA,
     WM_estimated_region_effects_abs = NA
@@ -87,7 +87,7 @@ exporting_region_effects_change_grids <- function(
                 housing_type,
                 .after = "grid"
             )
-            
+
             # add to list
             weighted_means_list[[dta]] <- weighted_means
         }
