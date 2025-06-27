@@ -32,6 +32,9 @@ suppressPackageStartupMessages({
     library(docstring)
     library(arrow)
     library(crew)
+    library(stats)
+    library(gdata)
+    library(tidyr)
 })
 
 #----------------------------------------------
@@ -301,93 +304,16 @@ targets_preparation_housing <- rlang::list2(
 )
 
 #--------------------------------------------------
-# Estimation of time effects
-# Currently done for: years and quarters
-# NOTE: This reflects regression 1 in the Stata routine.
+# Estimation of time-region effects
+# NOTE: This reflects regression 3 in the Stata routine but without taking the
+# change in logs.
 
-targets_estimation_time <- rlang::list2(
+targets_estimation_region_abs <- rlang::list2(
     tar_eval(
         list(
             tar_target(
-                estimated_time_effects,
-                estimating_time_effects(
-                    housing_data = housing_cleaned,
-                    housing_type = housing_types,
-                    reference_periods = c("2008", "2008-01"),
-                    export = TRUE
-                )
-            ),
-            tar_target(
-                estimated_time_effects_destatis,
-                estimating_time_effects(
-                    housing_data = housing_cleaned,
-                    housing_type = housing_types,
-                    reference_periods = c("2015", "2015-01"),
-                    export = FALSE
-                )
-            ),
-            tar_target(
-                exported_time_effects,
-                exporting_time_effects(
-                    time_effects = estimated_time_effects,
-                    housing_type_label = housing_type_labels
-                )
-            )
-        ),
-        values = list(
-            housing_types = helpers_target_names()[["static_housing_types"]],
-            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
-            housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
-            estimated_time_effects = rlang::syms(helpers_target_names()[["static_estimated_time_effects"]]),
-            estimated_time_effects_destatis = rlang::syms(helpers_target_names()[["static_estimated_time_effects_destatis"]]),
-            exported_time_effects = rlang::syms(helpers_target_names()[["static_exported_time_effects"]])
-        )
-    ),
-    tar_target(
-        combined_time_effects,
-        combining_time_effects(
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects
-        )
-    ),
-    tar_target(
-        combined_individual_time_plot,
-        plotting_combined_individual_effects(
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects,
-            combined_time_effects = combined_time_effects
-        )
-    ),
-    tar_target(
-        exported_combined_time_effects,
-        exporting_time_effects(
-            time_effects = combined_time_effects,
-            housing_type_label = "CombInd"
-        )
-    ),
-    tar_target(
-        exported_time_effects_grids,
-        exporting_time_effects_grids(
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects,
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            combined_time_effects = combined_time_effects
-        )
-    )
-)
-
-#--------------------------------------------------
-# Estimation of regional effects
-# NOTE: This reflects regression 2 in the Stata routine.
-
-targets_estimation_region <- rlang::list2(
-    tar_eval(
-        list(
-            tar_target(
-                estimated_region_effects,
-                estimating_regional_effects(
+                estimated_region_effects_abs,
+                estimating_regional_effects_abs(
                     housing_data = housing_cleaned,
                     housing_type = housing_types,
                     grids_municipalities = grids_municipalities,
@@ -395,17 +321,16 @@ targets_estimation_region <- rlang::list2(
                 )
             ),
             tar_target(
-                aggregated_region_effects,
-                aggregating_regional_effects(
-                    estimated_region_effects = estimated_region_effects,
+                aggregated_region_effects_abs,
+                aggregating_regional_effects_abs(
+                    estimated_effects_list = estimated_region_effects_abs,
                     housing_type = housing_types
                 )
             ),
-            # TODO: in function
             tar_target(
-                exported_aggregated_region_effects,
-                exporting_aggregated_regional_effects(
-                    aggregated_region_effects = aggregated_region_effects,
+                exported_aggregated_region_effects_abs,
+                exporting_aggregated_regional_effects_abs(
+                    aggregated_region_effects_list = aggregated_region_effects_abs,
                     housing_type = housing_types,
                     housing_type_label = housing_type_labels
                 )
@@ -415,126 +340,23 @@ targets_estimation_region <- rlang::list2(
             housing_types = helpers_target_names()[["static_housing_types"]],
             housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
             housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
-            estimated_region_effects = rlang::syms(helpers_target_names()[["static_estimated_region_effects"]]),
-            aggregated_region_effects = rlang::syms(helpers_target_names()[["static_aggregated_region_effects"]]),
-            exported_aggregated_region_effects = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects"]])
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
+            exported_aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_abs"]])
         )
     ),
     tar_target(
-        combined_region_effects,
-        combining_regional_effects(
-            HK_estimated_region_effects = HK_estimated_region_effects,
-            WK_estimated_region_effects = WK_estimated_region_effects,
-            WM_estimated_region_effects = WM_estimated_region_effects
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_region_effects_grids,
-        exporting_region_effects_grids(
-            HK_estimated_region_effects = HK_estimated_region_effects,
-            WK_estimated_region_effects = WK_estimated_region_effects,
-            WM_estimated_region_effects = WM_estimated_region_effects,
-            combined_region_effects = combined_region_effects
-        )
-    ),
-    tar_target(
-        aggregated_combined_region_effects,
-        aggregating_combined_regional_effects(
-            combined_region_effects = combined_region_effects,
-            grids_municipalities = grids_municipalities,
-            grids_lmr = grids_lmr
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_aggregated_combined_region_effects,
-        exporting_aggregated_regional_effects(
-            aggregated_region_effects = aggregated_combined_region_effects,
-            housing_type = "CI",
-            housing_type_label = "CombInd"
-        )
-    )
-)
-
-#--------------------------------------------------
-# Estimation of regional effects and calculating their change
-# NOTE: This reflects regression 3 in the Stata routine.
-
-targets_estimation_change_region <- rlang::list2(
-    tar_eval(
-        list(
-            tar_target(
-                estimated_region_effects_change,
-                estimating_regional_effects_change(
-                    housing_data = housing_cleaned,
-                    housing_type = housing_types,
-                    grids_municipalities = grids_municipalities,
-                    grids_lmr = grids_lmr
-                )
-            ),
-            tar_target(
-                aggregated_region_effects_change,
-                aggregating_regional_effects_change(
-                    estimated_effects_list = estimated_region_effects_change,
-                    housing_type = housing_types
-                )
-            ),
-            # TODO: in function
-            tar_target(
-                exported_aggregated_region_effects_change,
-                exporting_aggregated_regional_effects_change(
-                    aggregated_region_effects_change = aggregated_region_effects_change,
-                    housing_type = housing_types,
-                    housing_type_label = housing_type_labels
-                )
-            )
-        ),
-        values = list(
-            housing_types = helpers_target_names()[["static_housing_types"]],
-            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
-            housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
-            estimated_region_effects_change = rlang::syms(helpers_target_names()[["static_estimated_region_effects_change"]]),
-            aggregated_region_effects_change = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_change"]]),
-            exported_aggregated_region_effects_change = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_change"]])
-        )
-    ),
-    tar_target(
-        combined_region_effects_change,
-        combining_regional_effects_change(
-            HK_estimated_region_effects_change = HK_estimated_region_effects_change,
-            WK_estimated_region_effects_change = WK_estimated_region_effects_change,
-            WM_estimated_region_effects_change = WM_estimated_region_effects_change
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_region_effects_change_grids,
+        exported_region_effects_abs_grids,
         exporting_region_effects_change_grids(
-            HK_estimated_region_effects_change = HK_estimated_region_effects_change,
-            WK_estimated_region_effects_change = WK_estimated_region_effects_change,
-            WM_estimated_region_effects_change = WM_estimated_region_effects_change,
-            combined_region_effects_change = combined_region_effects_change
-        )
-    ),
-    tar_target(
-        aggregated_combined_region_effects_change,
-        aggregating_combined_regional_effects_change(
-            combined_region_effects_change = combined_region_effects_change,
-            grids_municipalities = grids_municipalities,
-            grids_lmr = grids_lmr
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_aggregated_combined_region_effects_change,
-        exporting_aggregated_regional_effects_change(
-            aggregated_region_effects_change = aggregated_combined_region_effects_change,
-            housing_type = "CI",
-            housing_type_label = "CombInd"
+            HK_estimated_region_effects_abs = HK_estimated_region_effects_abs,
+            WK_estimated_region_effects_abs = WK_estimated_region_effects_abs,
+            WM_estimated_region_effects_abs = WM_estimated_region_effects_abs
         )
     )
 )
+
+# branch: deviation within region (absolute and percent) -> refers to table 2 in notes
+# branch: deviation between regions (absolute and percent) -> refers to table 3 in notes
 
 #--------------------------------------------------
 # Testing output
@@ -773,11 +595,11 @@ rlang::list2(
     targets_preparation_folders,
     targets_preparation_geo,
     targets_preparation_housing,
-    targets_estimation_time,
-    targets_estimation_region,
-    targets_estimation_change_region,
-    targets_test,
-    targets_visualization,
-    targets_cleanup,
+    # targets_estimation_time, #TODO: DELETE LATER
+    # targets_estimation_region, TODO: DELETE POTENTIALLY LATER
+    targets_estimation_region_abs,
+    # targets_test, TODO: TURN ON LATER (ADJUST)
+    # targets_visualization, TODO: TURN ON LATER (ADJUST)
+    # targets_cleanup, TODO: TURN ON LATER (ADJUST)
     targets_pipeline_stats
 )
