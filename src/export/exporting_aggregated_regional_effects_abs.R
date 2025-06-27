@@ -62,60 +62,14 @@ exporting_aggregated_regional_effects_abs <- function(
         )
 
         #--------------------------------------------------
-        # add mean
+        # calculate weighted means across regions
 
-        weighted_means <- region_data |>
-            dplyr::group_by(
-                !!rlang::sym(time_label)
-            ) |>
-            dplyr::summarise(
-                overall_weighted_mean = weighted.mean(
-                    weighted_pindex,
-                    w = .data[[nobs_var]],
-                    na.rm = TRUE
-                )
-            ) |>
-            dplyr::mutate(
-                # add name column (needed for row binding to overall data)
-                var_name = paste0(
-                    "pindex",
-                    .data[[time_label]]
-                ),
-                # add empty NOBS column (so you have same structure as the 
-                # overall/ unmeaned data)
-                nobs_var = paste0(
-                    "NOBS",
-                    .data[[time_label]]
-                ),
-                nobs_value = NA_real_
-            )
-            
-        # make wide table (to resemble sorted data)
-        weighted_means_wide <- cbind(
-            weighted_means |>
-                dplyr::select(var_name, overall_weighted_mean) |>
-                tidyr::pivot_wider(
-                    names_from = var_name,
-                    values_from = overall_weighted_mean
-                ),
-            weighted_means |>
-                dplyr::select(nobs_var, nobs_value) |>
-                tidyr::pivot_wider(
-                    names_from = nobs_var,
-                    values_from = nobs_value
-                )
-        )
-
-        # add region id (for row binding with overall data)
-        weighted_means_wide[[region_id]] <- "Weighted Mean"
-
-        # sort columns
-        weighted_means_wide <- helpers_sorting_columns_region_effects(
-            region_effects_data = weighted_means_wide,
-            housing_type = housing_type,
-            regional_col = region_id,
-            time_col = time_label,
-            grids = FALSE
+        weighted_means <- helpers_calculating_regional_means(
+            region_data = region_data,
+            index_col = "weighted_pindex",
+            region_id_col = region_id,
+            nobs_col = nobs_var,
+            time_col = time_label
         )
 
         #--------------------------------------------------
@@ -137,12 +91,12 @@ exporting_aggregated_regional_effects_abs <- function(
         # add mean
         dta_suf <- dplyr::bind_rows(
             dta_suf,
-            weighted_means_wide
+            weighted_means
         )
 
         dta_puf <- dplyr::bind_rows(
             dta_puf,
-            weighted_means_wide
+            weighted_means
         )
 
         # store anonymized data
