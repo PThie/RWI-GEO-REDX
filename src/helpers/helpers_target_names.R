@@ -55,7 +55,7 @@ helpers_target_names <- function() {
         #     "{static_housing_types}_exported_aggregated_region_effects"
         # ),
         #--------------------------------------------------
-        # Names for estimation of regional effects (change)
+        # Names for estimation of regional effects
         # NOTE: This reflects regression 3 in the Stata routine.
         "static_estimated_region_effects_abs" = glue::glue(
             "{static_housing_types}_estimated_region_effects_abs"
@@ -65,6 +65,11 @@ helpers_target_names <- function() {
         ),
         "static_exported_aggregated_region_effects_abs" = glue::glue(
             "{static_housing_types}_exported_aggregated_region_effects_abs"
+        ),
+        #--------------------------------------------------
+        # Name for calculating deviations within region
+        "static_deviations_regions_grids" = glue::glue(
+            "{static_housing_types}_deviations_regions_grids"
         ),
         #--------------------------------------------------
         # Names for testing
