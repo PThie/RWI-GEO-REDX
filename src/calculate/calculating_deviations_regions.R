@@ -1,61 +1,68 @@
 calculating_deviations_regions <- function(
-    grid_effects_abs = NA
+    aggregated_effects = NA
 ) {
-    #' @title Calculating deviations within region
+    #' @title Calculate deviations for regions
     #' 
-    #' @description This function calculates the deviations within a region from a
-    #' base time period. The deviations are calculated for the absolute
-    #' estimated region effects and the percentage deviations.
+    #' @description This function calculates the deviations of the regional effects
+    #' from a base period. The base period is defined by the settings in the
+    #' `helpers_regional_effects_change_settings` function.
     #' 
-    #' @param grid_effects_abs List of data frames with absolute estimated region.
+    #' @param aggregated_effects List of data frames with the regional effects
     #' 
-    #' @return List of data frames with deviations within region for each time
-    #' period.
+    #' @return List of data frames with the deviations for each region and time period
     #' @author Patrick Thiel
 
     #--------------------------------------------------
-    # calculate deviations within region from base time
 
     results_list <- list()
-    for (time_label in names(grid_effects_abs)) {
+    for (result in names(aggregated_effects)) {
         #--------------------------------------------------
-        # get data
+        # subset for data at hand
 
-        period_data <- grid_effects_abs[[time_label]]
+        region_time_effects <- aggregated_effects[[result]]
 
         #--------------------------------------------------
-        # set up for different time periods
+        # set up for specific regional level and time definitions
+        
+        region_label <- unlist(stringr::str_split(result, "_"))[1]
+        time_label <- unlist(stringr::str_split(result, "_"))[2]
+
+        region_id <- helpers_regional_effects_settings(agg_level = region_label)[["region_id"]]
 
         reference_period <- helpers_regional_effects_change_settings(time_period = time_label)[["reference_period"]]
-    
-        #--------------------------------------------------
-        # add reference value to data
-
-        period_data_ref <- period_data |>
-            merge(
-                period_data |>
-                    dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
-                    dplyr::rename(pindex_ref = pindex) |>
-                    dplyr::select(grid, pindex_ref),
-                by = "grid",
-                all.x = TRUE
-            )
 
         #--------------------------------------------------
-        # calculate deviations within region
+        # merge base period to overall data
 
-        period_data_ref <- period_data_ref |>
+        base_period <- region_time_effects |>
+            dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
+            dplyr::rename(
+                pindex_ref = weighted_pindex
+            ) |>
+            dplyr::select(dplyr::all_of(c(region_id, "pindex_ref")))
+
+        region_time_effects_prep <- merge(
+            region_time_effects,
+            base_period,
+            by = region_id,
+            all.x = TRUE
+        )
+
+        #--------------------------------------------------
+        # calculate deviations within region from base time
+
+        region_time_effects_prep <- region_time_effects_prep |>
             dplyr::mutate(
-                pindex_dev = pindex - pindex_ref,
-                pindex_dev_perc = ((pindex - pindex_ref) / pindex_ref) * 100
+                pindex_dev = weighted_pindex - pindex_ref,
+                pindex_dev_perc = ((weighted_pindex - pindex_ref) / pindex_ref) * 100
             )
 
         #--------------------------------------------------
         # store results
 
-        results_list[[time_label]] <- period_data_ref
+        results_list[[result]] <- region_time_effects_prep
     }
-
+    
     #--------------------------------------------------
     # return
 
