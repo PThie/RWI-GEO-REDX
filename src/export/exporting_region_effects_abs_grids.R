@@ -1,7 +1,9 @@
 exporting_region_effects_abs_grids <- function(
-    HK_estimated_region_effects_abs = NA,
-    WK_estimated_region_effects_abs = NA,
-    WM_estimated_region_effects_abs = NA
+    HK_estimated_region_effects = NA,
+    WK_estimated_region_effects = NA,
+    WM_estimated_region_effects = NA,
+    pindex_col_name = c("pindex", "pindex_dev", "pindex_dev_perc"),
+    excel_name_addendum = c("abs", "dev", "dev_perc")
 ) {
     #' @title Exporting region effects
     #' 
@@ -21,14 +23,14 @@ exporting_region_effects_abs_grids <- function(
     #' @author Patrick Thiel
     
     #--------------------------------------------------
-    for (time_label in names(HK_estimated_region_effects_abs)) {
+    for (time_label in names(HK_estimated_region_effects)) {
         #--------------------------------------------------
         # group all data frames into a list
 
         data_list <- list(
-            HK = HK_estimated_region_effects_abs[[time_label]],
-            WK = WK_estimated_region_effects_abs[[time_label]],
-            WM = WM_estimated_region_effects_abs[[time_label]]
+            HK = HK_estimated_region_effects[[time_label]],
+            WK = WK_estimated_region_effects[[time_label]],
+            WM = WM_estimated_region_effects[[time_label]]
         )
 
         #--------------------------------------------------
@@ -39,11 +41,10 @@ exporting_region_effects_abs_grids <- function(
             reshaped <- helpers_reshaping_region_effects(
                 region_effects_data = data_list[[dta]],
                 regional_col = "grid",
-                pindex_col = "pindex",
+                pindex_col = pindex_col_name,
                 nobs_col = "nobs_grid",
                 time_col = time_label
             )
-            # }
 
             reshaped_data_list[[dta]] <- reshaped
         }
@@ -55,6 +56,7 @@ exporting_region_effects_abs_grids <- function(
         # NOTE: helpers_sorting_columns_region_effects is a helper function (see
         # helpers folder)
 
+        sorted_data_list <- list()
         sorted_data_list <- mapply(
             helpers_sorting_columns_region_effects,
             reshaped_data_list,
@@ -131,20 +133,14 @@ exporting_region_effects_abs_grids <- function(
         # row bind all data frames
         # separate for SUF and PUF
 
-        all_data_SUF <- rbind(
-            data.table::rbindlist(anonymized_data_list[
+        all_data_SUF <- data.table::rbindlist(anonymized_data_list[
                 c("HK_SUF", "WK_SUF", "WM_SUF")
-            ]),
-            anonymized_data_list[["CI_SUF"]]
-        )
+            ])
         
-        all_data_PUF <- rbind(
-            data.table::rbindlist(anonymized_data_list[
+        all_data_PUF <- data.table::rbindlist(anonymized_data_list[
                 c("HK_PUF", "WK_PUF", "WM_PUF")
-            ]),
-            anonymized_data_list[["CI_PUF"]]
-        )
-
+            ])
+        
         # pool together for export
         all_data_list <- list(
             "SUF" = all_data_SUF,
@@ -172,42 +168,32 @@ exporting_region_effects_abs_grids <- function(
                 )
             )
 
+            # define sheet name
+            sheet_name <- paste0(
+                "Grids_RegionEff_",
+                excel_name_addendum,
+                "_",
+                time_label,
+                "ly"
+            )
+
             # add sheet if not existent
-            if (time_label == "year") {
-                if (
-                    !"Grids_RegionEff_abs_yearly" %in%
-                    names(complete_wb)
-                ) {
-                    openxlsx::addWorksheet(
-                        complete_wb,
-                        "Grids_RegionEff_abs_yearly"
-                    )
-                }
-
-                # write data
-                openxlsx::writeData(
-                    wb = complete_wb,
-                    sheet = "Grids_RegionEff_abs_yearly",
-                    x = dta
-                )
-            } else {
-                if (
-                    !"Grids_RegionEff_abs_quarterly" %in%
-                    names(complete_wb)
-                ) {
-                    openxlsx::addWorksheet(
-                        complete_wb,
-                        "Grids_RegionEff_abs_quarterly"
-                    )
-                }
-
-                # write data
-                openxlsx::writeData(
-                    wb = complete_wb,
-                    sheet = "Grids_RegionEff_abs_quarterly",
-                    x = dta
+            if (
+                !sheet_name %in%
+                names(complete_wb)
+            ) {
+                openxlsx::addWorksheet(
+                    complete_wb,
+                    sheet_name
                 )
             }
+
+            # write data
+            openxlsx::writeData(
+                wb = complete_wb,
+                sheet = sheet_name,
+                x = dta
+            )
 
             # export workbook
             openxlsx::saveWorkbook(
