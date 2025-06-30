@@ -348,9 +348,11 @@ targets_estimation_region_abs <- rlang::list2(
     tar_target(
         exported_region_effects_abs_grids,
         exporting_region_effects_abs_grids(
-            HK_estimated_region_effects_abs = HK_estimated_region_effects_abs,
-            WK_estimated_region_effects_abs = WK_estimated_region_effects_abs,
-            WM_estimated_region_effects_abs = WM_estimated_region_effects_abs
+            HK_estimated_region_effects = HK_estimated_region_effects_abs,
+            WK_estimated_region_effects = WK_estimated_region_effects_abs,
+            WM_estimated_region_effects = WM_estimated_region_effects_abs,
+            pindex_col_name = "pindex",
+            excel_name_addendum = "abs"
         )
     )
 )
@@ -379,8 +381,17 @@ targets_deviation_region <- rlang::list2(
             calculated_deviations_regions = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions"]]),
             aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]])
         )
+    ),
+    tar_target(
+        exported_deviations_regions_grids,
+        exporting_region_effects_abs_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
+            pindex_col_name = "pindex_dev",
+            excel_name_addendum = "dev"
+        )
     )
-    # Step: aggregate deviations to larger region (absolute and percent)
     # Step: export deviations (absolute and percent) + calculate mean
     # Step: calculate combined deviations (percent) -> CI + calculate mean
     # Step: Aggregate combined deviations (percent) + calculate mean
