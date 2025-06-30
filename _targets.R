@@ -347,7 +347,7 @@ targets_estimation_region_abs <- rlang::list2(
     ),
     tar_target(
         exported_region_effects_abs_grids,
-        exporting_region_effects_change_grids(
+        exporting_region_effects_abs_grids(
             HK_estimated_region_effects_abs = HK_estimated_region_effects_abs,
             WK_estimated_region_effects_abs = WK_estimated_region_effects_abs,
             WM_estimated_region_effects_abs = WM_estimated_region_effects_abs
@@ -360,22 +360,30 @@ targets_deviation_region <- rlang::list2(
     tar_eval(
         list(
             tar_target(
-                deviations_regions_grids,
-                calculating_deviations_regions(
+                calculated_deviations_regions_grids,
+                calculating_deviations_regions_grids(
                     grid_effects_abs = estimated_region_effects_abs
+                )
+            ),
+            tar_target(
+                calculated_deviations_regions,
+                calculating_deviations_regions(
+                    aggregated_effects = aggregated_region_effects_abs
                 )
             )
             # export effects (separate by absolute and percent deviations)
         ),
         values = list(
-            deviations_regions_grids = rlang::syms(helpers_target_names()[["static_deviations_regions_grids"]]),
-            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]])
+            calculated_deviations_regions_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions_grids"]]),
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
+            calculated_deviations_regions = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]])
         )
     )
     # Step: aggregate deviations to larger region (absolute and percent)
-    # Step: export deviations (absolute and percent)
-    # Step: calculate combined deviations (percent) -> CI
-    # Step: Aggregate combined deviations (percent)
+    # Step: export deviations (absolute and percent) + calculate mean
+    # Step: calculate combined deviations (percent) -> CI + calculate mean
+    # Step: Aggregate combined deviations (percent) + calculate mean
     # Step: export aggregated combined deviations (percent)
 )
 
