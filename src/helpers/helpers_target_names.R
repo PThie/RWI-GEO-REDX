@@ -68,8 +68,11 @@ helpers_target_names <- function() {
         ),
         #--------------------------------------------------
         # Name for calculating deviations within region
-        "static_deviations_regions_grids" = glue::glue(
-            "{static_housing_types}_deviations_regions_grids"
+        "static_calculated_deviations_regions_grids" = glue::glue(
+            "{static_housing_types}_calculated_deviations_regions_grids"
+        ),
+        "static_calculated_deviations_regions" = glue::glue(
+            "{static_housing_types}_calculated_deviations_regions"
         ),
         #--------------------------------------------------
         # Names for testing
