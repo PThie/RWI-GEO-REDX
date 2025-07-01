@@ -3,11 +3,11 @@ combining_regional_effects <- function(
     WK_estimated_region_effects = NA,
     WM_estimated_region_effects = NA
 ) {
-    #' @title Combining regional effects
+    #' @title Combining regional effects at regions (deviations in percent)
     #' 
     #' @description This function combines regional effects for all housing types
-    #' by weighting the individual housing type results by the number of
-    #' observations.
+    #' at the regional level by weighting the individual housing type results
+    #' by the number of observations.
     #' 
     #' @param HK_estimated_region_effects Estimated regional effects for HK
     #' @param WK_estimated_region_effects Estimated regional effects for WK
@@ -20,16 +20,26 @@ combining_regional_effects <- function(
     # combine all indices
 
     results_list <- list()
-    for (result in c("year", "quarter")) {
+    for (region_time in names(HK_estimated_region_effects)) {
+        #--------------------------------------------------
+        # define settings
+
+        region_label <- unlist(stringr::str_split(region_time, "_"))[[1]]
+        time_label <- unlist(stringr::str_split(region_time, "_"))[[2]]
+        region_id <- helpers_regional_effects_settings(agg_level = region_label)[["region_id"]]
+        nobs_var <- helpers_regional_effects_settings(agg_level = region_label)[["nobs_var"]]
+
         #--------------------------------------------------
         # extract all individual effects
 
         # adding housing type
-        HK_effects <- HK_estimated_region_effects[[result]] |>
+        HK_effects <- HK_estimated_region_effects[[region_time]] |>
             dplyr::mutate(housing_type = "HK")
-        WK_effects <- WK_estimated_region_effects[[result]] |>
+        
+        WK_effects <- WK_estimated_region_effects[[region_time]] |>
             dplyr::mutate(housing_type = "WK")
-        WM_effects <- WM_estimated_region_effects[[result]] |>
+        
+        WM_effects <- WM_estimated_region_effects[[region_time]] |>
             dplyr::mutate(housing_type = "WM")
         
         # combine all effects
@@ -44,18 +54,18 @@ combining_regional_effects <- function(
 
         weighted_effects <- regional_effects |>
             dplyr::group_by(
-                !!rlang::sym(result),
-                grid
+                !!rlang::sym(time_label),
+                !!rlang::sym(region_id)
             ) |>
             dplyr::mutate(
-                total_nobs = sum(nobs_grid, na.rm = TRUE),
-                weight = nobs_grid / total_nobs,
-                weighted_pindex = pindex * weight
+                total_nobs = sum(.data[[nobs_var]], na.rm = TRUE),
+                weight = .data[[nobs_var]] / total_nobs,
+                weighted_pindex = pindex_dev_perc * weight
             ) |>
             dplyr::ungroup() |>
             dplyr::group_by(
-                !!rlang::sym(result),
-                grid
+                !!rlang::sym(time_label),
+                !!rlang::sym(region_id)
             ) |>
             dplyr::summarise(
                 weighted_pindex = sum(weighted_pindex, na.rm = TRUE)
@@ -67,15 +77,15 @@ combining_regional_effects <- function(
 
         nobs <- regional_effects |>
             dplyr::select(
-                !!rlang::sym(result),
-                grid,
-                nobs_grid,
+                !!rlang::sym(time_label),
+                !!rlang::sym(region_id),
+                !!rlang::sym(nobs_var),
                 housing_type
             ) |>
             tidyr::pivot_wider(
-                id_cols = c(result, "grid"),
+                id_cols = c(time_label, region_id),
                 names_from = housing_type,
-                values_from = nobs_grid,
+                values_from = !!rlang::sym(nobs_var),
                 names_glue = "{housing_type}_nobs"
             ) |>
             dplyr::mutate(
@@ -92,7 +102,7 @@ combining_regional_effects <- function(
         weighted_effects <- weighted_effects |>
             merge(
                 nobs,
-                by = c(result, "grid")
+                by = c(time_label, region_id)
             )
 
         #--------------------------------------------------
@@ -104,14 +114,20 @@ combining_regional_effects <- function(
                 config_paths()[["output_path"]],
                 "CI",
                 "estimates",
-                paste0("combined_regional_effects_grids_", result, ".xlsx")
+                paste0(
+                    "combined_regional_effects_",
+                    time_label,
+                    "_",
+                    region_label,
+                    "_dev_perc.xlsx"
+                )
             )
         )
 
         #--------------------------------------------------
         # store results
 
-        results_list[[result]] <- weighted_effects
+        results_list[[region_time]] <- weighted_effects
     }
 
     #--------------------------------------------------
