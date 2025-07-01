@@ -347,7 +347,7 @@ targets_estimation_region_abs <- rlang::list2(
     ),
     tar_target(
         exported_region_effects_abs_grids,
-        exporting_region_effects_abs_grids(
+        exporting_region_effects_abs_grids( # TODO: Change name of function. See comment below
             HK_estimated_region_effects = HK_estimated_region_effects_abs,
             WK_estimated_region_effects = WK_estimated_region_effects_abs,
             WM_estimated_region_effects = WM_estimated_region_effects_abs,
@@ -374,6 +374,7 @@ targets_deviation_region <- rlang::list2(
                 )
             )
             # export effects (separate by absolute and percent deviations)
+            # TODO: change once the data format is clear
         ),
         values = list(
             calculated_deviations_regions_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions_grids"]]),
@@ -382,20 +383,37 @@ targets_deviation_region <- rlang::list2(
             aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]])
         )
     ),
+    # TODO: Change once the data format is clear
     tar_target(
         exported_deviations_regions_grids,
-        exporting_region_effects_abs_grids(
+        exporting_region_effects_abs_grids( # TODO: Change name of function because "abs" is not correct. Used for abs and deviations
             HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
             WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
             WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
             pindex_col_name = "pindex_dev",
             excel_name_addendum = "dev"
         )
+    ),
+    # TODO: Calculate means
+    tar_target(
+        combined_deviations_regions_grids,
+        combining_regional_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids
+        )
+    ),
+    # TODO: Calculate means
+    tar_target(
+        combined_deviations_regions,
+        combining_regional_effects(
+            HK_estimated_region_effects = HK_calculated_deviations_regions,
+            WK_estimated_region_effects = WK_calculated_deviations_regions,
+            WM_estimated_region_effects = WM_calculated_deviations_regions
+        )
     )
-    # Step: export deviations (absolute and percent) + calculate mean
-    # Step: calculate combined deviations (percent) -> CI + calculate mean
-    # Step: Aggregate combined deviations (percent) + calculate mean
-    # Step: export aggregated combined deviations (percent)
+
+    # TODO: Step: export aggregated combined deviations (percent)
 )
 
 # branch: deviation between regions (absolute and percent) -> refers to table 3 in notes
