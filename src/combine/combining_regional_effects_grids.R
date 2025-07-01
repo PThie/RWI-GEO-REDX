@@ -1,49 +1,40 @@
-combining_regional_effects_abs <- function(
-    HK_estimated_region_effects_abs = NA,
-    WK_estimated_region_effects_abs = NA,
-    WM_estimated_region_effects_abs = NA
+combining_regional_effects_grids <- function(
+    HK_estimated_region_effects = NA,
+    WK_estimated_region_effects = NA,
+    WM_estimated_region_effects = NA
 ) {
-    #' @title Combining regional effects
+    #' @title Combining regional effects at grid (deviations in percent)
     #' 
     #' @description This function combines regional effects for all housing types
-    #' by weighting the individual housing type results by the number of
-    #' observations.
+    #' at the grid level by weighting the individual housing type results
+    #' (deviations in percent) by the number of observations.
     #' 
-    #' @param HK_estimated_region_effects_abs Estimated regional effects for
-    #' HK
-    #' @param WK_estimated_region_effects_abs Estimated regional effects for
-    #' WK
-    #' @param WM_estimated_region_effects_abs Estimated regional effects for
-    #' WM
+    #' @param HK_estimated_region_effects Estimated regional effects for HK
+    #' @param WK_estimated_region_effects Estimated regional effects for WK
+    #' @param WM_estimated_region_effects Estimated regional effects for WM
     #' 
     #' @return List with combined regional effects
     #' @author Patrick Thiel    
-
+    
     #--------------------------------------------------
     # combine all indices
 
     results_list <- list()
-    for (result in c("year", "quarter")) {
-        #--------------------------------------------------
-        # set up for specific time levels
-
-        time_label <- helpers_regional_effects_change_settings(time_period = result)[["time_label"]]
-        reference_period <- helpers_regional_effects_change_settings(time_period = result)[["reference_period"]]
-
+    for (time_label in names(HK_estimated_region_effects)) {
         #--------------------------------------------------
         # extract all individual effects
 
-        HK_effects <- HK_estimated_region_effects_abs[[result]] |>
+        HK_effects <- HK_estimated_region_effects[[time_label]] |>
             dplyr::mutate(
                 housing_type = "HK"
             )
 
-        WK_effects <- WK_estimated_region_effects_abs[[result]] |>
+        WK_effects <- WK_estimated_region_effects[[time_label]] |>
             dplyr::mutate(
                 housing_type = "WK"
             )
         
-        WM_effects <- WM_estimated_region_effects_abs[[result]] |>
+        WM_effects <- WM_estimated_region_effects[[time_label]] |>
             dplyr::mutate(
                 housing_type = "WM"
             )
@@ -66,7 +57,7 @@ combining_regional_effects_abs <- function(
             dplyr::mutate(
                 total_nobs = sum(nobs_grid, na.rm = TRUE),
                 weight = nobs_grid / total_nobs,
-                weighted_pindex = pindex * weight
+                weighted_pindex = pindex_dev_perc * weight
             ) |>
             dplyr::ungroup() |>
             dplyr::group_by(
@@ -123,7 +114,7 @@ combining_regional_effects_abs <- function(
                 paste0(
                     "combined_regional_effects_grids_",
                     time_label,
-                    "_absolute.xlsx"
+                    "_dev_perc.xlsx"
                 )
             )
         )
