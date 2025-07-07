@@ -1,4 +1,4 @@
-exporting_region_effects_abs_grids <- function(
+exporting_region_effects_grids <- function(
     HK_estimated_region_effects = NA,
     WK_estimated_region_effects = NA,
     WM_estimated_region_effects = NA,
