@@ -329,10 +329,15 @@ targets_estimation_region_abs <- rlang::list2(
             ),
             tar_target(
                 exported_aggregated_region_effects_abs,
+                # TODO: Change function name since ABS is not true
                 exporting_aggregated_regional_effects_abs(
                     aggregated_region_effects_list = aggregated_region_effects_abs,
                     housing_type = housing_types,
-                    housing_type_label = housing_type_labels
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "weighted_pindex",
+                    sheet_name_addendum = "abs",
+                    export_name_addendum = "abs",
+                    dependencies = empty_export_workbooks
                 )
             )
         ),
@@ -347,12 +352,12 @@ targets_estimation_region_abs <- rlang::list2(
     ),
     tar_target(
         exported_region_effects_abs_grids,
-        exporting_region_effects_abs_grids( # TODO: Change name of function. See comment below
+        exporting_region_effects_grids(
             HK_estimated_region_effects = HK_estimated_region_effects_abs,
             WK_estimated_region_effects = WK_estimated_region_effects_abs,
             WM_estimated_region_effects = WM_estimated_region_effects_abs,
             pindex_col_name = "pindex",
-            excel_name_addendum = "abs"
+            export_name_addendum = "abs"
         )
     )
 )
@@ -372,26 +377,63 @@ targets_deviation_region <- rlang::list2(
                 calculating_deviations_regions(
                     aggregated_effects = aggregated_region_effects_abs
                 )
+            ),
+            # TODO: Adjust function name (see comment above)
+            tar_target(
+                exported_aggregated_region_effects_dev,
+                exporting_aggregated_regional_effects_abs(
+                    aggregated_region_effects_list = calculated_deviations_regions,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev",
+                    sheet_name_addendum = "dev",
+                    export_name_addendum = "dev_region",
+                    dependencies = empty_export_workbooks
+                )
+            ),
+            # TODO: Adjust function name (see comment above)
+            tar_target(
+                exported_aggregated_region_effects_dev_perc,
+                exporting_aggregated_regional_effects_abs(
+                    aggregated_region_effects_list = calculated_deviations_regions,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev_perc",
+                    sheet_name_addendum = "devpc",
+                    export_name_addendum = "dev_region",
+                    dependencies = empty_export_workbooks
+                )
             )
-            # export effects (separate by absolute and percent deviations)
-            # TODO: change once the data format is clear
         ),
         values = list(
+            housing_types = helpers_target_names()[["static_housing_types"]],
+            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
             calculated_deviations_regions_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions_grids"]]),
             estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
             calculated_deviations_regions = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions"]]),
-            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]])
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
+            exported_aggregated_region_effects_dev = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev"]]),
+            exported_aggregated_region_effects_dev_perc = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_perc"]])
         )
     ),
-    # TODO: Change once the data format is clear
     tar_target(
-        exported_deviations_regions_grids,
-        exporting_region_effects_abs_grids( # TODO: Change name of function because "abs" is not correct. Used for abs and deviations
+        exported_deviations_regions_grids_dev,
+        exporting_region_effects_grids(
             HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
             WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
             WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
             pindex_col_name = "pindex_dev",
-            excel_name_addendum = "dev"
+            export_name_addendum = "dev_region"
+        )
+    ),
+    tar_target(
+        exported_deviations_regions_grids_dev_perc,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
+            pindex_col_name = "pindex_dev_perc",
+            export_name_addendum = "dev_perc_region"
         )
     ),
     # TODO: Calculate means
