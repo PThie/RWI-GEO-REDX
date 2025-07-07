@@ -330,7 +330,7 @@ targets_estimation_region_abs <- rlang::list2(
             tar_target(
                 exported_aggregated_region_effects_abs,
                 # TODO: Change function name since ABS is not true
-                exporting_aggregated_regional_effects_abs(
+                exporting_aggregated_regional_effects(
                     aggregated_region_effects_list = aggregated_region_effects_abs,
                     housing_type = housing_types,
                     housing_type_label = housing_type_labels,
@@ -381,7 +381,7 @@ targets_deviation_region <- rlang::list2(
             # TODO: Adjust function name (see comment above)
             tar_target(
                 exported_aggregated_region_effects_dev,
-                exporting_aggregated_regional_effects_abs(
+                exporting_aggregated_regional_effects(
                     aggregated_region_effects_list = calculated_deviations_regions,
                     housing_type = housing_types,
                     housing_type_label = housing_type_labels,
@@ -394,7 +394,7 @@ targets_deviation_region <- rlang::list2(
             # TODO: Adjust function name (see comment above)
             tar_target(
                 exported_aggregated_region_effects_dev_perc,
-                exporting_aggregated_regional_effects_abs(
+                exporting_aggregated_regional_effects(
                     aggregated_region_effects_list = calculated_deviations_regions,
                     housing_type = housing_types,
                     housing_type_label = housing_type_labels,

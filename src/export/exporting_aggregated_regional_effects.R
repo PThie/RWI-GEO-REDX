@@ -1,4 +1,4 @@
-exporting_aggregated_regional_effects_abs <- function(
+exporting_aggregated_regional_effects <- function(
     aggregated_region_effects_list = NA,
     housing_type = NA,
     housing_type_label = NA,
