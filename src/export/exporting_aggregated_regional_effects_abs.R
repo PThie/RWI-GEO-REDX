@@ -107,10 +107,13 @@ exporting_aggregated_regional_effects_abs <- function(
         # export
 
         for (dta_name in names(anonymized_data_list)) {
-            dta_name_clean <- stringr::str_remove(
+            # extract anonymization type (SUF or PUF)
+            anonym_type <- stringr::str_remove(
                 dta_name,
                 paste0(housing_type, "_")
             )
+
+            # extract actual data for anonymization type
             dta <- anonymized_data_list[[dta_name]]
 
             # load workbook
@@ -120,11 +123,15 @@ exporting_aggregated_regional_effects_abs <- function(
                     "export",
                     paste0(
                         "RWIGEOREDX_",
-                        housing_type_label,
+                        toupper(housing_type_label),
                         "_",
                         config_globals()[["next_version"]],
                         "_",
-                        dta_name_clean,
+                        anonym_type,
+                        "_",
+                        toupper(time_label),
+                        "_",
+                        "ABS",
                         ".xlsx"
                     )
                 )
@@ -175,11 +182,15 @@ exporting_aggregated_regional_effects_abs <- function(
                     "export",
                     paste0(
                         "RWIGEOREDX_",
-                        housing_type_label,
+                        toupper(housing_type_label),
                         "_",
                         config_globals()[["next_version"]],
                         "_",
-                        dta_name_clean,
+                        anonym_type,
+                        "_",
+                        toupper(time_label),
+                        "_",
+                        "ABS",
                         ".xlsx"
                     )
                 ),
