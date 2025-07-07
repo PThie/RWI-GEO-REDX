@@ -1,7 +1,11 @@
 exporting_aggregated_regional_effects_abs <- function(
     aggregated_region_effects_list = NA,
     housing_type = NA,
-    housing_type_label = NA
+    housing_type_label = NA,
+    pindex_col_name = c("weighted_pindex", "pindex_dev", "pindex_dev_perc"),
+    sheet_name_addendum = c("abs", "dev", "dev_perc"),
+    export_name_addendum = c("abs", "dev_cross", "dev_region"),
+    dependencies = NA
 ) {
     #' @title Exporting aggregated regional effects (change values)
     #' 
@@ -13,9 +17,18 @@ exporting_aggregated_regional_effects_abs <- function(
     #' effects (change values)
     #' @param housing_type Housing type
     #' @param housing_type_label Housing type labels
+    #' @param pindex_col_name Name of the column with the price index
+    #' @param sheet_name_addendum Addendum for the sheet name
+    #' @param export_name_addendum Addendum for the exported file name
+    #' @param dependencies Dependencies for the function
     #' 
     #' @return List with exported aggregated regional effects (change values)
     #' @author Patrick Thiel
+
+    #--------------------------------------------------
+    # check dependencies
+
+    targets::tar_assert_nonempty(dependencies)
 
     #--------------------------------------------------
     # loop through different regional delineations
@@ -45,7 +58,7 @@ exporting_aggregated_regional_effects_abs <- function(
         reshaped_data <- helpers_reshaping_region_effects(
             region_effects_data = region_data,
             regional_col = region_id,
-            pindex_col = "weighted_pindex",
+            pindex_col = pindex_col_name,
             nobs_col = nobs_var,
             time_col = time_label
         )
@@ -66,7 +79,7 @@ exporting_aggregated_regional_effects_abs <- function(
 
         weighted_means <- helpers_calculating_regional_means(
             region_data = region_data,
-            index_col = "weighted_pindex",
+            index_col = pindex_col_name,
             region_id_col = region_id,
             nobs_col = nobs_var,
             time_col = time_label
@@ -131,7 +144,7 @@ exporting_aggregated_regional_effects_abs <- function(
                         "_",
                         toupper(time_label),
                         "_",
-                        "ABS",
+                        toupper(export_name_addendum),
                         ".xlsx"
                     )
                 )
@@ -140,36 +153,36 @@ exporting_aggregated_regional_effects_abs <- function(
             # add sheet if not existent
             if (time_label == "year") {
                 if (
-                    !paste0(sheet_name, "_RegionEff_abs_yearly") %in%
+                    !paste0(sheet_name, "_RegionEff_", sheet_name_addendum, "_yearly") %in%
                     names(complete_wb)
                 ) {
                     openxlsx::addWorksheet(
                         complete_wb,
-                        paste0(sheet_name, "_RegionEff_abs_yearly")
+                        paste0(sheet_name, "_RegionEff_", sheet_name_addendum, "_yearly")
                     )
                 }
 
                 # write data
                 openxlsx::writeData(
                     wb = complete_wb,
-                    sheet = paste0(sheet_name, "_RegionEff_abs_yearly"),
+                    sheet = paste0(sheet_name, "_RegionEff_", sheet_name_addendum, "_yearly"),
                     x = dta
                 )
             } else {
                 if (
-                    !paste0(sheet_name, "_RegionEff_abs_quarterly") %in%
+                    !paste0(sheet_name, "_RegionEff_", sheet_name_addendum, "_quarterly") %in%
                     names(complete_wb)
                 ) {
                     openxlsx::addWorksheet(
                         complete_wb,
-                        paste0(sheet_name, "_RegionEff_abs_quarterly")
+                        paste0(sheet_name, "_RegionEff_", sheet_name_addendum, "_quarterly")
                     )
                 }
 
                 # write data
                 openxlsx::writeData(
                     wb = complete_wb,
-                    sheet = paste0(sheet_name, "_RegionEff_abs_quarterly"),
+                    sheet = paste0(sheet_name, "_RegionEff_", sheet_name_addendum, "_quarterly"),
                     x = dta
                 )
             }
@@ -190,7 +203,7 @@ exporting_aggregated_regional_effects_abs <- function(
                         "_",
                         toupper(time_label),
                         "_",
-                        "ABS",
+                        toupper(export_name_addendum),
                         ".xlsx"
                     )
                 ),
