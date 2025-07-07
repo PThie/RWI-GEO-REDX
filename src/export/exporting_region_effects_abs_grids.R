@@ -3,7 +3,7 @@ exporting_region_effects_abs_grids <- function(
     WK_estimated_region_effects = NA,
     WM_estimated_region_effects = NA,
     pindex_col_name = c("pindex", "pindex_dev", "pindex_dev_perc"),
-    excel_name_addendum = c("abs", "dev", "dev_perc")
+    export_name_addendum = c("abs", "dev", "dev_perc")
 ) {
     #' @title Exporting region effects
     #' 
@@ -12,17 +12,20 @@ exporting_region_effects_abs_grids <- function(
     #' The data is also anonymized (individual housing types only, NOT combined
     #' index).
     #' 
-    #' @param HK_estimated_region_effects_abs Data frame with estimated region
+    #' @param HK_estimated_region_effects Data frame with estimated region
     #' effects for housing type HK
-    #' @param WK_estimated_region_effects_abs Data frame with estimated region
+    #' @param WK_estimated_region_effects Data frame with estimated region
     #' effects for housing type WK
-    #' @param WM_estimated_region_effects_abs Data frame with estimated region
+    #' @param WM_estimated_region_effects Data frame with estimated region
     #' effects for housing type WM
+    #' @param pindex_col_name Name of the column with the price index
+    #' @param export_name_addendum Addendum for the exported file name
     #' 
     #' @return List with exported region effects
     #' @author Patrick Thiel
     
     #--------------------------------------------------
+    all_results <- list()
     for (time_label in names(HK_estimated_region_effects)) {
         #--------------------------------------------------
         # group all data frames into a list
@@ -150,73 +153,54 @@ exporting_region_effects_abs_grids <- function(
         #--------------------------------------------------
         # export
 
-        for (dta_name in names(all_data_list)) {
-            dta <- all_data_list[[dta_name]]
+        for (anonym_type in names(all_data_list)) {
+            dta <- all_data_list[[anonym_type]]
 
-            # load workbook
-            complete_wb <- openxlsx::loadWorkbook(
-                file.path(
-                    config_paths()[["output_path"]],
-                    "export",
-                    paste0(
-                        "RWIGEOREDX_GRIDS_",
-                        config_globals()[["next_version"]],
-                        "_",
-                        dta_name,
-                        ".xlsx"
+            # create export directory
+            directory <- file.path(
+                config_paths()[["output_path"]],
+                "export",
+                paste0(
+                    "RWIGEOREDX_GRIDS_",
+                    config_globals()[["next_version"]],
+                    "_",
+                    anonym_type,
+                    "_",
+                    toupper(time_label),
+                    "_",
+                    toupper(export_name_addendum)
+                )
+            )
+
+            # export data in CSV and parquet format
+            for (file_format in c("csv", "parquet")) {
+                file_name <- paste0(
+                    directory,
+                    ".",
+                    file_format
+                )
+
+                if (file_format == "csv") {
+                    data.table::fwrite(
+                        dta,
+                        file_name,
+                        row.names = FALSE
                     )
-                )
-            )
-
-            # define sheet name
-            sheet_name <- paste0(
-                "Grids_RegionEff_",
-                excel_name_addendum,
-                "_",
-                time_label,
-                "ly"
-            )
-
-            # add sheet if not existent
-            if (
-                !sheet_name %in%
-                names(complete_wb)
-            ) {
-                openxlsx::addWorksheet(
-                    complete_wb,
-                    sheet_name
-                )
+                } else {
+                    arrow::write_parquet(
+                        dta,
+                        file_name
+                    )
+                }
             }
-
-            # write data
-            openxlsx::writeData(
-                wb = complete_wb,
-                sheet = sheet_name,
-                x = dta
-            )
-
-            # export workbook
-            openxlsx::saveWorkbook(
-                complete_wb,
-                file = file.path(
-                    config_paths()[["output_path"]],
-                    "export",
-                    paste0(
-                        "RWIGEOREDX_",
-                        "GRIDS_",
-                        config_globals()[["next_version"]],
-                        "_",
-                        dta_name,
-                        ".xlsx"
-                    )
-                ),
-                overwrite = TRUE
-            )
         }
+
+        # store all results
+        all_results[[time_label]] <- all_data_list
     }
     
     #--------------------------------------------------
     # return
 
-    return(all_data_list)
+    return(all_results)
 }
