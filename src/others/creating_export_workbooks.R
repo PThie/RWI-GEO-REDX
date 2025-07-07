@@ -4,7 +4,7 @@ creating_export_workbooks <- function() {
     #' @description This function creates empty workbooks for the export of the
     #' REDGEOREDX data which is the final data which goes to the user.
     #' 
-    #' @return NULL
+    #' @return Key word "WORKED" to indicate that the function has run
     #' @author Patrick Thiel
 
     #--------------------------------------------------
@@ -80,5 +80,5 @@ creating_export_workbooks <- function() {
     #--------------------------------------------------
     # return
 
-    return(NULL)
+    return("WORKED")
 }
