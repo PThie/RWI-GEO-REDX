@@ -162,7 +162,7 @@ exporting_region_effects_grids <- function(
                 "export",
                 paste0(
                     "RWIGEOREDX_GRIDS_",
-                    config_globals()[["next_version"]],
+                    toupper(config_globals()[["next_version"]]),
                     "_",
                     anonym_type,
                     "_",
