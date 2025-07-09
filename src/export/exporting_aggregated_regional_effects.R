@@ -44,6 +44,11 @@ exporting_aggregated_regional_effects <- function(
         region_id <- helpers_regional_effects_settings(agg_level = region)[["region_id"]]
         sheet_name <- helpers_regional_effects_settings(agg_level = region)[["sheet_name"]]
 
+        if (housing_type == "CI") {
+            # NOTE: overwrite NOBS variable for combined index
+            nobs_var <- "total_nobs"
+        }
+
         #--------------------------------------------------
         # subset data
 
@@ -138,7 +143,7 @@ exporting_aggregated_regional_effects <- function(
                         "RWIGEOREDX_",
                         toupper(housing_type_label),
                         "_",
-                        config_globals()[["next_version"]],
+                        toupper(config_globals()[["next_version"]]),
                         "_",
                         anonym_type,
                         "_",
@@ -197,7 +202,7 @@ exporting_aggregated_regional_effects <- function(
                         "RWIGEOREDX_",
                         toupper(housing_type_label),
                         "_",
-                        config_globals()[["next_version"]],
+                        toupper(config_globals()[["next_version"]]),
                         "_",
                         anonym_type,
                         "_",
