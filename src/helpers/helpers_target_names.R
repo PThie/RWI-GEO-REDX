@@ -67,7 +67,7 @@ helpers_target_names <- function() {
             "{static_housing_types}_exported_aggregated_region_effects_abs"
         ),
         #--------------------------------------------------
-        # Name for calculating deviations within region
+        # Names for calculating deviations within region
         "static_calculated_deviations_regions_grids" = glue::glue(
             "{static_housing_types}_calculated_deviations_regions_grids"
         ),
@@ -79,6 +79,11 @@ helpers_target_names <- function() {
         ),
         "static_exported_aggregated_region_effects_dev_perc" = glue::glue(
             "{static_housing_types}_exported_aggregated_region_effects_dev_perc"
+        ),
+        #--------------------------------------------------
+        # Names for calculating deviations between regions ("cross-section")
+        "static_calculated_deviations_cross_grids" = glue::glue(
+            "{static_housing_types}_calculated_deviations_cross_grids"
         ),
         #--------------------------------------------------
         # Names for testing
