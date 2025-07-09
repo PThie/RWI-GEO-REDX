@@ -59,6 +59,9 @@ helpers_target_names <- function() {
         "static_calculated_deviations_cross_grids" = glue::glue(
             "{static_housing_types}_calculated_deviations_cross_grids"
         ),
+        "static_calculated_deviations_cross" = glue::glue(
+            "{static_housing_types}_calculated_deviations_cross"
+        ),
         #--------------------------------------------------
         # Names for testing
         "static_estimated_region_effects_prev_version" = glue::glue(
