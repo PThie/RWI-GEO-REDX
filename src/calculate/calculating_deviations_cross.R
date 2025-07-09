@@ -60,7 +60,7 @@ calculating_deviations_cross <- function(
         #--------------------------------------------------
         # store results
 
-        results_list[[time_label]] <- region_time_effects_ref
+        results_list[[region_time]] <- region_time_effects_ref
     }
 
     #--------------------------------------------------
