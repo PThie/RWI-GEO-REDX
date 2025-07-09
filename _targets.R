@@ -509,13 +509,21 @@ targets_deviation_cross <- rlang::list2(
                 calculating_deviations_cross_grids(
                     grid_effects_abs = estimated_region_effects_abs
                 )
+            ),
+            tar_target(
+                calculated_deviations_cross,
+                calculating_deviations_cross(
+                    aggregated_effects = aggregated_region_effects_abs
+                )
             )
         ),
         values = list(
             housing_types = helpers_target_names()[["static_housing_types"]],
             housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
             calculated_deviations_cross_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross_grids"]]),
-            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]])
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
+            calculated_deviations_cross = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross"]])
         )
     )
 )
@@ -758,8 +766,6 @@ rlang::list2(
     targets_preparation_folders,
     targets_preparation_geo,
     targets_preparation_housing,
-    # targets_estimation_time, #TODO: DELETE LATER
-    # targets_estimation_region, TODO: DELETE POTENTIALLY LATER
     targets_estimation_region_abs,
     targets_deviation_region,
     targets_deviation_cross,
