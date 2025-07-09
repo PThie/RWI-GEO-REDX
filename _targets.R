@@ -463,7 +463,8 @@ targets_deviation_region <- rlang::list2(
         combining_regional_effects_grids(
             HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
             WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
-            WM_estimated_region_effects = WM_calculated_deviations_regions_grids
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
+            export_name_addendum = "region"
         )
     ),
     tar_target(
@@ -473,7 +474,7 @@ targets_deviation_region <- rlang::list2(
             pindex_col_name = "weighted_pindex",
             nvar = "total_nobs",
             housing_type = "CI",
-            export_name_addendum = "dev_perc"
+            export_name_addendum = "dev_perc_region"
         )
     ),
     tar_target(
@@ -481,7 +482,8 @@ targets_deviation_region <- rlang::list2(
         combining_regional_effects(
             HK_estimated_region_effects = HK_calculated_deviations_regions,
             WK_estimated_region_effects = WK_calculated_deviations_regions,
-            WM_estimated_region_effects = WM_calculated_deviations_regions
+            WM_estimated_region_effects = WM_calculated_deviations_regions,
+            export_name_addendum = "region"
         )
     ),
     tar_target(
@@ -570,6 +572,46 @@ targets_deviation_cross <- rlang::list2(
             WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
             pindex_col_name = "pindex_dev_perc",
             export_name_addendum = "dev_perc_cross"
+        )
+    ),
+    tar_target(
+        combined_deviations_cross_grids,
+        combining_regional_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_cross_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_cross_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
+            export_name_addendum = "cross"
+        )
+    ),
+    tar_target(
+        exported_deviations_combined_grids_dev_perc_cross,
+        exporting_combined_deviations_regions_grids(
+            combined_effects = combined_deviations_cross_grids,
+            pindex_col_name = "weighted_pindex",
+            nvar = "total_nobs",
+            housing_type = "CI",
+            export_name_addendum = "dev_perc_cross"
+        )
+    ),
+    tar_target(
+        combined_deviations_cross,
+        combining_regional_effects(
+            HK_estimated_region_effects = HK_calculated_deviations_cross,
+            WK_estimated_region_effects = WK_calculated_deviations_cross,
+            WM_estimated_region_effects = WM_calculated_deviations_cross,
+            export_name_addendum = "cross"
+        )
+    ),
+    tar_target(
+        exported_combined_deviations_cross_dev_perc,
+        exporting_aggregated_regional_effects(
+            aggregated_region_effects_list = combined_deviations_cross,
+            housing_type = "CI",
+            housing_type_label = "CombInd",
+            pindex_col_name = "weighted_pindex",
+            sheet_name_addendum = "devpc",
+            export_name_addendum = "dev_cross",
+            dependencies = empty_export_workbooks
         )
     )
 )
