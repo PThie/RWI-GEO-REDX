@@ -384,7 +384,9 @@ targets_estimation_region_abs <- rlang::list2(
     )
 )
 
-# branch: deviation within region (absolute and percent) -> refers to table 2 in notes
+#--------------------------------------------------
+# branch: deviation within region (absolute and percent)
+
 targets_deviation_region <- rlang::list2(
     tar_eval(
         list(
@@ -474,7 +476,6 @@ targets_deviation_region <- rlang::list2(
             export_name_addendum = "dev_perc"
         )
     ),
-    # TODO: Calculate means
     tar_target(
         combined_deviations_regions,
         combining_regional_effects(
@@ -482,9 +483,19 @@ targets_deviation_region <- rlang::list2(
             WK_estimated_region_effects = WK_calculated_deviations_regions,
             WM_estimated_region_effects = WM_calculated_deviations_regions
         )
+    ),
+    tar_target(
+        exported_combined_deviations_regions_dev_perc,
+        exporting_aggregated_regional_effects(
+            aggregated_region_effects_list = combined_deviations_regions,
+            housing_type = "CI",
+            housing_type_label = "CombInd",
+            pindex_col_name = "weighted_pindex",
+            sheet_name_addendum = "devpc",
+            export_name_addendum = "dev_region",
+            dependencies = empty_export_workbooks
+        )
     )
-
-    # TODO: Step: export aggregated combined deviations (percent)
 )
 
 # branch: deviation between regions (absolute and percent) -> refers to table 3 in notes
