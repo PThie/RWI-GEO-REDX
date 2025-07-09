@@ -1,16 +1,16 @@
 calculating_deviations_cross_grids <- function(
     grid_effects_abs = NA
 ) {
-    #' @title Calculating deviations between regions (cross-section)
+    #' @title Calculating deviations between grids (cross-section)
     #' 
-    #' @description This function calculates deviations between regions
-    #' (cross-section)for the absolute and percent price index values. The
+    #' @description This function calculates deviations between grids
+    #' (cross-section) for the absolute and percent price index values. The
     #' deviations are calculated relative to the overall mean of the price index
     #' values for each time period.
     #' 
     #' @param grid_effects_abs List of data frames with absolute estimated region.
     #' 
-    #' @return List of data frames with deviations across region for each time
+    #' @return List of data frames with deviations across grids for each time
     #' period.
     #' @author Patrick Thiel
     
