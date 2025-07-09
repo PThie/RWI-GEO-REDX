@@ -515,6 +515,30 @@ targets_deviation_cross <- rlang::list2(
                 calculating_deviations_cross(
                     aggregated_effects = aggregated_region_effects_abs
                 )
+            ),
+            tar_target(
+                exported_aggregated_region_effects_dev_cross,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects_list = calculated_deviations_cross,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev",
+                    sheet_name_addendum = "dev",
+                    export_name_addendum = "dev_cross",
+                    dependencies = empty_export_workbooks
+                )
+            ),
+            tar_target(
+                exported_aggregated_region_effects_dev_perc_cross,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects_list = calculated_deviations_cross,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev_perc",
+                    sheet_name_addendum = "devpc",
+                    export_name_addendum = "dev_cross",
+                    dependencies = empty_export_workbooks
+                )
             )
         ),
         values = list(
@@ -523,7 +547,9 @@ targets_deviation_cross <- rlang::list2(
             calculated_deviations_cross_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross_grids"]]),
             estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
             aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
-            calculated_deviations_cross = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross"]])
+            calculated_deviations_cross = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross"]]),
+            exported_aggregated_region_effects_dev_cross = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_cross"]]),
+            exported_aggregated_region_effects_dev_perc_cross = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_perc_cross"]])
         )
     )
 )
