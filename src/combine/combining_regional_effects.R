@@ -1,7 +1,8 @@
 combining_regional_effects <- function(
     HK_estimated_region_effects = NA,
     WK_estimated_region_effects = NA,
-    WM_estimated_region_effects = NA
+    WM_estimated_region_effects = NA,
+    export_name_addendum = c("cross", "region")
 ) {
     #' @title Combining regional effects at regions (deviations in percent)
     #' 
@@ -12,6 +13,7 @@ combining_regional_effects <- function(
     #' @param HK_estimated_region_effects Estimated regional effects for HK
     #' @param WK_estimated_region_effects Estimated regional effects for WK
     #' @param WM_estimated_region_effects Estimated regional effects for WM
+    #' @param export_name_addendum Addendum for the exported file name
     #' 
     #' @return List with combined regional effects
     #' @author Patrick Thiel    
@@ -119,7 +121,9 @@ combining_regional_effects <- function(
                     time_label,
                     "_",
                     region_label,
-                    "_dev_perc.xlsx"
+                    "_dev_perc_",
+                    export_name_addendum,
+                    ".xlsx"
                 )
             )
         )
