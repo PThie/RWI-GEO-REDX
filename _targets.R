@@ -498,7 +498,28 @@ targets_deviation_region <- rlang::list2(
     )
 )
 
-# branch: deviation between regions (absolute and percent) -> refers to table 3 in notes
+#--------------------------------------------------
+# branch: deviation between regions ("cross-section") (absolute and percent)
+
+targets_deviation_cross <- rlang::list2(
+    tar_eval(
+        list(
+            tar_target(
+                calculated_deviations_cross_grids,
+                calculating_deviations_cross_grids(
+                    grid_effects_abs = estimated_region_effects_abs
+                )
+            )
+        ),
+        values = list(
+            housing_types = helpers_target_names()[["static_housing_types"]],
+            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
+            calculated_deviations_cross_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross_grids"]]),
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]])
+        )
+    )
+)
+
 
 #--------------------------------------------------
 # Testing output
@@ -741,6 +762,7 @@ rlang::list2(
     # targets_estimation_region, TODO: DELETE POTENTIALLY LATER
     targets_estimation_region_abs,
     targets_deviation_region,
+    targets_deviation_cross,
     # targets_test, TODO: TURN ON LATER (ADJUST)
     # targets_visualization, TODO: TURN ON LATER (ADJUST)
     # targets_cleanup, TODO: TURN ON LATER (ADJUST)
