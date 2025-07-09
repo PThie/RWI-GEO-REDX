@@ -29,32 +29,6 @@ helpers_target_names <- function() {
             "{static_housing_types}_cleaned"
         ),
         #--------------------------------------------------
-        # TODO: DELETE LATER
-        # Names for estimation of time effects
-        # NOTE: This reflects regression 1 in the Stata routine.
-        # "static_estimated_time_effects" = glue::glue(
-        #     "{static_housing_types}_estimated_time_effects"
-        # ),
-        # "static_estimated_time_effects_destatis" = glue::glue(
-        #     "{static_housing_types}_estimated_time_effects_destatis"
-        # ),
-        # "static_exported_time_effects" = glue::glue(
-        #     "{static_housing_types}_exported_time_effects"
-        # ),
-        #--------------------------------------------------
-        # TODO: DELETE LATER
-        # Names for estimation of regional effects
-        # NOTE: This reflects regression 2 in the Stata routine.
-        # "static_estimated_region_effects" = glue::glue(
-        #     "{static_housing_types}_estimated_region_effects"
-        # ),
-        # "static_aggregated_region_effects" = glue::glue(
-        #     "{static_housing_types}_aggregated_region_effects"
-        # ),
-        # "static_exported_aggregated_region_effects" = glue::glue(
-        #     "{static_housing_types}_exported_aggregated_region_effects"
-        # ),
-        #--------------------------------------------------
         # Names for estimation of regional effects
         # NOTE: This reflects regression 3 in the Stata routine.
         "static_estimated_region_effects_abs" = glue::glue(
