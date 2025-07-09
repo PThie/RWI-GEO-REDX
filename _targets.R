@@ -551,6 +551,26 @@ targets_deviation_cross <- rlang::list2(
             exported_aggregated_region_effects_dev_cross = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_cross"]]),
             exported_aggregated_region_effects_dev_perc_cross = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_perc_cross"]])
         )
+    ),
+    tar_target(
+        exported_deviations_cross_grids_dev,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_cross_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_cross_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
+            pindex_col_name = "pindex_dev",
+            export_name_addendum = "dev_cross"
+        )
+    ),
+    tar_target(
+        exported_deviations_cross_grids_dev_perc,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_cross_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_cross_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
+            pindex_col_name = "pindex_dev_perc",
+            export_name_addendum = "dev_perc_cross"
+        )
     )
 )
 
