@@ -124,6 +124,29 @@ for (sub_directory in sub_directories) {
 #--------------------------------------------------
 # Folder and file generation
 
+# define export directory
+# NOTE: This is just one example of an exported excel file.
+directory <- file.path(
+    config_paths()[["output_path"]],
+    "export",
+    paste0(
+        "RWIGEOREDX_",
+        toupper("HouPurc"),
+        "_",
+        toupper(config_globals()[["next_version"]]),
+        "_",
+        "SUF",
+        "_",
+        toupper("year"),
+        "_",
+        toupper("abs"),
+        ".xlsx"
+    )
+)
+if (!file.exists(directory)) {
+    targets::tar_invalidate(empty_export_workbooks)
+}
+
 targets_preparation_folders <- rlang::list2(
     # Creating empty workbooks for the exporting functions
     tar_target(
@@ -329,7 +352,6 @@ targets_estimation_region_abs <- rlang::list2(
             ),
             tar_target(
                 exported_aggregated_region_effects_abs,
-                # TODO: Change function name since ABS is not true
                 exporting_aggregated_regional_effects(
                     aggregated_region_effects_list = aggregated_region_effects_abs,
                     housing_type = housing_types,
@@ -378,7 +400,6 @@ targets_deviation_region <- rlang::list2(
                     aggregated_effects = aggregated_region_effects_abs
                 )
             ),
-            # TODO: Adjust function name (see comment above)
             tar_target(
                 exported_aggregated_region_effects_dev,
                 exporting_aggregated_regional_effects(
@@ -391,7 +412,6 @@ targets_deviation_region <- rlang::list2(
                     dependencies = empty_export_workbooks
                 )
             ),
-            # TODO: Adjust function name (see comment above)
             tar_target(
                 exported_aggregated_region_effects_dev_perc,
                 exporting_aggregated_regional_effects(
@@ -436,13 +456,22 @@ targets_deviation_region <- rlang::list2(
             export_name_addendum = "dev_perc_region"
         )
     ),
-    # TODO: Calculate means
     tar_target(
         combined_deviations_regions_grids,
         combining_regional_effects_grids(
             HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
             WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
             WM_estimated_region_effects = WM_calculated_deviations_regions_grids
+        )
+    ),
+    tar_target(
+        exported_deviations_combined_grids_dev_perc,
+        exporting_combined_deviations_regions_grids(
+            combined_effects = combined_deviations_regions_grids,
+            pindex_col_name = "weighted_pindex",
+            nvar = "total_nobs",
+            housing_type = "CI",
+            export_name_addendum = "dev_perc"
         )
     ),
     # TODO: Calculate means
