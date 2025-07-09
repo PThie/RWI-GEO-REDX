@@ -616,6 +616,35 @@ targets_deviation_cross <- rlang::list2(
     )
 )
 
+#--------------------------------------------------
+# clean up
+
+targets_cleanup <- rlang::list2(
+    tar_target(
+        copy_information_worksheet,
+        copying_information_worksheet(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependencies = list(
+                exported_region_effects_grids,
+                exported_region_effects_change_grids
+            )
+        )
+    ),
+    tar_target(
+        reorder_worksheets,
+        reordering_worksheets(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = copy_information_worksheet
+        )
+    ),
+    tar_target(
+        calculate_num_rows_cols_doi,
+        calculating_num_rows_cols_doi(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = reorder_worksheets
+        )
+    )
+)
 
 #--------------------------------------------------
 # Testing output
@@ -805,36 +834,6 @@ targets_visualization <- rlang::list2(
 )
 
 #--------------------------------------------------
-# clean up
-
-targets_cleanup <- rlang::list2(
-    tar_target(
-        copy_information_worksheet,
-        copying_information_worksheet(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependencies = list(
-                exported_region_effects_grids,
-                exported_region_effects_change_grids
-            )
-        )
-    ),
-    tar_target(
-        reorder_worksheets,
-        reordering_worksheets(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = copy_information_worksheet
-        )
-    ),
-    tar_target(
-        calculate_num_rows_cols_doi,
-        calculating_num_rows_cols_doi(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = reorder_worksheets
-        )
-    )
-)
-
-#--------------------------------------------------
 # pipeline stats
 
 targets_pipeline_stats <- rlang::list2(
@@ -857,8 +856,8 @@ rlang::list2(
     targets_estimation_region_abs,
     targets_deviation_region,
     targets_deviation_cross,
+    # targets_cleanup, # TODO: TURN ON LATER (ADJUST)
     # targets_test, TODO: TURN ON LATER (ADJUST)
     # targets_visualization, TODO: TURN ON LATER (ADJUST)
-    # targets_cleanup, TODO: TURN ON LATER (ADJUST)
     targets_pipeline_stats
 )
