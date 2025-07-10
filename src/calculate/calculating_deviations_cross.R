@@ -27,16 +27,25 @@ calculating_deviations_cross <- function(
         
         region_label <- unlist(stringr::str_split(region_time, "_"))[1]
         time_label <- unlist(stringr::str_split(region_time, "_"))[2]
-
+        nobs_var <- helpers_regional_effects_settings(agg_level = region_label)[["nobs_var"]]
         region_id <- helpers_regional_effects_settings(agg_level = region_label)[["region_id"]]
 
         #--------------------------------------------------
         # calculate mean across all regions in the period
 
         period_means <- region_time_effects |>
+            # NOTE: weighted mean cannot be calculated if there are NAs in the
+            # NOBS variable
+            dplyr::filter(
+                !is.na(.data[[nobs_var]])
+            ) |>
             dplyr::group_by(!!rlang::sym(time_label)) |>
             dplyr::summarise(
-                mean_pindex = mean(weighted_pindex, na.rm = TRUE)
+                mean_pindex = stats::weighted.mean(
+                    weighted_pindex,
+                    w = .data[[nobs_var]],
+                    na.rm = TRUE
+                )
             )
         
         #--------------------------------------------------

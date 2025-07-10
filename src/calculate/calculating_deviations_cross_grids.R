@@ -27,10 +27,21 @@ calculating_deviations_cross_grids <- function(
         #--------------------------------------------------
         # calculate mean across all grids in the period
 
+        nobs_col <- "nobs_grid"
+
         period_means <- period_data |>
+            # NOTE: weighted mean cannot be calculated if there are NAs in the
+            # NOBS variable
+            dplyr::filter(
+                !is.na(.data[[nobs_col]])
+            ) |>
             dplyr::group_by(!!rlang::sym(time_label)) |>
             dplyr::summarise(
-                mean_pindex = mean(pindex, na.rm = TRUE)
+                mean_pindex = stats::weighted.mean(
+                    pindex,
+                    w = .data[[nobs_col]],
+                    na.rm = TRUE
+                )
             )
 
         #--------------------------------------------------
