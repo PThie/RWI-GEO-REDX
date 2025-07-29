@@ -625,8 +625,13 @@ targets_cleanup <- rlang::list2(
         copying_information_worksheet(
             housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
             dependencies = list(
-                exported_region_effects_grids,
-                exported_region_effects_change_grids
+                HK_exported_aggregated_region_effects_abs,
+                exported_region_effects_abs_grids,
+                HK_exported_aggregated_region_effects_dev,
+                exported_deviations_regions_grids_dev,
+                HK_exported_aggregated_region_effects_dev_cross,
+                exported_deviations_cross_grids_dev,
+                exported_deviations_combined_grids_dev_perc_cross
             )
         )
     ),
@@ -637,13 +642,13 @@ targets_cleanup <- rlang::list2(
             dependency = copy_information_worksheet
         )
     ),
-    tar_target(
-        calculate_num_rows_cols_doi,
-        calculating_num_rows_cols_doi(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = reorder_worksheets
-        )
-    )
+    # tar_target(
+    #     calculate_num_rows_cols_doi,
+    #     calculating_num_rows_cols_doi(
+    #         housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+    #         dependency = reorder_worksheets
+    #     )
+    # )
 )
 
 #--------------------------------------------------
@@ -856,7 +861,7 @@ rlang::list2(
     targets_estimation_region_abs,
     targets_deviation_region,
     targets_deviation_cross,
-    # targets_cleanup, # TODO: TURN ON LATER (ADJUST)
+    targets_cleanup,
     # targets_test, TODO: TURN ON LATER (ADJUST)
     # targets_visualization, TODO: TURN ON LATER (ADJUST)
     targets_pipeline_stats
