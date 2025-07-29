@@ -31,74 +31,126 @@ reordering_worksheets <- function(
     )
 
     #--------------------------------------------------
+    # define options
+
+    anonym_types <- c("SUF", "PUF")
+
+    housing_types_labels_extended <- c(
+        housing_types_labels,
+        "CombInd"
+    )
+
+    time_periods <- config_globals()[["time_periods"]]
+
+    data_types <- c("ABS", "DEV_CROSS", "DEV_REGION")
+
+    #--------------------------------------------------
     # open workbooks
     # reorder worksheets
     # save workbooks
 
     housing_types_labels_extended <- c(
         housing_types_labels,
-        "CombInd",
-        "GRIDS"
+        "CombInd"
     )
 
-    for (anonym_type in c("PUF", "SUF")) {
-        for (data_type in housing_types_labels_extended) {
-            # define directory
-            directory <- file.path(
-                config_paths()[["output_path"]],
-                "export",
-                paste0(
-                    "RWIGEOREDX_",
-                    data_type,
-                    "_",
-                    config_globals()[["next_version"]],
-                    "_",
-                    anonym_type,
-                    ".xlsx"
-                )
-            )
+    for (time_period in time_periods) {
+        for (data_type in data_types) {
+            for (anonym_type in c("PUF", "SUF")) {
+                for (housing_types_label in housing_types_labels_extended) {
+                    #--------------------------------------------------
+                    # skip absolute values for combined index because the
+                    # combined index is only available as deviations
+                    if (housing_types_label == "CombInd" & data_type == "ABS") {
+                        next
+                    }
 
-            # open workbook
-            workbook <- openxlsx::loadWorkbook(directory)
+                    #--------------------------------------------------
+                    # define sheet order
 
-            # get sheet names
-            sheet_names <- names(workbook)
+                    if (housing_types_label == "CombInd") {
+                        sheet_order <- c(
+                            "Information",
+                            paste0("Munic_RegionEff_devpc_", paste0(time_period, "ly")),
+                            paste0("Distr_RegionEff_devpc_", paste0(time_period, "ly")),
+                            paste0("LMR_RegionEff_devpc_", paste0(time_period, "ly"))
+                        )
+                    } else {
+                        if (data_type == "ABS") {
+                            sheet_order <- c(
+                                "Information",
+                                paste0("Munic_RegionEff_abs_", paste0(time_period, "ly")),
+                                paste0("Distr_RegionEff_abs_", paste0(time_period, "ly")),
+                                paste0("LMR_RegionEff_abs_", paste0(time_period, "ly"))
+                            )
+                        } else {
+                            sheet_order <- c(
+                                "Information",
+                                paste0("Munic_RegionEff_dev_", paste0(time_period, "ly")),
+                                paste0("Distr_RegionEff_dev_", paste0(time_period, "ly")),
+                                paste0("LMR_RegionEff_dev_", paste0(time_period, "ly")),
+                                paste0("Munic_RegionEff_devpc_", paste0(time_period, "ly")),
+                                paste0("Distr_RegionEff_devpc_", paste0(time_period, "ly")),
+                                paste0("LMR_RegionEff_devpc_", paste0(time_period, "ly"))
+                            )
+                        }
+                    }
 
-            # remove sheet 1
-            # NOTE: gets created when generating an empty workbook
-            if ("Sheet 1" %in% sheet_names) {
-                openxlsx::removeWorksheet(
-                    workbook,
-                    sheet = "Sheet 1"
-                )
+                    #--------------------------------------------------
+                    # define directory
+                    directory <- file.path(
+                        config_paths()[["output_path"]],
+                        "export",
+                        paste0(
+                            "RWIGEOREDX_",
+                            toupper(housing_types_label),
+                            "_",
+                            toupper(config_globals()[["next_version"]]),
+                            "_",
+                            toupper(anonym_type),
+                            "_",
+                            toupper(time_period),
+                            "_",
+                            toupper(data_type),
+                            ".xlsx"
+                        )
+                    )
+
+                    # open workbook
+                    workbook <- openxlsx::loadWorkbook(directory)
+
+                    # get sheet names
+                    sheet_names <- names(workbook)
+
+                    # remove sheet 1
+                    # NOTE: gets created when generating an empty workbook
+                    if ("Sheet 1" %in% sheet_names) {
+                        openxlsx::removeWorksheet(
+                            workbook,
+                            sheet = "Sheet 1"
+                        )
+                    }
+
+                    # update sheet names (in case "Sheet 1" got removed)
+                    sheet_names <- names(workbook)
+
+                    # match sheet names with desired order
+                    sheet_indices <- match(
+                        sheet_order,
+                        sheet_names
+                    )
+
+                    # reorder worksheets
+                    openxlsx::worksheetOrder(workbook) <- sheet_indices
+
+                    # save workbook
+                    openxlsx::saveWorkbook(
+                        workbook,
+                        file = directory,
+                        overwrite = TRUE
+                    )
+                }
             }
-
-            # update sheet names (in case "Sheet 1" got removed)
-            sheet_names <- names(workbook)
-
-            # retrieve desired order
-            # NOTE: GRIDS output is shorter and has fewer sheets
-            if (data_type == "GRIDS") {
-                desired_sheet_order <- config_globals()[["desired_sheet_order_grids"]]
-            } else {
-                desired_sheet_order <- config_globals()[["desired_sheet_order"]]
-            }
-
-            # match sheet names with desired order
-            sheet_indices <- match(
-                desired_sheet_order,
-                sheet_names
-            )
-
-            # reorder worksheets
-            openxlsx::worksheetOrder(workbook) <- sheet_indices
-
-            # save workbook
-            openxlsx::saveWorkbook(
-                workbook,
-                file = directory,
-                overwrite = TRUE
-            )
         }
     }
 
