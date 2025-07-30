@@ -1,27 +1,27 @@
-exporting_aggregated_regional_effects_change <- function(
-    aggregated_region_effects_change = NA,
+exporting_aggregated_regional_effects <- function(
+    aggregated_region_effects = NA,
     housing_type = NA,
     housing_type_label = NA
 ) {
-    #' @title Exporting aggregated regional effects (change values)
+    #' @title Exporting aggregated regional effects
     #' 
-    #' @description This function exports the aggregated regional effects
-    #' (change values) for the different regional delineations. The data is also
-    #' anonymized (individual housing types only, NOT combined index).
+    #' @description This function exports the aggregated regional effects for
+    #' the different regional delineations. The data is also anonymized
+    #' (individual housing types only, NOT combined index).
     #' 
     #' @param aggregated_region_effects List with estimated aggregated regional
-    #' effects (change values)
+    #' effects
     #' @param housing_type Housing type
     #' @param housing_type_label Housing type labels
     #' 
-    #' @return List with exported aggregated regional effects (change values)
+    #' @return List with exported aggregated regional effects
     #' @author Patrick Thiel
-
+    
     #--------------------------------------------------
     # loop through different regional delineations
 
     results_list <- list()
-    for (region_time in names(aggregated_region_effects_change)) {
+    for (region_time in names(aggregated_region_effects)) {
         # TODO: expand to quarterly effects later
         # NOTE: focus for now on yearly effects to generate consistent output
         # for quarterly data the output has to be different since a column per
@@ -39,7 +39,7 @@ exporting_aggregated_regional_effects_change <- function(
             #--------------------------------------------------
             # subset data
 
-            region_data <- aggregated_region_effects_change[[region_time]]
+            region_data <- aggregated_region_effects[[region_time]]
 
             # remove NAs in region identifier
             region_data <- region_data[!is.na(region_data[[region_id]]), ]
@@ -50,7 +50,7 @@ exporting_aggregated_regional_effects_change <- function(
             reshaped_data <- helpers_reshaping_region_effects(
                 region_effects_data = region_data,
                 regional_col = region_id,
-                pindex_col = "weighted_pindex_change",
+                pindex_col = "weighted_pindex",
                 nobs_col = nobs_var
             )
 
@@ -66,9 +66,9 @@ exporting_aggregated_regional_effects_change <- function(
 
             #--------------------------------------------------
             # anonymize the data
-            # Only applied to individual housing types (not to the combined index)
 
             anonymized_data_list <- list()
+
             # apply anonymization function
             dta_suf <- helpers_anonymizing_region_effects(
                 region_effects_data = sorted_data,
@@ -110,19 +110,19 @@ exporting_aggregated_regional_effects_change <- function(
 
                 # add sheet if not existent
                 if (
-                    !paste0(sheet_name, "_RegionEff_Change_yearly") %in%
+                    !paste0(sheet_name, "_RegionEff_yearly") %in%
                     names(complete_wb)
                 ) {
                     openxlsx::addWorksheet(
                         complete_wb,
-                        paste0(sheet_name, "_RegionEff_Change_yearly")
+                        paste0(sheet_name, "_RegionEff_yearly")
                     )
                 }
 
                 # write data
                 openxlsx::writeData(
                     wb = complete_wb,
-                    sheet = paste0(sheet_name, "_RegionEff_Change_yearly"),
+                    sheet = paste0(sheet_name, "_RegionEff_yearly"),
                     x = dta
                 )
 
@@ -146,7 +146,7 @@ exporting_aggregated_regional_effects_change <- function(
                 )
             }
         }
-        
+
         #--------------------------------------------------
         # store results
 

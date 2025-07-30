@@ -32,6 +32,9 @@ suppressPackageStartupMessages({
     library(docstring)
     library(arrow)
     library(crew)
+    library(stats)
+    library(gdata)
+    library(tidyr)
 })
 
 #----------------------------------------------
@@ -120,6 +123,29 @@ for (sub_directory in sub_directories) {
 
 #--------------------------------------------------
 # Folder and file generation
+
+# define export directory
+# NOTE: This is just one example of an exported excel file.
+directory <- file.path(
+    config_paths()[["output_path"]],
+    "export",
+    paste0(
+        "RWIGEOREDX_",
+        toupper("HouPurc"),
+        "_",
+        toupper(config_globals()[["next_version"]]),
+        "_",
+        "SUF",
+        "_",
+        toupper("year"),
+        "_",
+        toupper("abs"),
+        ".xlsx"
+    )
+)
+if (!file.exists(directory)) {
+    targets::tar_invalidate(empty_export_workbooks)
+}
 
 targets_preparation_folders <- rlang::list2(
     # Creating empty workbooks for the exporting functions
@@ -301,93 +327,16 @@ targets_preparation_housing <- rlang::list2(
 )
 
 #--------------------------------------------------
-# Estimation of time effects
-# Currently done for: years and quarters
-# NOTE: This reflects regression 1 in the Stata routine.
+# Estimation of time-region effects
+# NOTE: This reflects regression 3 in the Stata routine but without taking the
+# change in logs.
 
-targets_estimation_time <- rlang::list2(
+targets_estimation_region_abs <- rlang::list2(
     tar_eval(
         list(
             tar_target(
-                estimated_time_effects,
-                estimating_time_effects(
-                    housing_data = housing_cleaned,
-                    housing_type = housing_types,
-                    reference_periods = c("2008", "2008-01"),
-                    export = TRUE
-                )
-            ),
-            tar_target(
-                estimated_time_effects_destatis,
-                estimating_time_effects(
-                    housing_data = housing_cleaned,
-                    housing_type = housing_types,
-                    reference_periods = c("2015", "2015-01"),
-                    export = FALSE
-                )
-            ),
-            tar_target(
-                exported_time_effects,
-                exporting_time_effects(
-                    time_effects = estimated_time_effects,
-                    housing_type_label = housing_type_labels
-                )
-            )
-        ),
-        values = list(
-            housing_types = helpers_target_names()[["static_housing_types"]],
-            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
-            housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
-            estimated_time_effects = rlang::syms(helpers_target_names()[["static_estimated_time_effects"]]),
-            estimated_time_effects_destatis = rlang::syms(helpers_target_names()[["static_estimated_time_effects_destatis"]]),
-            exported_time_effects = rlang::syms(helpers_target_names()[["static_exported_time_effects"]])
-        )
-    ),
-    tar_target(
-        combined_time_effects,
-        combining_time_effects(
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects
-        )
-    ),
-    tar_target(
-        combined_individual_time_plot,
-        plotting_combined_individual_effects(
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects,
-            combined_time_effects = combined_time_effects
-        )
-    ),
-    tar_target(
-        exported_combined_time_effects,
-        exporting_time_effects(
-            time_effects = combined_time_effects,
-            housing_type_label = "CombInd"
-        )
-    ),
-    tar_target(
-        exported_time_effects_grids,
-        exporting_time_effects_grids(
-            HK_estimated_time_effects = HK_estimated_time_effects,
-            WK_estimated_time_effects = WK_estimated_time_effects,
-            WM_estimated_time_effects = WM_estimated_time_effects,
-            combined_time_effects = combined_time_effects
-        )
-    )
-)
-
-#--------------------------------------------------
-# Estimation of regional effects
-# NOTE: This reflects regression 2 in the Stata routine.
-
-targets_estimation_region <- rlang::list2(
-    tar_eval(
-        list(
-            tar_target(
-                estimated_region_effects,
-                estimating_regional_effects(
+                estimated_region_effects_abs,
+                estimating_regional_effects_abs(
                     housing_data = housing_cleaned,
                     housing_type = housing_types,
                     grids_municipalities = grids_municipalities,
@@ -395,19 +344,25 @@ targets_estimation_region <- rlang::list2(
                 )
             ),
             tar_target(
-                aggregated_region_effects,
-                aggregating_regional_effects(
-                    estimated_region_effects = estimated_region_effects,
+                aggregated_region_effects_abs,
+                aggregating_regional_effects_abs(
+                    estimated_effects_list = estimated_region_effects_abs,
                     housing_type = housing_types
                 )
             ),
-            # TODO: in function
             tar_target(
-                exported_aggregated_region_effects,
+                exported_aggregated_region_effects_abs,
                 exporting_aggregated_regional_effects(
-                    aggregated_region_effects = aggregated_region_effects,
+                    aggregated_region_effects_list = aggregated_region_effects_abs,
                     housing_type = housing_types,
-                    housing_type_label = housing_type_labels
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "weighted_pindex",
+                    sheet_name_addendum = "abs",
+                    export_name_addendum = "abs",
+                    dependencies = list(
+                        empty_export_workbooks,
+                        aggregated_region_effects_abs
+                    )
                 )
             )
         ),
@@ -415,123 +370,306 @@ targets_estimation_region <- rlang::list2(
             housing_types = helpers_target_names()[["static_housing_types"]],
             housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
             housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
-            estimated_region_effects = rlang::syms(helpers_target_names()[["static_estimated_region_effects"]]),
-            aggregated_region_effects = rlang::syms(helpers_target_names()[["static_aggregated_region_effects"]]),
-            exported_aggregated_region_effects = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects"]])
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
+            exported_aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_abs"]])
         )
     ),
     tar_target(
-        combined_region_effects,
-        combining_regional_effects(
-            HK_estimated_region_effects = HK_estimated_region_effects,
-            WK_estimated_region_effects = WK_estimated_region_effects,
-            WM_estimated_region_effects = WM_estimated_region_effects
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_region_effects_grids,
+        exported_region_effects_abs_grids,
         exporting_region_effects_grids(
-            HK_estimated_region_effects = HK_estimated_region_effects,
-            WK_estimated_region_effects = WK_estimated_region_effects,
-            WM_estimated_region_effects = WM_estimated_region_effects,
-            combined_region_effects = combined_region_effects
-        )
-    ),
-    tar_target(
-        aggregated_combined_region_effects,
-        aggregating_combined_regional_effects(
-            combined_region_effects = combined_region_effects,
-            grids_municipalities = grids_municipalities,
-            grids_lmr = grids_lmr
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_aggregated_combined_region_effects,
-        exporting_aggregated_regional_effects(
-            aggregated_region_effects = aggregated_combined_region_effects,
-            housing_type = "CI",
-            housing_type_label = "CombInd"
+            HK_estimated_region_effects = HK_estimated_region_effects_abs,
+            WK_estimated_region_effects = WK_estimated_region_effects_abs,
+            WM_estimated_region_effects = WM_estimated_region_effects_abs,
+            pindex_col_name = "pindex",
+            export_name_addendum = "abs"
         )
     )
 )
 
 #--------------------------------------------------
-# Estimation of regional effects and calculating their change
-# NOTE: This reflects regression 3 in the Stata routine.
+# branch: deviation within region (absolute and percent)
 
-targets_estimation_change_region <- rlang::list2(
+targets_deviation_region <- rlang::list2(
     tar_eval(
         list(
             tar_target(
-                estimated_region_effects_change,
-                estimating_regional_effects_change(
-                    housing_data = housing_cleaned,
-                    housing_type = housing_types,
-                    grids_municipalities = grids_municipalities,
-                    grids_lmr = grids_lmr
+                calculated_deviations_regions_grids,
+                calculating_deviations_regions_grids(
+                    grid_effects_abs = estimated_region_effects_abs
                 )
             ),
             tar_target(
-                aggregated_region_effects_change,
-                aggregating_regional_effects_change(
-                    estimated_effects_list = estimated_region_effects_change,
-                    housing_type = housing_types
+                calculated_deviations_regions,
+                calculating_deviations_regions(
+                    aggregated_effects = aggregated_region_effects_abs
                 )
             ),
-            # TODO: in function
             tar_target(
-                exported_aggregated_region_effects_change,
-                exporting_aggregated_regional_effects_change(
-                    aggregated_region_effects_change = aggregated_region_effects_change,
+                exported_aggregated_region_effects_dev,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects_list = calculated_deviations_regions,
                     housing_type = housing_types,
-                    housing_type_label = housing_type_labels
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev",
+                    sheet_name_addendum = "dev",
+                    export_name_addendum = "dev_region",
+                    dependencies = list(
+                        empty_export_workbooks,
+                        calculated_deviations_regions
+                    )
+                )
+            ),
+            tar_target(
+                exported_aggregated_region_effects_dev_perc,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects_list = calculated_deviations_regions,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev_perc",
+                    sheet_name_addendum = "devpc",
+                    export_name_addendum = "dev_region",
+                    dependencies = list(
+                        empty_export_workbooks,
+                        exported_aggregated_region_effects_dev
+                    )
                 )
             )
         ),
         values = list(
             housing_types = helpers_target_names()[["static_housing_types"]],
             housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
-            housing_cleaned = rlang::syms(helpers_target_names()[["static_housing_data_cleaned"]]),
-            estimated_region_effects_change = rlang::syms(helpers_target_names()[["static_estimated_region_effects_change"]]),
-            aggregated_region_effects_change = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_change"]]),
-            exported_aggregated_region_effects_change = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_change"]])
+            calculated_deviations_regions_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions_grids"]]),
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
+            calculated_deviations_regions = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
+            exported_aggregated_region_effects_dev = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev"]]),
+            exported_aggregated_region_effects_dev_perc = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_perc"]])
         )
     ),
     tar_target(
-        combined_region_effects_change,
-        combining_regional_effects_change(
-            HK_estimated_region_effects_change = HK_estimated_region_effects_change,
-            WK_estimated_region_effects_change = WK_estimated_region_effects_change,
-            WM_estimated_region_effects_change = WM_estimated_region_effects_change
-        )
-    ),
-    # TODO: in function
-    tar_target(
-        exported_region_effects_change_grids,
-        exporting_region_effects_change_grids(
-            HK_estimated_region_effects_change = HK_estimated_region_effects_change,
-            WK_estimated_region_effects_change = WK_estimated_region_effects_change,
-            WM_estimated_region_effects_change = WM_estimated_region_effects_change,
-            combined_region_effects_change = combined_region_effects_change
+        exported_deviations_regions_grids_dev,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
+            pindex_col_name = "pindex_dev",
+            export_name_addendum = "dev_region"
         )
     ),
     tar_target(
-        aggregated_combined_region_effects_change,
-        aggregating_combined_regional_effects_change(
-            combined_region_effects_change = combined_region_effects_change,
-            grids_municipalities = grids_municipalities,
-            grids_lmr = grids_lmr
+        exported_deviations_regions_grids_dev_perc,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
+            pindex_col_name = "pindex_dev_perc",
+            export_name_addendum = "dev_perc_region"
         )
     ),
-    # TODO: in function
     tar_target(
-        exported_aggregated_combined_region_effects_change,
-        exporting_aggregated_regional_effects_change(
-            aggregated_region_effects_change = aggregated_combined_region_effects_change,
+        combined_deviations_regions_grids,
+        combining_regional_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_regions_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_regions_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
+            export_name_addendum = "region"
+        )
+    ),
+    tar_target(
+        exported_deviations_combined_grids_dev_perc,
+        exporting_combined_deviations_regions_grids(
+            combined_effects = combined_deviations_regions_grids,
+            pindex_col_name = "weighted_pindex",
+            nvar = "total_nobs",
             housing_type = "CI",
-            housing_type_label = "CombInd"
+            export_name_addendum = "dev_perc_region"
+        )
+    ),
+    tar_target(
+        combined_deviations_regions,
+        combining_regional_effects(
+            HK_estimated_region_effects = HK_calculated_deviations_regions,
+            WK_estimated_region_effects = WK_calculated_deviations_regions,
+            WM_estimated_region_effects = WM_calculated_deviations_regions,
+            export_name_addendum = "region"
+        )
+    ),
+    tar_target(
+        exported_combined_deviations_regions_dev_perc,
+        exporting_aggregated_regional_effects(
+            aggregated_region_effects_list = combined_deviations_regions,
+            housing_type = "CI",
+            housing_type_label = "CombInd",
+            pindex_col_name = "weighted_pindex",
+            sheet_name_addendum = "devpc",
+            export_name_addendum = "dev_region",
+            dependencies = list(
+                empty_export_workbooks,
+                combined_deviations_regions
+            )
+        )
+    )
+)
+
+#--------------------------------------------------
+# branch: deviation between regions ("cross-section") (absolute and percent)
+
+targets_deviation_cross <- rlang::list2(
+    tar_eval(
+        list(
+            tar_target(
+                calculated_deviations_cross_grids,
+                calculating_deviations_cross_grids(
+                    grid_effects_abs = estimated_region_effects_abs
+                )
+            ),
+            tar_target(
+                calculated_deviations_cross,
+                calculating_deviations_cross(
+                    aggregated_effects = aggregated_region_effects_abs
+                )
+            ),
+            tar_target(
+                exported_aggregated_region_effects_dev_cross,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects_list = calculated_deviations_cross,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev",
+                    sheet_name_addendum = "dev",
+                    export_name_addendum = "dev_cross",
+                    dependencies = list(
+                        empty_export_workbooks,
+                        calculated_deviations_cross
+                    )
+                )
+            ),
+            tar_target(
+                exported_aggregated_region_effects_dev_perc_cross,
+                exporting_aggregated_regional_effects(
+                    aggregated_region_effects_list = calculated_deviations_cross,
+                    housing_type = housing_types,
+                    housing_type_label = housing_type_labels,
+                    pindex_col_name = "pindex_dev_perc",
+                    sheet_name_addendum = "devpc",
+                    export_name_addendum = "dev_cross",
+                    dependencies = list(
+                        empty_export_workbooks,
+                        exported_aggregated_region_effects_dev_cross
+                    )
+                )
+            )
+        ),
+        values = list(
+            housing_types = helpers_target_names()[["static_housing_types"]],
+            housing_type_labels = helpers_target_names()[["static_housing_types_labels"]],
+            calculated_deviations_cross_grids = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross_grids"]]),
+            estimated_region_effects_abs = rlang::syms(helpers_target_names()[["static_estimated_region_effects_abs"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]]),
+            calculated_deviations_cross = rlang::syms(helpers_target_names()[["static_calculated_deviations_cross"]]),
+            exported_aggregated_region_effects_dev_cross = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_cross"]]),
+            exported_aggregated_region_effects_dev_perc_cross = rlang::syms(helpers_target_names()[["static_exported_aggregated_region_effects_dev_perc_cross"]])
+        )
+    ),
+    tar_target(
+        exported_deviations_cross_grids_dev,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_cross_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_cross_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
+            pindex_col_name = "pindex_dev",
+            export_name_addendum = "dev_cross"
+        )
+    ),
+    tar_target(
+        exported_deviations_cross_grids_dev_perc,
+        exporting_region_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_cross_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_cross_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
+            pindex_col_name = "pindex_dev_perc",
+            export_name_addendum = "dev_perc_cross"
+        )
+    ),
+    tar_target(
+        combined_deviations_cross_grids,
+        combining_regional_effects_grids(
+            HK_estimated_region_effects = HK_calculated_deviations_cross_grids,
+            WK_estimated_region_effects = WK_calculated_deviations_cross_grids,
+            WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
+            export_name_addendum = "cross"
+        )
+    ),
+    tar_target(
+        exported_deviations_combined_grids_dev_perc_cross,
+        exporting_combined_deviations_regions_grids(
+            combined_effects = combined_deviations_cross_grids,
+            pindex_col_name = "weighted_pindex",
+            nvar = "total_nobs",
+            housing_type = "CI",
+            export_name_addendum = "dev_perc_cross"
+        )
+    ),
+    tar_target(
+        combined_deviations_cross,
+        combining_regional_effects(
+            HK_estimated_region_effects = HK_calculated_deviations_cross,
+            WK_estimated_region_effects = WK_calculated_deviations_cross,
+            WM_estimated_region_effects = WM_calculated_deviations_cross,
+            export_name_addendum = "cross"
+        )
+    ),
+    tar_target(
+        exported_combined_deviations_cross_dev_perc,
+        exporting_aggregated_regional_effects(
+            aggregated_region_effects_list = combined_deviations_cross,
+            housing_type = "CI",
+            housing_type_label = "CombInd",
+            pindex_col_name = "weighted_pindex",
+            sheet_name_addendum = "devpc",
+            export_name_addendum = "dev_cross",
+            dependencies = list(
+                empty_export_workbooks,
+                combined_deviations_cross
+            )
+        )
+    )
+)
+
+#--------------------------------------------------
+# clean up
+
+targets_cleanup <- rlang::list2(
+    tar_target(
+        copy_information_worksheet,
+        copying_information_worksheet(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependencies = list(
+                HK_exported_aggregated_region_effects_abs,
+                exported_region_effects_abs_grids,
+                HK_exported_aggregated_region_effects_dev,
+                exported_deviations_regions_grids_dev,
+                HK_exported_aggregated_region_effects_dev_cross,
+                exported_deviations_cross_grids_dev,
+                exported_deviations_combined_grids_dev_perc_cross,
+                exported_combined_deviations_cross_dev_perc,
+                exported_combined_deviations_regions_dev_perc
+            )
+        )
+    ),
+    tar_target(
+        reorder_worksheets,
+        reordering_worksheets(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = copy_information_worksheet
+        )
+    ),
+    tar_target(
+        calculate_num_rows_cols_doi,
+        calculating_num_rows_cols_doi(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = reorder_worksheets
         )
     )
 )
@@ -724,36 +862,6 @@ targets_visualization <- rlang::list2(
 )
 
 #--------------------------------------------------
-# clean up
-
-targets_cleanup <- rlang::list2(
-    tar_target(
-        copy_information_worksheet,
-        copying_information_worksheet(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependencies = list(
-                exported_region_effects_grids,
-                exported_region_effects_change_grids
-            )
-        )
-    ),
-    tar_target(
-        reorder_worksheets,
-        reordering_worksheets(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = copy_information_worksheet
-        )
-    ),
-    tar_target(
-        calculate_num_rows_cols_doi,
-        calculating_num_rows_cols_doi(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = reorder_worksheets
-        )
-    )
-)
-
-#--------------------------------------------------
 # pipeline stats
 
 targets_pipeline_stats <- rlang::list2(
@@ -773,11 +881,11 @@ rlang::list2(
     targets_preparation_folders,
     targets_preparation_geo,
     targets_preparation_housing,
-    targets_estimation_time,
-    targets_estimation_region,
-    targets_estimation_change_region,
-    targets_test,
-    targets_visualization,
+    targets_estimation_region_abs,
+    targets_deviation_region,
+    targets_deviation_cross,
     targets_cleanup,
+    # targets_test, TODO: TURN ON LATER (ADJUST)
+    # targets_visualization, TODO: TURN ON LATER (ADJUST)
     targets_pipeline_stats
 )

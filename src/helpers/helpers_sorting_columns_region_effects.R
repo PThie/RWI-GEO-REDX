@@ -2,6 +2,7 @@ helpers_sorting_columns_region_effects <- function(
     region_effects_data = NA,
     housing_type = NA,
     regional_col = NA,
+    time_col = c("year", "quarter"),
     grids = TRUE
 ) {
     #' @title Sort columns of region effects data frame
@@ -23,15 +24,32 @@ helpers_sorting_columns_region_effects <- function(
     nam <- names(region_effects_data)
     nam <- nam[!grepl(regional_col, nam)]
 
-    # extract years and sort them
-    sorted_vec <- c(regional_col)
-    for (year in seq(
+    # extract time periods
+    year_sequence <- seq(
         config_globals()[["first_year"]],
-        config_globals()[["max_year"]])
-    ) {
+        config_globals()[["max_year"]]
+    )
+
+    if (time_col == "year") {
+        time_sequence <- year_sequence
+    } else {
+        time_sequence <- c()
+        for (year in year_sequence) {
+            for (quarter in seq(1, config_globals()[["max_quarter"]])) {
+                time_sequence <- c(
+                    time_sequence,
+                    paste0(year, "-0", quarter)
+                )
+            }
+        }
+    }
+
+    # sort time periods
+    sorted_vec <- c(regional_col)
+    for (time_period in time_sequence) {
         sorted_vec <- c(
             sorted_vec,
-            nam[grepl(year, nam)]
+            nam[grepl(time_period, nam)]
         )
     }
 

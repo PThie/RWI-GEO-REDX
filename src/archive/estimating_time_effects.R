@@ -1,164 +1,178 @@
 estimating_time_effects <- function(
     housing_data = NA,
-    data_type = NA
+    housing_type = NA,
+    reference_periods = NA,
+    export = TRUE
 ) {
-    #' @title Estimate time effects (Regression 1)
+    #' @title Estimating time effects
     #' 
-    #' @description
+    #' @description This function estimates time effects for a given housing type.
     #' 
-    #' @param housing_data Housing data (type-specific), comes from target
-    #' pipeline
-    #' @param data_type Type of housing data (e.g. "WK")
+    #' @param housing_data Data frame with housing data
+    #' @param housing_type Housing type
+    #' @param reference_year List, Reference periods for time effects
+    #' @param export Indicator to export results to Excel, only for non-destatis results
     #' 
-    #' @return Estimation output
+    #' @note This refers to regression 1 in the former Stata coding.
+    #' 
+    #' @return List with estimation output
     #' @author Patrick Thiel
-    
+
     #--------------------------------------------------
-    # read data
+    # select dependent and independent variables from global definition
+    # based on housing type
 
-    #org_data <- targets::tar_read(housing_data)
+    depvar <- helpers_var_definition(housing_type = housing_type)[["depvar"]]
+    indepvars <- helpers_var_definition(housing_type = housing_type)[["indepvars"]]
+    regional_fes <- helpers_var_definition(housing_type = housing_type)[["regional_fe"]]
+    time_fes <- helpers_var_definition(housing_type = housing_type)[["time_fe"]]
+
     #--------------------------------------------------
-    # drop last month in the sample to prevent look-ahead bias
-    # drop 2007 since the data provided ImmoScout is a bit different from 
-    # the waves afterward
+    # prepare the housing data
+    # includes demeaning of independent variables
 
-    print(typeof(housing_data$e_year_mon))
+    housing_data <- helpers_preparing_estimation(
+        housing_type = housing_type,
+        data = housing_data
+    )
 
-    org_data_prep <- housing_data |>
-        dplyr::filter(
-            e_year_mon != paste0(
-                config_globals()[["max_year"]],
-                "-",
-                config_globals()[["max_month"]]
-            )
-        ) |>
-        dplyr::filter(ejahr > 2007)
-    
     #--------------------------------------------------
-    # regression 1: Time effects
+    # perform estimation
 
-    regions <- c("kid2019")
-    times <- c("ejahr", "e_year_quarter")
-    
-    for (region in regions) {
-        for (time in times) {
+    results_list <- list()
+    for (time_fe in time_fes) {
+        # NOTE: analysis not performed at monthly level because the number
+        # of observations is too low
+        if (time_fe != "e_year_mon") {
             #--------------------------------------------------
-            # TODO: move variable definition to config.R
-            # estimation
+            # set up for different time periods
 
-            mod <- fixest::feols(
-                ln_flatprice_sqm ~ as.factor(construction_year_cat) +
-                    as.factor(first_occupancy) + as.factor(balkon) +
-                    as.factor(garten) + as.factor(einbaukueche) +
-                    as.factor(keller) + as.factor(aufzug) +
-                    as.factor(gaestewc) + as.factor(ausstattung) +
-                    as.factor(declared_wohngeld) + as.factor(betreut) +
-                    zimmeranzahl_full + as.factor(num_floors_cat) + 
-                    as.factor(floors_cat) + as.factor(e_year_quarter),
-                    fixef = region,
-                    cluster = region,
-                    data = org_data_prep
-            )
+            if (time_fe == "ejahr") {
+                time_label <- "year"
+                reference_period <- reference_periods[1]
 
-            #--------------------------------------------------
-            # extract confidence intervals (CI 95%)
+                # exception for rents: Destatis uses here a different reference period
+                # NOTE: this is only necessary for the Destatis comparison, not the
+                # own data (export = FALSE means comparison with Destatis)
+                if (housing_type == "WM" & export == FALSE) {
+                    reference_period <- "2020"
+                }
+            } else {
+                time_label <- "quarter"
+                reference_period <- reference_periods[2]
 
-            ci <- as.data.frame(confint(mod, level = 0.95))
-            ci$var <- rownames(ci)
-
-            #--------------------------------------------------
-            # extract coefficients
-
-            coefs <- as.data.frame(mod$coefficient)
-            coefs$var <- rownames(coefs)
-
-            #--------------------------------------------------
-            # combine, clean and define base time
-
-            if (time == "ejahr") {
-                cutoff <- 3
-                base_time <- "2008"
-                time_name <- "year"
-            } else if (time == "e_year_quarter") {
-                cutoff <- 6
-                base_time <- "2008-01"
-                time_name <- "quarter"
+                # exception for rents: Destatis uses here a different reference period
+                # NOTE: this is only necessary for the Destatis comparison, not the
+                # own data (export = FALSE means comparison with Destatis)
+                # NOTE: sofar destatis does not offer quarterly data
+                if (housing_type == "WM" & export == FALSE) {
+                    reference_period <- "2020-01"
+                }
             }
 
-            coefs_ci <- merge(coefs, ci, by = "var") |>
-                dplyr::filter(stringr::str_detect(var, time)) |>
-                dplyr::mutate(
-                    var = substring(var, nchar(var) - cutoff, nchar(var))
-                ) |>
-                dplyr::rename(
-                    !!time_name := var,
-                    timeeff = `mod$coefficient`,
-                    timeeff_p025 = `2.5 %`,
-                    timeeff_p975 = `97.5 %`
-                ) |>
-                dplyr::bind_rows(
-                    data.frame(
-                        placeholder = base_time,
-                        timeeff = 0,
-                        timeeff_p025 = 0,
-                        timeeff_p975 = 0
-                    ) |>
-                    dplyr::rename(!!time_name := placeholder)
-                ) |>
-                # NOTE: Arrange does not work yet
-                dplyr::arrange(!!rlang::sym(time_name))
+            #--------------------------------------------------
+            # define formula
+
+            form <- as.formula(
+                paste(
+                    depvar,
+                    paste(
+                        c(
+                            paste(indepvars, collapse = " + "),
+                            paste0("relevel(as.factor(", time_fe, "), '", reference_period,"')")
+                        ),
+                        collapse = " + "
+                    ),
+                    sep = "~"
+                )
+            )
 
             #--------------------------------------------------
-            # export
+            # estimate the model
 
-            openxlsx::write.xlsx(
-                coefs_ci,
-                file.path(
-                    config_paths()[["output_path"]],
-                    paste0(data_type, "_rebuild"),
-                    "output",
-                    paste0(
-                        region,
-                        "_timeeff_",
-                        data_type,
-                        "_",
-                        time,
-                        "_reg1.xlsx"
-                    )
-                ),
-                row.names = FALSE
+            base_mod <- fixest::feols(
+                fml = form,
+                data = housing_data,
+                se = "hetero",
+                fixef = regional_fes[1]
             )
+
+            #--------------------------------------------------
+            # used sample
+
+            indices_include_obs <- fixest::obs(base_mod)
+            used_sample <- housing_data[indices_include_obs, ]
+
+            #--------------------------------------------------
+            # number of observations
+            
+            nobs <- used_sample |>
+                dplyr::group_by(!!rlang::sym(time_fe)) |>
+                dplyr::summarise(
+                    nobs = dplyr::n()
+                ) |>
+                dplyr::rename(!!time_label := 1) |>
+                as.data.frame()
+
+            #--------------------------------------------------
+            # extract time coefficients (coefficients on years or quarters)
+            # NOTE: on why no de-logging is necessary:
+            # What we are measuring is the effect relative to 2008 measured
+            # directly in percent (if multiplied by 100). Not measured in units
+            # of the dependent variable (i.e. logged price/ rent).
+            # In the other settings where we use the FE, these are measured in 
+            # units of the dependent variable (i.e. logged price/ rent).
+            time_coefs <- helpers_extracting_time_effects(
+                model = base_mod,
+                time = time_fe,
+                reference_period = reference_period
+            )
+
+            #--------------------------------------------------
+            # merge with number of observations
+
+            time_coefs <- merge(
+                time_coefs,
+                nobs,
+                by = time_label,
+                all.x = TRUE
+            )
+
+            #--------------------------------------------------
+            # multiple by 100 to get the percentage change
+
+            time_coefs <- time_coefs |>
+                dplyr::mutate(
+                    dplyr::across(
+                        .cols = dplyr::contains("timeeff"),
+                        ~ .x * 100
+                    )
+                )
+
+            #--------------------------------------------------
+            # export findings
+            
+            if (export == TRUE) {
+                openxlsx::write.xlsx(
+                    time_coefs,
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0("time_effects_grids_", time_label, ".xlsx")
+                    )
+                )
+            }
+
+            #--------------------------------------------------
+            # store results
+
+            results_list[[time_fe]] <- time_coefs
         }
     }
-#     etable(mod, digits = "r9")
 
-# # names(org_data_prep)
-
-# # extract fixed effects
-# fixed_effects <- fixest::fixef(mod) |>
-#     as.data.frame() |>
-#     dplyr::rename(pindex_FE = id_fe)
-
-# # replace rownames
-# fixed_effects$id_fe <- rownames(fixed_effects)
-# rownames(fixed_effects) <- seq(1, nrow(fixed_effects))
-
-# # determine constant
-# constant <- mean(tst_mod$sumFE)
-
-# # org_data_prep |>
-# #     select(contains("flat")) |>
-# #     names()
-
-#     org_findings = haven::read_dta(
-#         "M:/_FDZ/RWI-GEO/RWI-GEO-REDX/output/WK/data/Jun2023/kid2019_WK_ejahr1.dta"
-#     )
-
-#     org_findings <- org_findings |>
-#         filter(ejahr > 2007)
-
-# bla = data.table::fread("M:/_FDZ/RWI-GEO/RWI-GEO-REDX/output/WK/data/Jun2023/kid2019_timeeff_WK_ejahr_reg1.csv")
-
-
-
+    #--------------------------------------------------
+    # return
+    
+    return(results_list)
 }

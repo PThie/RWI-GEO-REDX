@@ -1,43 +1,43 @@
-exporting_region_effects_change_grids <- function(
-    HK_estimated_region_effects_change = NA,
-    WK_estimated_region_effects_change = NA,
-    WM_estimated_region_effects_change = NA,
-    combined_region_effects_change = NA
+exporting_region_effects_grids <- function(
+    HK_estimated_region_effects = NA,
+    WK_estimated_region_effects = NA,
+    WM_estimated_region_effects = NA,
+    combined_region_effects = NA
 ) {
-    #' @title Exporting region effects (change effects)
+    #' @title Exporting region effects
     #' 
     #' @description This function exports the estimated region effects (at the
     #' grid level) for the different housing types and the combined index.
     #' The data is also anonymized (individual housing types only, NOT combined
     #' index).
     #' 
-    #' @param HK_estimated_region_effects_change Data frame with estimated region effects
-    #' for housing type HK (change values)
-    #' @param WK_estimated_region_effects_change Data frame with estimated region effects
-    #' for housing type WK (change values)
-    #' @param WM_estimated_region_effects_change Data frame with estimated region effects
-    #' for housing type WM (change values)
-    #' @param combined_region_effects_change Data frame with estimated region effects
-    #' for the combined index (change values)
+    #' @param HK_estimated_region_effects Data frame with estimated region effects
+    #' for housing type HK
+    #' @param WK_estimated_region_effects Data frame with estimated region effects
+    #' for housing type WK
+    #' @param WM_estimated_region_effects Data frame with estimated region effects
+    #' for housing type WM
+    #' @param combined_region_effects Data frame with estimated region effects
+    #' for the combined index
     #' 
     #' @return List with exported region effects
     #' @author Patrick Thiel
     
     #--------------------------------------------------
-    for (time in names(HK_estimated_region_effects_change)) {
+    for (period in names(HK_estimated_region_effects)) {
         # TODO: expand to quarterly effects later
         # NOTE: focus for now on yearly effects to generate consistent output
         # for quarterly data the output has to be different since a column per
         # quarter would create too many columns
-        if (time == "year") {
+        if (period == "year") {
             #--------------------------------------------------
             # group all data frames into a list
 
             data_list <- list(
-                HK = HK_estimated_region_effects_change[[time]],
-                WK = WK_estimated_region_effects_change[[time]],
-                WM = WM_estimated_region_effects_change[[time]],
-                CI = combined_region_effects_change[[time]]
+                HK = HK_estimated_region_effects[[period]],
+                WK = WK_estimated_region_effects[[period]],
+                WM = WM_estimated_region_effects[[period]],
+                CI = combined_region_effects[[period]]
             )
 
             #--------------------------------------------------
@@ -49,14 +49,14 @@ exporting_region_effects_change_grids <- function(
                     reshaped <- helpers_reshaping_region_effects(
                         region_effects_data = data_list[[dta]],
                         regional_col = "grid",
-                        pindex_col = "weighted_pindex_change",
+                        pindex_col = "weighted_pindex",
                         nobs_col = "total_nobs"
                     )
                 } else {
                     reshaped <- helpers_reshaping_region_effects(
                         region_effects_data = data_list[[dta]],
                         regional_col = "grid",
-                        pindex_col = "pindex_change",
+                        pindex_col = "pindex",
                         nobs_col = "nobs_grid"
                     )
                 }
@@ -150,19 +150,19 @@ exporting_region_effects_change_grids <- function(
 
                 # add sheet if not existent
                 if (
-                    !"Grids_RegionEff_Change_yearly" %in%
+                    !"Grids_RegionEff_yearly" %in%
                     names(complete_wb)
                 ) {
                     openxlsx::addWorksheet(
                         complete_wb,
-                        "Grids_RegionEff_Change_yearly"
+                        "Grids_RegionEff_yearly"
                     )
                 }
 
                 # write data
                 openxlsx::writeData(
                     wb = complete_wb,
-                    sheet = "Grids_RegionEff_Change_yearly",
+                    sheet = "Grids_RegionEff_yearly",
                     x = dta
                 )
 
@@ -186,7 +186,7 @@ exporting_region_effects_change_grids <- function(
             }
         }
     }
-    
+
     #--------------------------------------------------
     # return
 

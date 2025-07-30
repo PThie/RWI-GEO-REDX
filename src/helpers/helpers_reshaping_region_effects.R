@@ -2,7 +2,8 @@ helpers_reshaping_region_effects <- function(
     region_effects_data = NA,
     regional_col = c("grid", "kid2019", "gid2019", "lmrid"),
     pindex_col = c("pindex", "weighted_pindex"),
-    nobs_col = c("nobs_grid", "total_nobs", "nobs_district", "nobs_munic", "nobs_lmr")
+    nobs_col = c("nobs_grid", "total_nobs", "nobs_district", "nobs_munic", "nobs_lmr"),
+    time_col = c("year", "quarter")
 ) {
     #' @title Reshaping region effects
     #' 
@@ -13,6 +14,7 @@ helpers_reshaping_region_effects <- function(
     #' @param regional_col Column names for regional identifier
     #' @param pindex_col Column names for price indices
     #' @param nobs_col Column names for NOBS
+    #' @param time_col Column names for time variable
     #' 
     #' @return Data frame with reshaped region effects
     #' @author Patrick Thiel
@@ -23,21 +25,21 @@ helpers_reshaping_region_effects <- function(
     reshaped_region_effects <- merge(
         region_effects_data |>
             dplyr::select(
-                dplyr::all_of(c("year", regional_col, pindex_col))
+                dplyr::all_of(c(time_col, regional_col, pindex_col))
             ) |>
             tidyr::pivot_wider(
-                names_from = "year",
+                names_from = time_col,
                 values_from = pindex_col,
-                names_glue = "pindex{year}"
+                names_glue = glue::glue("pindex{{{time_col}}}")
             ),
         region_effects_data |>
             dplyr::select(
-                dplyr::all_of(c("year", regional_col, nobs_col))
+                dplyr::all_of(c(time_col, regional_col, nobs_col))
             ) |>
             tidyr::pivot_wider(
-                names_from = "year",
+                names_from = time_col,
                 values_from = nobs_col,
-                names_glue = "NOBS{year}"
+                names_glue = glue::glue("NOBS{{{time_col}}}")
             ),
         by = regional_col
     )

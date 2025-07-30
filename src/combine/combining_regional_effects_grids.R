@@ -1,49 +1,42 @@
-combining_regional_effects_change <- function(
-    HK_estimated_region_effects_change = NA,
-    WK_estimated_region_effects_change = NA,
-    WM_estimated_region_effects_change = NA
+combining_regional_effects_grids <- function(
+    HK_estimated_region_effects = NA,
+    WK_estimated_region_effects = NA,
+    WM_estimated_region_effects = NA,
+    export_name_addendum = c("cross", "region")
 ) {
-    #' @title Combining regional effects (with change values)
+    #' @title Combining regional effects at grid (deviations in percent)
     #' 
     #' @description This function combines regional effects for all housing types
-    #' by weighting the individual housing type results by the number of
-    #' observations. It also calculates the change to the reference period.
+    #' at the grid level by weighting the individual housing type results
+    #' (deviations in percent) by the number of observations.
     #' 
-    #' @param HK_estimated_region_effects_change Estimated regional effects for
-    #' HK (with change values)
-    #' @param WK_estimated_region_effects_change Estimated regional effects for
-    #' WK (with change values)
-    #' @param WM_estimated_region_effects_change Estimated regional effects for
-    #' WM (with change values)
+    #' @param HK_estimated_region_effects Estimated regional effects for HK
+    #' @param WK_estimated_region_effects Estimated regional effects for WK
+    #' @param WM_estimated_region_effects Estimated regional effects for WM
+    #' @param export_name_addendum Addendum for the exported file name
     #' 
     #' @return List with combined regional effects
     #' @author Patrick Thiel    
-
+    
     #--------------------------------------------------
     # combine all indices
 
     results_list <- list()
-    for (result in c("year", "quarter")) {
-        #--------------------------------------------------
-        # set up for specific time levels
-
-        time_label <- helpers_regional_effects_change_settings(time_period = result)[["time_label"]]
-        reference_period <- helpers_regional_effects_change_settings(time_period = result)[["reference_period"]]
-
+    for (time_label in names(HK_estimated_region_effects)) {
         #--------------------------------------------------
         # extract all individual effects
 
-        HK_effects <- HK_estimated_region_effects_change[[result]] |>
+        HK_effects <- HK_estimated_region_effects[[time_label]] |>
             dplyr::mutate(
                 housing_type = "HK"
             )
 
-        WK_effects <- WK_estimated_region_effects_change[[result]] |>
+        WK_effects <- WK_estimated_region_effects[[time_label]] |>
             dplyr::mutate(
                 housing_type = "WK"
             )
         
-        WM_effects <- WM_estimated_region_effects_change[[result]] |>
+        WM_effects <- WM_estimated_region_effects[[time_label]] |>
             dplyr::mutate(
                 housing_type = "WM"
             )
@@ -66,7 +59,7 @@ combining_regional_effects_change <- function(
             dplyr::mutate(
                 total_nobs = sum(nobs_grid, na.rm = TRUE),
                 weight = nobs_grid / total_nobs,
-                weighted_pindex = pindex * weight
+                weighted_pindex = pindex_dev_perc * weight
             ) |>
             dplyr::ungroup() |>
             dplyr::group_by(
@@ -77,28 +70,6 @@ combining_regional_effects_change <- function(
                 weighted_pindex = sum(weighted_pindex, na.rm = TRUE)
             ) |>
             dplyr::ungroup()
-
-            #--------------------------------------------------
-            # calculate the change between District_Year - District_2008
-
-            weighted_effects <- weighted_effects |>
-                merge(
-                    weighted_effects |>
-                        dplyr::filter(!!rlang::sym(time_label) == reference_period) |>
-                        dplyr::rename(weighted_pindex_ref = weighted_pindex) |>
-                        dplyr::select(-c(time_label)),
-                    by = "grid",
-                    all.x = TRUE
-                ) |>
-                dplyr::mutate(
-                    weighted_pindex_change = dplyr::case_when(
-                        !is.na(weighted_pindex) ~ (
-                            (weighted_pindex - weighted_pindex_ref) / weighted_pindex_ref
-                        ) * 100,
-                        TRUE ~ NA_real_
-                    )
-                ) |>
-                dplyr::select(-c(weighted_pindex_ref))
 
         #--------------------------------------------------
         # number of observations
@@ -142,7 +113,13 @@ combining_regional_effects_change <- function(
                 config_paths()[["output_path"]],
                 "CI",
                 "estimates",
-                paste0("combined_regional_effects_grids_", time_label, "_change.xlsx")
+                paste0(
+                    "combined_regional_effects_grids_",
+                    time_label,
+                    "_dev_perc_",
+                    export_name_addendum,
+                    ".xlsx"
+                )
             )
         )
 

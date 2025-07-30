@@ -29,40 +29,44 @@ helpers_target_names <- function() {
             "{static_housing_types}_cleaned"
         ),
         #--------------------------------------------------
-        # Names for estimation of time effects
-        # NOTE: This reflects regression 1 in the Stata routine.
-        "static_estimated_time_effects" = glue::glue(
-            "{static_housing_types}_estimated_time_effects"
-        ),
-        "static_estimated_time_effects_destatis" = glue::glue(
-            "{static_housing_types}_estimated_time_effects_destatis"
-        ),
-        "static_exported_time_effects" = glue::glue(
-            "{static_housing_types}_exported_time_effects"
-        ),
-        #--------------------------------------------------
         # Names for estimation of regional effects
-        # NOTE: This reflects regression 2 in the Stata routine.
-        "static_estimated_region_effects" = glue::glue(
-            "{static_housing_types}_estimated_region_effects"
+        # NOTE: This reflects regression 3 in the Stata routine.
+        "static_estimated_region_effects_abs" = glue::glue(
+            "{static_housing_types}_estimated_region_effects_abs"
         ),
-        "static_aggregated_region_effects" = glue::glue(
-            "{static_housing_types}_aggregated_region_effects"
+        "static_aggregated_region_effects_abs" = glue::glue(
+            "{static_housing_types}_aggregated_region_effects_abs"
         ),
-        "static_exported_aggregated_region_effects" = glue::glue(
-            "{static_housing_types}_exported_aggregated_region_effects"
+        "static_exported_aggregated_region_effects_abs" = glue::glue(
+            "{static_housing_types}_exported_aggregated_region_effects_abs"
         ),
         #--------------------------------------------------
-        # Names for estimation of regional effects (change)
-        # NOTE: This reflects regression 3 in the Stata routine.
-        "static_estimated_region_effects_change" = glue::glue(
-            "{static_housing_types}_estimated_region_effects_change"
+        # Names for calculating deviations within region
+        "static_calculated_deviations_regions_grids" = glue::glue(
+            "{static_housing_types}_calculated_deviations_regions_grids"
         ),
-        "static_aggregated_region_effects_change" = glue::glue(
-            "{static_housing_types}_aggregated_region_effects_change"
+        "static_calculated_deviations_regions" = glue::glue(
+            "{static_housing_types}_calculated_deviations_regions"
         ),
-        "static_exported_aggregated_region_effects_change" = glue::glue(
-            "{static_housing_types}_exported_aggregated_region_effects_change"
+        "static_exported_aggregated_region_effects_dev" = glue::glue(
+            "{static_housing_types}_exported_aggregated_region_effects_dev"
+        ),
+        "static_exported_aggregated_region_effects_dev_perc" = glue::glue(
+            "{static_housing_types}_exported_aggregated_region_effects_dev_perc"
+        ),
+        #--------------------------------------------------
+        # Names for calculating deviations between regions ("cross-section")
+        "static_calculated_deviations_cross_grids" = glue::glue(
+            "{static_housing_types}_calculated_deviations_cross_grids"
+        ),
+        "static_calculated_deviations_cross" = glue::glue(
+            "{static_housing_types}_calculated_deviations_cross"
+        ),
+        "static_exported_aggregated_region_effects_dev_cross" = glue::glue(
+            "{static_housing_types}_exported_aggregated_region_effects_dev_cross"
+        ),
+        "static_exported_aggregated_region_effects_dev_perc_cross" = glue::glue(
+            "{static_housing_types}_exported_aggregated_region_effects_dev_perc_cross"
         ),
         #--------------------------------------------------
         # Names for testing
