@@ -3,7 +3,7 @@ exporting_aggregated_regional_effects <- function(
     housing_type = NA,
     housing_type_label = NA,
     pindex_col_name = c("weighted_pindex", "pindex_dev", "pindex_dev_perc"),
-    sheet_name_addendum = c("abs", "dev", "dev_perc"),
+    sheet_name_addendum = c("abs", "dev", "devpc"),
     export_name_addendum = c("abs", "dev_cross", "dev_region"),
     dependencies = NA
 ) {
@@ -28,13 +28,14 @@ exporting_aggregated_regional_effects <- function(
     #--------------------------------------------------
     # check dependencies
 
-    targets::tar_assert_nonempty(dependencies)
+    targets::tar_assert_nonempty(dependencies[[1]])
+    targets::tar_assert_nonempty(dependencies[[2]])
 
     #--------------------------------------------------
     # loop through different regional delineations
 
     results_list <- list()
-    for (region_time in names(aggregated_region_effects_list)) {
+    for (region_time in names(aggregated_region_effects_list)) {    
         #--------------------------------------------------
         # general setup
 
@@ -56,6 +57,15 @@ exporting_aggregated_regional_effects <- function(
 
         # remove NAs in region identifier
         region_data <- region_data[!is.na(region_data[[region_id]]), ]
+
+        targets::tar_assert_nonempty(
+            region_data,
+            msg = glue::glue(
+                "!!! WARNING: ",
+                "The data for {region_time} is empty.",
+                " (Error code: rw#1)"
+            )
+        )
 
         #--------------------------------------------------
         # reshape columns
@@ -133,6 +143,15 @@ exporting_aggregated_regional_effects <- function(
 
             # extract actual data for anonymization type
             dta <- anonymized_data_list[[dta_name]]
+
+            targets::tar_assert_nonempty(
+                dta,
+                msg = glue::glue(
+                    "!!! WARNING: ",
+                    "The data for {region_time} is empty.",
+                    " (Error code: rw#2)"
+                )
+            )
 
             # load workbook
             complete_wb <- openxlsx::loadWorkbook(
