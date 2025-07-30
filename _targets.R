@@ -359,7 +359,10 @@ targets_estimation_region_abs <- rlang::list2(
                     pindex_col_name = "weighted_pindex",
                     sheet_name_addendum = "abs",
                     export_name_addendum = "abs",
-                    dependencies = empty_export_workbooks
+                    dependencies = list(
+                        empty_export_workbooks,
+                        aggregated_region_effects_abs
+                    )
                 )
             )
         ),
@@ -411,7 +414,10 @@ targets_deviation_region <- rlang::list2(
                     pindex_col_name = "pindex_dev",
                     sheet_name_addendum = "dev",
                     export_name_addendum = "dev_region",
-                    dependencies = empty_export_workbooks
+                    dependencies = list(
+                        empty_export_workbooks,
+                        calculated_deviations_regions
+                    )
                 )
             ),
             tar_target(
@@ -423,7 +429,10 @@ targets_deviation_region <- rlang::list2(
                     pindex_col_name = "pindex_dev_perc",
                     sheet_name_addendum = "devpc",
                     export_name_addendum = "dev_region",
-                    dependencies = empty_export_workbooks
+                    dependencies = list(
+                        empty_export_workbooks,
+                        exported_aggregated_region_effects_dev
+                    )
                 )
             )
         ),
@@ -495,7 +504,10 @@ targets_deviation_region <- rlang::list2(
             pindex_col_name = "weighted_pindex",
             sheet_name_addendum = "devpc",
             export_name_addendum = "dev_region",
-            dependencies = empty_export_workbooks
+            dependencies = list(
+                empty_export_workbooks,
+                combined_deviations_regions
+            )
         )
     )
 )
@@ -527,7 +539,10 @@ targets_deviation_cross <- rlang::list2(
                     pindex_col_name = "pindex_dev",
                     sheet_name_addendum = "dev",
                     export_name_addendum = "dev_cross",
-                    dependencies = empty_export_workbooks
+                    dependencies = list(
+                        empty_export_workbooks,
+                        calculated_deviations_cross
+                    )
                 )
             ),
             tar_target(
@@ -539,7 +554,10 @@ targets_deviation_cross <- rlang::list2(
                     pindex_col_name = "pindex_dev_perc",
                     sheet_name_addendum = "devpc",
                     export_name_addendum = "dev_cross",
-                    dependencies = empty_export_workbooks
+                    dependencies = list(
+                        empty_export_workbooks,
+                        exported_aggregated_region_effects_dev_cross
+                    )
                 )
             )
         ),
@@ -611,7 +629,10 @@ targets_deviation_cross <- rlang::list2(
             pindex_col_name = "weighted_pindex",
             sheet_name_addendum = "devpc",
             export_name_addendum = "dev_cross",
-            dependencies = empty_export_workbooks
+            dependencies = list(
+                empty_export_workbooks,
+                combined_deviations_cross
+            )
         )
     )
 )
@@ -631,7 +652,9 @@ targets_cleanup <- rlang::list2(
                 exported_deviations_regions_grids_dev,
                 HK_exported_aggregated_region_effects_dev_cross,
                 exported_deviations_cross_grids_dev,
-                exported_deviations_combined_grids_dev_perc_cross
+                exported_deviations_combined_grids_dev_perc_cross,
+                exported_combined_deviations_cross_dev_perc,
+                exported_combined_deviations_regions_dev_perc
             )
         )
     ),
@@ -642,13 +665,13 @@ targets_cleanup <- rlang::list2(
             dependency = copy_information_worksheet
         )
     ),
-    # tar_target(
-    #     calculate_num_rows_cols_doi,
-    #     calculating_num_rows_cols_doi(
-    #         housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-    #         dependency = reorder_worksheets
-    #     )
-    # )
+    tar_target(
+        calculate_num_rows_cols_doi,
+        calculating_num_rows_cols_doi(
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
+            dependency = reorder_worksheets
+        )
+    )
 )
 
 #--------------------------------------------------
