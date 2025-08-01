@@ -21,24 +21,7 @@ It is not permitted for users to undertake any action that might result in the r
 
 Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2025): RWI-GEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2024 (V15). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v15. Further, we recommend citing the data description.
 
-## Data generating process
-
-The data generation process follows a classic ETL pipeline setup, where first the sources (mainly geographic information and housing data) are extracted and cleaned. Then, in the transformation step, three estimations are performed (represented by the three pillars in the figure below). Finally, the data is loaded into the final dataset and distributed to users on demand.
-
 For more details, especially on the estimates, please refer to the [data report](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v15.pdf).
-
-<div style="text-align: center;">
-    <img src="output/process_picture_extract.png" alt="Extract" width="400"/> 
-</div>
-
-<div style="text-align: center;">
-    <img src="output/process_picture_transform.png" alt="Transform" width="400"/> 
-</div>
-
-<div style="text-align: center;">
-    <img src="output/process_picture_load.png" alt="Load" width="400"/> 
-</div>
-<h6 style="text-align: center;"><strong>Data Generating Process for the dataset RWI-GEO-REDX. Source: Patrick Thiel.</strong></h6>
 
 ## More Information
 
