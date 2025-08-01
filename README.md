@@ -26,7 +26,7 @@ For more details, especially on the estimates, please refer to the [data report]
 ## More Information
 
 - [General information on RWI-GEO-RED/X](https://www.rwi-essen.de/en/research-advice/further/research-data-center-ruhr-fdz/data-sets/rwi-geo-red/x-real-estate-data-and-price-indices)
-- [Data report RWI-GEO-REDX V15](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v15.pdf). Please cite the data report as: Thiel (2025), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-05/2024 (V14.1), RWI Projektberichte, Essen
+- [Data report RWI-GEO-REDX V15](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v15.pdf). Please cite the data report as: Thiel (2025), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-11/2024 (V15), RWI Projektberichte, Essen
 
 ## DOI
 - Repository for V15: [![DOI:10.5281/zenodo.16609434](http://img.shields.io/badge/DOI-10.5281/zenodo.16609434-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
