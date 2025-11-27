@@ -103,7 +103,15 @@ estimating_regional_effects_abs <- function(
             # replace rownames
             fixed_effects$id_fe <- rownames(fixed_effects)
             rownames(fixed_effects) <- seq(1, nrow(fixed_effects))
-
+            
+            # split the fixed effect combination into its components
+            fixed_effects_logged <- fixed_effects |>
+                dplyr::mutate(
+                    # separate region and time into separate columns
+                    !!time_label := substring(id_fe, 1, string_cutoff),
+                    grid = substring(id_fe, string_cutoff + 2, nchar(id_fe))
+                )
+            
             #--------------------------------------------------
             # get the smearing factor
 
@@ -113,7 +121,8 @@ estimating_regional_effects_abs <- function(
             #--------------------------------------------------
             # calculate price index, i.e. delogarithmize the fixed effect
 
-            fixed_effects <- fixed_effects |>
+
+            fixed_effects_abs <- fixed_effects_logged |>
                 dplyr::mutate(
                     pindex = exp(pindex_FE) * smearing_factor,
                     # separate region and time into separate columns
@@ -191,7 +200,7 @@ estimating_regional_effects_abs <- function(
             # merge FE and NOBS data
 
             regional_coef <- merge(
-                fixed_effects,
+                fixed_effects_abs,
                 nobs,
                 by = c(time_label, "grid"),
                 all.x = TRUE
