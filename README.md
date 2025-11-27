@@ -2,14 +2,14 @@
 
 This repository shows the detailed preparation and generation of RWI-GEO-REDX price index.
 
-## Abstract Data Description (V15)
+## Abstract Data Description (V16)
 
 The FDZ Ruhr at RWI provides regional price indices for apartments and houses (rentals and sales) in Germany since 2008 through the RWI-GEO-REDX dataset, based on property listings from ImmoScout24 (RWI-GEO-RED).
 
 RWI-GEO-REDX stands out for its high spatial resolution: the exact location of each listing allows price indices to be calculated at the level of 1×1 km grid cells. Results are aggregated at regional levels including grid cells, municipalities, counties, and labor market regions. The indices are reported as quality-adjusted absolute prices, including annual and regional changes. 
 A key feature is the location-adjusted national index, which accounts for shifts in the regional composition of listings over time.
 
-This repository constitutes an updated version of previous reports and refers to RWI-GEO-REDX V15, which encompasses data up to November 2025.
+This repository constitutes an updated version of previous reports and refers to RWI-GEO-REDX V16, which encompasses data up to May 2025.
 
 ## Access
 
