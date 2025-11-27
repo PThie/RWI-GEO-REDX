@@ -19,19 +19,19 @@ Data access does not require a data use agreement, but users must register to ac
 
 It is not permitted for users to undertake any action that might result in the re-identification of individual homes or apartments.
 
-Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2025): RWI-GEO-REDX: Regional Real Estate Price Index for Germany, 2008-11/2024 (V15). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v15. Further, we recommend citing the data description.
+Users are requested to cite the source correctly and to inform the FDZ Ruhr about publications using the data. When using the dataset RWI-GEO-REDX, please cite the data as RWI (2025): RWI-GEO-REDX: Regional Real Estate Price Index for Germany, 2008-05/2025 (V16). Version: 1. RWI – Leibniz Institute for Economic Research. Dataset. http://doi.org/10.7807/immo:redx:puf:v16. Further, we recommend citing the data description.
 
-For more details, especially on the estimates, please refer to the [data report](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v15.pdf).
+For more details, especially on the estimates, please refer to the [data report](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v16.pdf).
 
 ## More Information
 
 - [General information on RWI-GEO-RED/X](https://www.rwi-essen.de/en/research-advice/further/research-data-center-ruhr-fdz/data-sets/rwi-geo-red/x-real-estate-data-and-price-indices)
-- [Data report RWI-GEO-REDX V15](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v15.pdf). Please cite the data report as: Thiel (2025), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-11/2024 (V15), RWI Projektberichte, Essen
+- [Data report RWI-GEO-REDX V15](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v16.pdf). Please cite the data report as: Heuer and Thiel (2025), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-5/2025 (V16), RWI Projektberichte, Essen
 
 ## DOI
-- Repository for V15: [![DOI:10.5281/zenodo.16609434](http://img.shields.io/badge/DOI-10.5281/zenodo.16609434-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
-- RWI-GEO-REDX V15 (PUF): http://doi.org/10.7807/immo:redx:puf:v15
-- RWI-GEO-REDX V15 (SUF): http://doi.org/10.7807/immo:redx:suf:v15
+- Repository for V16: [![DOI:10.5281/zenodo.16609434](http://img.shields.io/badge/DOI-10.5281/zenodo.16609434-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
+- RWI-GEO-REDX V16 (PUF): http://doi.org/10.7807/immo:redx:puf:v16
+- RWI-GEO-REDX V16 (SUF): http://doi.org/10.7807/immo:redx:suf:v16
 
 ## Contact Person
 
