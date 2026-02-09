@@ -299,7 +299,7 @@ targets_preparation_housing <- rlang::list2(
                     "On-site",
                     config_globals()[["red_version"]],
                     "parquet",
-                    paste0(housing_types, "_allVersions_ohneText.parquet")
+                    paste0(housing_types, "_ohneText.parquet")
                 )
             ),
             tar_file_read(
@@ -340,14 +340,16 @@ targets_estimation_region_abs <- rlang::list2(
                     housing_data = housing_cleaned,
                     housing_type = housing_types,
                     grids_municipalities = grids_municipalities,
-                    grids_lmr = grids_lmr
+                    grids_lmr = grids_lmr,
+                    destatis = FALSE
                 )
             ),
             tar_target(
                 aggregated_region_effects_abs,
                 aggregating_regional_effects_abs(
                     estimated_effects_list = estimated_region_effects_abs,
-                    housing_type = housing_types
+                    housing_type = housing_types,
+                    destatis = FALSE
                 )
             ),
             tar_target(
@@ -396,13 +398,17 @@ targets_deviation_region <- rlang::list2(
             tar_target(
                 calculated_deviations_regions_grids,
                 calculating_deviations_regions_grids(
-                    grid_effects_abs = estimated_region_effects_abs
+                    grid_effects_abs = estimated_region_effects_abs,
+                    destatis = FALSE,
+                    housing_type = housing_types
                 )
             ),
             tar_target(
                 calculated_deviations_regions,
                 calculating_deviations_regions(
-                    aggregated_effects = aggregated_region_effects_abs
+                    aggregated_effects = aggregated_region_effects_abs,
+                    destatis = FALSE,
+                    housing_type = housing_types
                 )
             ),
             tar_target(
@@ -680,81 +686,82 @@ targets_cleanup <- rlang::list2(
 targets_test <- rlang::list2(
     #--------------------------------------------------
     # reading previous version output
-    tar_eval(
-        list(
-            # regional effects
-            tar_file_read(
-                estimated_region_effects_prev_version,
-                file.path(
-                    stringr::str_replace(
-                        config_paths()[["output_path"]],
-                        paste0("version_", config_globals()[["next_version"]]),
-                        paste0("version_", config_globals()[["current_version"]])    
-                    ),
-                    housing_type,
-                    "estimates",
-                    "regional_effects_grids_year.xlsx"
-                ),
-                reading_estimated_region_effects_prev_version(!!.x),
-                format = "fst"
-            ),
-            # change in regional effects
-            tar_file_read(
-                estimated_region_effects_change_prev_version,
-                file.path(
-                    stringr::str_replace(
-                        config_paths()[["output_path"]],
-                        paste0("version_", config_globals()[["next_version"]]),
-                        paste0("version_", config_globals()[["current_version"]])    
-                    ),
-                    housing_type,
-                    "estimates",
-                    "regional_effects_grids_year_change.xlsx"
-                ),
-                reading_estimated_region_effects_prev_version(!!.x),
-                format = "fst"
-            )
-        ),
-        values = list(
-            housing_type = helpers_target_names()[["static_housing_types"]],
-            estimated_region_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_prev_version"]]),
-            estimated_region_effects_change_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_change_prev_version"]])
-        )
-    ),
-    # regional effects
-    tar_file_read(
-        combined_estimated_region_effects_prev_version,
-        file.path(
-            stringr::str_replace(
-                config_paths()[["output_path"]],
-                paste0("version_", config_globals()[["next_version"]]),
-                paste0("version_", config_globals()[["current_version"]])    
-            ),
-            "CI",
-            "estimates",
-            "combined_regional_effects_grids_year.xlsx"
-        ),
-        reading_estimated_region_effects_prev_version(!!.x),
-        format = "fst"
-    ),
-    tar_file_read(
-        combined_estimated_region_effects_change_prev_version,
-        file.path(
-            stringr::str_replace(
-                config_paths()[["output_path"]],
-                paste0("version_", config_globals()[["next_version"]]),
-                paste0("version_", config_globals()[["current_version"]])    
-            ),
-            "CI",
-            "estimates",
-            "combined_regional_effects_grids_year_change.xlsx"
-        ),
-        reading_estimated_region_effects_prev_version(!!.x),
-        format = "fst"
-    ),
+    # tar_eval(
+    #     list(
+    #         # regional effects
+    #         tar_file_read(
+    #             estimated_region_effects_prev_version,
+    #             file.path(
+    #                 stringr::str_replace(
+    #                     config_paths()[["output_path"]],
+    #                     paste0("version_", config_globals()[["next_version"]]),
+    #                     paste0("version_", config_globals()[["current_version"]])    
+    #                 ),
+    #                 housing_type,
+    #                 "estimates",
+    #                 "regional_effects_grids_year.xlsx"
+    #             ),
+    #             reading_estimated_region_effects_prev_version(!!.x),
+    #             format = "fst"
+    #         ),
+    #         # change in regional effects
+    #         tar_file_read(
+    #             estimated_region_effects_change_prev_version,
+    #             file.path(
+    #                 stringr::str_replace(
+    #                     config_paths()[["output_path"]],
+    #                     paste0("version_", config_globals()[["next_version"]]),
+    #                     paste0("version_", config_globals()[["current_version"]])    
+    #                 ),
+    #                 housing_type,
+    #                 "estimates",
+    #                 "regional_effects_grids_year_change.xlsx"
+    #             ),
+    #             reading_estimated_region_effects_prev_version(!!.x),
+    #             format = "fst"
+    #         )
+    #     ),
+    #     values = list(
+    #         housing_type = helpers_target_names()[["static_housing_types"]],
+    #         estimated_region_effects_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_prev_version"]]),
+    #         estimated_region_effects_change_prev_version = rlang::syms(helpers_target_names()[["static_estimated_region_effects_change_prev_version"]])
+    #     )
+    # ),
+    # # regional effects
+    # tar_file_read(
+    #     combined_estimated_region_effects_prev_version,
+    #     file.path(
+    #         stringr::str_replace(
+    #             config_paths()[["output_path"]],
+    #             paste0("version_", config_globals()[["next_version"]]),
+    #             paste0("version_", config_globals()[["current_version"]])    
+    #         ),
+    #         "CI",
+    #         "estimates",
+    #         "combined_regional_effects_grids_year.xlsx"
+    #     ),
+    #     reading_estimated_region_effects_prev_version(!!.x),
+    #     format = "fst"
+    # ),
+    # tar_file_read(
+    #     combined_estimated_region_effects_change_prev_version,
+    #     file.path(
+    #         stringr::str_replace(
+    #             config_paths()[["output_path"]],
+    #             paste0("version_", config_globals()[["next_version"]]),
+    #             paste0("version_", config_globals()[["current_version"]])    
+    #         ),
+    #         "CI",
+    #         "estimates",
+    #         "combined_regional_effects_grids_year_change.xlsx"
+    #     ),
+    #     reading_estimated_region_effects_prev_version(!!.x),
+    #     format = "fst"
+    # ),
     #--------------------------------------------------
     # reading destatis indices (just for time effects)
     # comparing RWI-GEO-REDX with Destatis
+    # TODO: adjust to new data 2025 (download new destatis data)
     tar_file_read(
         destatis_time_effects,
         file.path(
@@ -764,86 +771,105 @@ targets_test <- rlang::list2(
         ),
         reading_destatis(!!.x)
     ),
-    tar_target(
-        time_effects_comparison_plots,
-        plotting_time_differences_destatis(
-            HK_effects = HK_estimated_time_effects_destatis,
-            WK_effects = WK_estimated_time_effects_destatis,
-            WM_effects = WM_estimated_time_effects_destatis,
-            destatis_effects = destatis_time_effects
+    # calculate deviations over time for REDX but using a different reference
+    # period
+    tar_eval(
+        list(
+            tar_target(
+                calculated_deviations_regions_destatis,
+                calculating_deviations_regions(
+                    aggregated_effects = aggregated_region_effects_abs,
+                    housing_type = housing_types,
+                    destatis = TRUE
+                )
+            )
+        ),
+        values = list(
+            housing_types = helpers_target_names()[["static_housing_types"]],
+            calculated_deviations_regions_destatis = rlang::syms(helpers_target_names()[["static_calculated_deviations_regions_destatis"]]),
+            aggregated_region_effects_abs = rlang::syms(helpers_target_names()[["static_aggregated_region_effects_abs"]])
         )
     ),
+    # tar_target(
+    #     time_effects_comparison_plots,
+    #     plotting_time_differences_destatis(
+    #         HK_effects = HK_estimated_time_effects_destatis,
+    #         WK_effects = WK_estimated_time_effects_destatis,
+    #         WM_effects = WM_estimated_time_effects_destatis,
+    #         destatis_effects = destatis_time_effects
+    #     )
+    # ),
     #--------------------------------------------------
     # summarise regional effects (current/upcoming and previous version)
     # regional effects upcoming version
-    tar_target(
-        summary_stats_region_test,
-        testing_summaries_region_effects(
-            HK_region_effects = HK_estimated_region_effects[["year"]],
-            WK_region_effects = WK_estimated_region_effects[["year"]],
-            WM_region_effects = WM_estimated_region_effects[["year"]],
-            CI_region_effects = combined_region_effects[["year"]],
-            output_text_file = "overall_summary_stats",
-            change_effects = FALSE
-        )
-    ),
-    # regional effects previous version
-    tar_target(
-        summary_stats_region_test_prev_version,
-        testing_summaries_region_effects(
-            HK_region_effects = HK_estimated_region_effects_prev_version,
-            WK_region_effects = WK_estimated_region_effects_prev_version,
-            WM_region_effects = WM_estimated_region_effects_prev_version,
-            CI_region_effects = combined_estimated_region_effects_prev_version,
-            output_text_file = "overall_summary_stats_prev_version",
-            change_effects = FALSE
-        )
-    ),
-    # regional effects changes upcoming version
-    # NOTE: currently works only for yearly changes. code needs to be adjusted
-    # if quarterly changes should be considered as well
-    tar_target(
-        summary_stats_region_change_test,
-        testing_summaries_region_effects(
-            HK_region_effects = HK_estimated_region_effects_change[["year"]],
-            WK_region_effects = WK_estimated_region_effects_change[["year"]],
-            WM_region_effects = WM_estimated_region_effects_change[["year"]],
-            CI_region_effects = combined_region_effects_change[["year"]],
-            output_text_file = "overall_summary_stats_change",
-            change_effects = TRUE
-        )
-    ),
-    # regional effects changes previous version
-    tar_target(
-        summary_stats_region_change_test_prev_version,
-        testing_summaries_region_effects(
-            HK_region_effects = HK_estimated_region_effects_change_prev_version,
-            WK_region_effects = WK_estimated_region_effects_change_prev_version,
-            WM_region_effects = WM_estimated_region_effects_change_prev_version,
-            CI_region_effects = combined_estimated_region_effects_change_prev_version,
-            output_text_file = "overall_summary_stats_change_prev_version",
-            change_effects = TRUE
-        )
-    ),
-    # comparison regional effects upcoming and previous version
-    tar_target(
-        summary_stats_region_test_comparison,
-        testing_differences_region_effects_versions(
-            summary_stats = summary_stats_region_test,
-            summary_stats_prev_version = summary_stats_region_test_prev_version,
-            output_text_file = "overall_summary_stats_comparison_versions"
-        )
-    ),
-    # comparison regional effects changes upcoming and previos version
-    tar_target(
-        summary_stats_region_change_test_comparison,
-        testing_differences_region_effects_versions(
-            summary_stats = summary_stats_region_change_test,
-            summary_stats_prev_version = summary_stats_region_change_test_prev_version,
-            output_text_file = "overall_summary_stats_change_comparison_versions"
-        )
+    # tar_target(
+    #     summary_stats_region_test,
+    #     testing_summaries_region_effects(
+    #         HK_region_effects = HK_estimated_region_effects[["year"]],
+    #         WK_region_effects = WK_estimated_region_effects[["year"]],
+    #         WM_region_effects = WM_estimated_region_effects[["year"]],
+    #         CI_region_effects = combined_region_effects[["year"]],
+    #         output_text_file = "overall_summary_stats",
+    #         change_effects = FALSE
+    #     )
+    # ),
+    # # regional effects previous version
+    # tar_target(
+    #     summary_stats_region_test_prev_version,
+    #     testing_summaries_region_effects(
+    #         HK_region_effects = HK_estimated_region_effects_prev_version,
+    #         WK_region_effects = WK_estimated_region_effects_prev_version,
+    #         WM_region_effects = WM_estimated_region_effects_prev_version,
+    #         CI_region_effects = combined_estimated_region_effects_prev_version,
+    #         output_text_file = "overall_summary_stats_prev_version",
+    #         change_effects = FALSE
+    #     )
+    # ),
+    # # regional effects changes upcoming version
+    # # NOTE: currently works only for yearly changes. code needs to be adjusted
+    # # if quarterly changes should be considered as well
+    # tar_target(
+    #     summary_stats_region_change_test,
+    #     testing_summaries_region_effects(
+    #         HK_region_effects = HK_estimated_region_effects_change[["year"]],
+    #         WK_region_effects = WK_estimated_region_effects_change[["year"]],
+    #         WM_region_effects = WM_estimated_region_effects_change[["year"]],
+    #         CI_region_effects = combined_region_effects_change[["year"]],
+    #         output_text_file = "overall_summary_stats_change",
+    #         change_effects = TRUE
+    #     )
+    # ),
+    # # regional effects changes previous version
+    # tar_target(
+    #     summary_stats_region_change_test_prev_version,
+    #     testing_summaries_region_effects(
+    #         HK_region_effects = HK_estimated_region_effects_change_prev_version,
+    #         WK_region_effects = WK_estimated_region_effects_change_prev_version,
+    #         WM_region_effects = WM_estimated_region_effects_change_prev_version,
+    #         CI_region_effects = combined_estimated_region_effects_change_prev_version,
+    #         output_text_file = "overall_summary_stats_change_prev_version",
+    #         change_effects = TRUE
+    #     )
+    # ),
+    # # comparison regional effects upcoming and previous version
+    # tar_target(
+    #     summary_stats_region_test_comparison,
+    #     testing_differences_region_effects_versions(
+    #         summary_stats = summary_stats_region_test,
+    #         summary_stats_prev_version = summary_stats_region_test_prev_version,
+    #         output_text_file = "overall_summary_stats_comparison_versions"
+    #     )
+    # ),
+    # # comparison regional effects changes upcoming and previos version
+    # tar_target(
+    #     summary_stats_region_change_test_comparison,
+    #     testing_differences_region_effects_versions(
+    #         summary_stats = summary_stats_region_change_test,
+    #         summary_stats_prev_version = summary_stats_region_change_test_prev_version,
+    #         output_text_file = "overall_summary_stats_change_comparison_versions"
+    #     )
         
-    )
+    # )
 )
 
 #--------------------------------------------------
@@ -885,7 +911,7 @@ rlang::list2(
     targets_deviation_region,
     targets_deviation_cross,
     targets_cleanup,
-    # targets_test, TODO: TURN ON LATER (ADJUST)
+    targets_test, # TODO: TURN ON LATER (ADJUST)
     # targets_visualization, TODO: TURN ON LATER (ADJUST)
     targets_pipeline_stats
 )
