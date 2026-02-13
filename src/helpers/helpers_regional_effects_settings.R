@@ -24,11 +24,16 @@ helpers_regional_effects_settings <- function(
         region_id <- "kid2019"
         region_label <- "district"
         sheet_name <- "Distr"
-    } else {
+    } else if (agg_level == "lmr"){
         nobs_var <- "nobs_lmr"
         region_id <- "lmrid"
         region_label <- "lmr"
         sheet_name <- "LMR"
+    } else {
+        nobs_var <- "nobs_zipcode"
+        region_id <- "zipcodeid"
+        region_label <- "zipcode"
+        sheet_name <- "Zip"
     }
 
     #--------------------------------------------------
