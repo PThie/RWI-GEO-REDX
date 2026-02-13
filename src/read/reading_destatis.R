@@ -32,6 +32,10 @@ reading_destatis <- function(data_path_destatis = NA) {
             slicing_rows <- 1
         }
 
+        if (file_name == "net_rents_index_states_years") {
+            slicing_rows <- 0
+        }
+
         # extract column names
         col_names <- data |>
             dplyr::slice(slicing_rows)
@@ -41,11 +45,26 @@ reading_destatis <- function(data_path_destatis = NA) {
         if (!grepl("net", file_name)) {
             col_names[1] <- "data_type"
             col_names[2] <- "DELETE"
-            col_names <- stringr::str_replace(col_names, 'c\\(\\"', '')
-            col_names <- stringr::str_replace(col_names, '\", \"', '-0')
-            col_names <- stringr::str_replace(col_names, '\\. Quartal\\"\\)', '')        
+            # Extract year and quarter
+            years <- stringr::str_extract(col_names, "\\d{4}")
+            quarters <- stringr::str_extract(col_names, "\\d(?=\\. Quartal)")
+
+            # Fill forward years
+            years <- zoo::na.locf(years, na.rm = FALSE)
+
+            # Combine where we have quarter info
+            col_names[3:length(col_names)] <- ifelse(
+                !is.na(quarters[3:length(col_names)]),
+                paste0(years[3:length(col_names)], "-0", quarters[3:length(col_names)]),
+                col_names[3:length(col_names)]
+            )
         } else {
             col_names[1] <- "year"
+
+            if (file_name == "net_rents_index_states_years") {
+                col_names <- colnames(data)
+                col_names[1] <- "year"
+            }
         }
 
         # assign clean column names
@@ -114,7 +133,19 @@ reading_destatis <- function(data_path_destatis = NA) {
                     values_to = "timeeff"
                 ) |>
                 # drop NAs in value since these are not yet available quarters
-                dplyr::filter(!is.na(value))
+                dplyr::filter(!is.na(timeeff))
+        } else if (file_name == "net_rents_index_states_years") {
+            data_clean_long <- data_clean |>
+                dplyr::mutate(year = as.numeric(year)) |>
+                dplyr::filter(!is.na(year)) |>
+                dplyr::mutate(
+                    year = as.character(year)
+                ) |>
+                tidyr::pivot_longer(
+                    cols = -year,
+                    names_to = "state",
+                    values_to = "timeeff"
+                )
         } else {
             data_clean_long <- data_clean |>
                 tidyr::pivot_longer(
