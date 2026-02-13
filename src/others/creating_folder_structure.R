@@ -27,7 +27,7 @@ creating_folder_structure <- function() {
     #--------------------------------------------------
     # create special folders
 
-    special_folders <- c("export", "testing", "visualizations", "info")
+    special_folders <- c("export", "testing", "visualizations", "info", "destatis")
 
     for (special_folder in special_folders) {
         directory <- file.path(
