@@ -27,6 +27,16 @@ cleaning_housing_data <- function(
         }
     }
 
+    #--------------------------------------------------
+    # delete unnecessary variable that might cause conflicts
+
+    vars <- c("merge_gid")
+    for (col in vars) {
+        if (col %in% names(housing_data_org)) {
+            housing_data_org[[col]] <- NULL
+        }
+    }
+
     #----------------------------------------------
     # general cleaning (identical for all types)
 
@@ -328,6 +338,9 @@ cleaning_housing_data <- function(
         # still appears twice with complete identical information (including
         # the spell). Therefore, the above algortihm does not capture this as
         # duplicate. Solution: Just keep one of the two observations.
+        # Way to find duplicates:
+        # dup <- duplicated(org_data$obid)
+        # duplicated_rows <- org_data[!dup, ]
         org_data <- dplyr::bind_rows(
             org_data |>
                 dplyr::filter(
@@ -353,7 +366,8 @@ cleaning_housing_data <- function(
             "80125487",
             "84395483",
             "81421542",
-            "63487465"
+            "63487465",
+            "80484644"
         )
 
         org_data_unique <- org_data |>
@@ -365,7 +379,7 @@ cleaning_housing_data <- function(
             dplyr::filter(
                 obid %in% identical_rows
             ) |>
-            group_by(obid) |>
+            dplyr::group_by(obid) |>
             dplyr::slice(1)
 
         org_data <- dplyr::bind_rows(
@@ -376,7 +390,12 @@ cleaning_housing_data <- function(
 
     # UNIT TEST: no duplicates in obid
     tar_assert_true(
-        sum(duplicated(org_data$obid)) == 0
+        sum(duplicated(org_data$obid)) == 0,
+        msg = glue::glue(
+            "!!! WARNING: ",
+            "There are duplicate entries in the dataset.",
+            " (Error code: chd#1)"
+        )
     )
 
     #----------------------------------------------
