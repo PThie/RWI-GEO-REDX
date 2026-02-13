@@ -1,5 +1,7 @@
 helpers_regional_effects_change_settings <- function(
-    time_period = NA
+    time_period = NA,
+    destatis = NA,
+    housing_type = NA
 ) {
     #' @title Regional effects change ettings
     #' 
@@ -8,6 +10,8 @@ helpers_regional_effects_change_settings <- function(
     #' temporal variables.
     #' 
     #' @param time_period Character defining the temporal level
+    #' @param destatis Logical indicating whether to use Destatis references.
+    #' @param housing_type Character string specifying the housing type.
     #' 
     #' @return List with settings
     #' @author Patrick Thiel
@@ -25,6 +29,27 @@ helpers_regional_effects_change_settings <- function(
         string_cutoff <- 7
         time_label <- "quarter"
         reference_period <- "2008-01"
+    }
+
+    #--------------------------------------------------
+    # settings for destatis comparison
+
+    if (destatis == TRUE) {
+        if (time_period == "ejahr" | time_period == "year") {
+            time_label <- "year"
+            if (housing_type == "WM") {
+                reference_period <- "2020"
+            } else {
+                reference_period <- "2015"
+            }
+        } else {
+            time_label <- "quarter"
+            if (housing_type == "WM") {
+                reference_period <- "2020-01"
+            } else {
+                reference_period <- "2015-01"
+            }
+        }
     }
 
     #--------------------------------------------------
