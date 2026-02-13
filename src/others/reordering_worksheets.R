@@ -1,15 +1,12 @@
 
 reordering_worksheets <- function(
-    housing_types_labels = NA,
-    dependency = NA
+    housing_types_labels = NA
 ) {
     #' @title Reordering worksheets in export workbooks
     #' 
     #' @description This function reorders the worksheets in the export workbooks.
     #' 
     #' @param housing_types_labels Character with housing types
-    #' @param dependency Placeholder for target object that needs to be created
-    #' before executing this function
     #' 
     #' @return NULL
     #' @author Patrick Thiel
@@ -18,18 +15,6 @@ reordering_worksheets <- function(
     #' However, this returned object is not used in the pipeline. It is only
     #' returned to establish dependencies in the next step.
     
-    #--------------------------------------------------
-    # check depdenency
-
-    targets::tar_assert_nonempty(
-        dependency,
-        msg = glue::glue(
-            "!!! WARNING:",
-            "The dependency object is empty.",
-            " (Error code: rw#1)"
-        )
-    )
-
     #--------------------------------------------------
     # define options
 
@@ -61,6 +46,7 @@ reordering_worksheets <- function(
                     #--------------------------------------------------
                     # skip absolute values for combined index because the
                     # combined index is only available as deviations
+
                     if (housing_types_label == "CombInd" & data_type == "ABS") {
                         next
                     }
@@ -73,7 +59,8 @@ reordering_worksheets <- function(
                             "Information",
                             paste0("Munic_RegionEff_devpc_", paste0(time_period, "ly")),
                             paste0("Distr_RegionEff_devpc_", paste0(time_period, "ly")),
-                            paste0("LMR_RegionEff_devpc_", paste0(time_period, "ly"))
+                            paste0("LMR_RegionEff_devpc_", paste0(time_period, "ly")),
+                            paste0("Zip_RegionEff_devpc_", paste0(time_period, "ly"))
                         )
                     } else {
                         if (data_type == "ABS") {
@@ -81,7 +68,8 @@ reordering_worksheets <- function(
                                 "Information",
                                 paste0("Munic_RegionEff_abs_", paste0(time_period, "ly")),
                                 paste0("Distr_RegionEff_abs_", paste0(time_period, "ly")),
-                                paste0("LMR_RegionEff_abs_", paste0(time_period, "ly"))
+                                paste0("LMR_RegionEff_abs_", paste0(time_period, "ly")),
+                                paste0("Zip_RegionEff_abs_", paste0(time_period, "ly"))
                             )
                         } else {
                             sheet_order <- c(
@@ -89,9 +77,11 @@ reordering_worksheets <- function(
                                 paste0("Munic_RegionEff_dev_", paste0(time_period, "ly")),
                                 paste0("Distr_RegionEff_dev_", paste0(time_period, "ly")),
                                 paste0("LMR_RegionEff_dev_", paste0(time_period, "ly")),
+                                paste0("Zip_RegionEff_dev_", paste0(time_period, "ly")),
                                 paste0("Munic_RegionEff_devpc_", paste0(time_period, "ly")),
                                 paste0("Distr_RegionEff_devpc_", paste0(time_period, "ly")),
-                                paste0("LMR_RegionEff_devpc_", paste0(time_period, "ly"))
+                                paste0("LMR_RegionEff_devpc_", paste0(time_period, "ly")),
+                                paste0("Zip_RegionEff_devpc_", paste0(time_period, "ly"))
                             )
                         }
                     }
@@ -155,7 +145,20 @@ reordering_worksheets <- function(
     }
 
     #--------------------------------------------------
+    # load files that have been modified
+
+    files <- list.files(
+        file.path(
+            file.path(
+                config_paths()[["output_path"]],
+                "export"
+            ),
+            full.names = TRUE
+        )
+    )
+
+    #--------------------------------------------------
     # return
     
-    return(workbook)
+    return(files)
 }

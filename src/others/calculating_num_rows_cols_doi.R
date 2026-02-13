@@ -1,6 +1,5 @@
 calculating_num_rows_cols_doi <- function(
-    housing_types_labels = NA,
-    dependency = NA
+    housing_types_labels = NA
 ) {
     #' @title Calculate number of rows and columns for DOI
     #' 
@@ -8,24 +7,10 @@ calculating_num_rows_cols_doi <- function(
     #' each housing type. This information is needed for the DOI registration.
     #' 
     #' @param housing_types_labels Character with housing types
-    #' @param dependency Placeholder for target object that needs to be created
-    #' before executing this function
     #' 
     #' @return NULL, direct export
     #' @author Patrick Thiel
 
-    #--------------------------------------------------
-    # check depdenency
-
-    targets::tar_assert_nonempty(
-        dependency,
-        msg = glue::glue(
-            "!!! WARNING:",
-            "The dependency object is empty.",
-            " (Error code: rw#1)"
-        )
-    )
-    
     #--------------------------------------------------
     # define export file (for storage)
 
@@ -179,6 +164,6 @@ calculating_num_rows_cols_doi <- function(
     #--------------------------------------------------
     # return
 
-    return(NULL)
+    return(export_file)
 }
 
