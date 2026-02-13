@@ -69,6 +69,11 @@ helpers_target_names <- function() {
             "{static_housing_types}_exported_aggregated_region_effects_dev_perc_cross"
         ),
         #--------------------------------------------------
+        # Names for doing comparison to destatis
+        "static_calculated_deviations_regions_destatis" = glue::glue(
+            "{static_housing_types}_calculated_deviations_regions_destatis"
+        ),
+        #--------------------------------------------------
         # Names for testing
         "static_estimated_region_effects_prev_version" = glue::glue(
             "{static_housing_types}_estimated_region_effects_prev_version"
