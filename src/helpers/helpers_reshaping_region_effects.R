@@ -1,8 +1,8 @@
 helpers_reshaping_region_effects <- function(
     region_effects_data = NA,
-    regional_col = c("grid", "kid2019", "gid2019", "lmrid"),
+    regional_col = c("grid", "kid2019", "gid2019", "lmrid", "zipcodeid"),
     pindex_col = c("pindex", "weighted_pindex"),
-    nobs_col = c("nobs_grid", "total_nobs", "nobs_district", "nobs_munic", "nobs_lmr"),
+    nobs_col = c("nobs_grid", "total_nobs", "nobs_district", "nobs_munic", "nobs_lmr", "nobs_zipcode"),
     time_col = c("year", "quarter")
 ) {
     #' @title Reshaping region effects
