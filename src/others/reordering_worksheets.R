@@ -1,6 +1,7 @@
 
 reordering_worksheets <- function(
-    housing_types_labels = NA
+    housing_types_labels = NA,
+    dependency = NA
 ) {
     #' @title Reordering worksheets in export workbooks
     #' 
