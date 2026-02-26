@@ -78,7 +78,50 @@ creating_export_workbooks <- function() {
     }
 
     #--------------------------------------------------
+    # read all created file paths
+
+    created_files <- list.files(
+        file.path(
+            config_paths()[["output_path"]],
+            "export"
+        ),
+        full.names = TRUE
+    )
+
+    # keep only Excel workbooks
+    created_files <- created_files[
+        stringr::str_detect(created_files, "\\.xlsx$")
+    ]
+
+    #--------------------------------------------------
+    # check that the number of created workbooks is correct
+
+    n_anonym_types <- 2 # PUF and SUF
+    n_housing_types <- length(config_globals()[["housing_types"]])
+    n_time_periods <- 2 # year and quarter
+    n_workbook_suffixes <- 3 # ABS, DEV_REGION, DEV_CROSS
+    n_exception_CI <- 4 # CombInd (CI) does not come for ABS (absolute), i.e.
+    # not for ABS PUF YEAR, ABS PUF QUARTER, ABS SUF YEAR, ABS SUF QUARTER (= 4)
+
+    total_n <- (
+        n_anonym_types *
+        n_housing_types *
+        n_time_periods *
+        n_workbook_suffixes
+    ) - n_exception_CI
+
+    targets::tar_assert_true(
+        length(created_files) == total_n,
+        msg = glue::glue(
+            "!!! WARNING: ",
+            "The number of created workbooks ({length(created_files)}) does not
+            match the expected number ({total_n}).",
+            " (Error code: cew#1)"
+        )
+    )
+
+    #--------------------------------------------------
     # return
 
-    return("WORKED")
+    return(created_files)
 }
