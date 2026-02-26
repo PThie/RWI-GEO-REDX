@@ -152,6 +152,7 @@ targets_preparation_folders <- rlang::list2(
     tar_target(
         empty_export_workbooks,
         creating_export_workbooks(),
+        format = "file",
         deployment = "main"
     ),
     tar_target(
@@ -277,6 +278,22 @@ targets_preparation_geo <- rlang::list2(
             ),
         format = "fst"
     ),
+    tar_file_read(
+        grids_zipcodes,
+        file.path(
+            config_paths()[["gebiete_path"]],
+            "Zuordnung",
+            "Raster_PLZ",
+            "raster_plz_2019_unambiguous.csv"
+        ),
+        data.table::fread(!!.x) |>
+            dplyr::rename(grid = idm, zipcode = PLZ) |>
+            dplyr::mutate(
+                zipcode = as.character(zipcode),
+                zipcode = stringr::str_pad(zipcode, 5, pad = "0")
+            ),
+        format = "fst"
+    ),
     tar_fst(
         grids_lmr,
         connecting_grids_lmr(
@@ -341,6 +358,7 @@ targets_estimation_region_abs <- rlang::list2(
                     housing_type = housing_types,
                     grids_municipalities = grids_municipalities,
                     grids_lmr = grids_lmr,
+                    grids_zipcodes = grids_zipcodes,
                     destatis = FALSE
                 )
             ),
@@ -360,12 +378,10 @@ targets_estimation_region_abs <- rlang::list2(
                     housing_type_label = housing_type_labels,
                     pindex_col_name = "weighted_pindex",
                     sheet_name_addendum = "abs",
-                    export_name_addendum = "abs",
-                    dependencies = list(
-                        empty_export_workbooks,
-                        aggregated_region_effects_abs
-                    )
-                )
+                    export_name_addendum = "abs"
+                ),
+                deployment = "main",
+                format = "file"
             )
         ),
         values = list(
@@ -385,7 +401,8 @@ targets_estimation_region_abs <- rlang::list2(
             WM_estimated_region_effects = WM_estimated_region_effects_abs,
             pindex_col_name = "pindex",
             export_name_addendum = "abs"
-        )
+        ),
+        format = "file"
     )
 )
 
@@ -419,12 +436,10 @@ targets_deviation_region <- rlang::list2(
                     housing_type_label = housing_type_labels,
                     pindex_col_name = "pindex_dev",
                     sheet_name_addendum = "dev",
-                    export_name_addendum = "dev_region",
-                    dependencies = list(
-                        empty_export_workbooks,
-                        calculated_deviations_regions
-                    )
-                )
+                    export_name_addendum = "dev_region"
+                ),
+                deployment = "main",
+                format = "file"
             ),
             tar_target(
                 exported_aggregated_region_effects_dev_perc,
@@ -434,12 +449,10 @@ targets_deviation_region <- rlang::list2(
                     housing_type_label = housing_type_labels,
                     pindex_col_name = "pindex_dev_perc",
                     sheet_name_addendum = "devpc",
-                    export_name_addendum = "dev_region",
-                    dependencies = list(
-                        empty_export_workbooks,
-                        exported_aggregated_region_effects_dev
-                    )
-                )
+                    export_name_addendum = "dev_region"
+                ),
+                deployment = "main",
+                format = "file"
             )
         ),
         values = list(
@@ -461,7 +474,8 @@ targets_deviation_region <- rlang::list2(
             WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
             pindex_col_name = "pindex_dev",
             export_name_addendum = "dev_region"
-        )
+        ),
+        format = "file"
     ),
     tar_target(
         exported_deviations_regions_grids_dev_perc,
@@ -471,7 +485,8 @@ targets_deviation_region <- rlang::list2(
             WM_estimated_region_effects = WM_calculated_deviations_regions_grids,
             pindex_col_name = "pindex_dev_perc",
             export_name_addendum = "dev_perc_region"
-        )
+        ),
+        format = "file"
     ),
     tar_target(
         combined_deviations_regions_grids,
@@ -490,7 +505,8 @@ targets_deviation_region <- rlang::list2(
             nvar = "total_nobs",
             housing_type = "CI",
             export_name_addendum = "dev_perc_region"
-        )
+        ),
+        format = "file"
     ),
     tar_target(
         combined_deviations_regions,
@@ -509,12 +525,10 @@ targets_deviation_region <- rlang::list2(
             housing_type_label = "CombInd",
             pindex_col_name = "weighted_pindex",
             sheet_name_addendum = "devpc",
-            export_name_addendum = "dev_region",
-            dependencies = list(
-                empty_export_workbooks,
-                combined_deviations_regions
-            )
-        )
+            export_name_addendum = "dev_region"
+        ),
+        deployment = "main",
+        format = "file"
     )
 )
 
@@ -544,12 +558,10 @@ targets_deviation_cross <- rlang::list2(
                     housing_type_label = housing_type_labels,
                     pindex_col_name = "pindex_dev",
                     sheet_name_addendum = "dev",
-                    export_name_addendum = "dev_cross",
-                    dependencies = list(
-                        empty_export_workbooks,
-                        calculated_deviations_cross
-                    )
-                )
+                    export_name_addendum = "dev_cross"
+                ),
+                deployment = "main",
+                format = "file"
             ),
             tar_target(
                 exported_aggregated_region_effects_dev_perc_cross,
@@ -559,12 +571,10 @@ targets_deviation_cross <- rlang::list2(
                     housing_type_label = housing_type_labels,
                     pindex_col_name = "pindex_dev_perc",
                     sheet_name_addendum = "devpc",
-                    export_name_addendum = "dev_cross",
-                    dependencies = list(
-                        empty_export_workbooks,
-                        exported_aggregated_region_effects_dev_cross
-                    )
-                )
+                    export_name_addendum = "dev_cross"
+                ),
+                deployment = "main",
+                format = "file"
             )
         ),
         values = list(
@@ -586,7 +596,8 @@ targets_deviation_cross <- rlang::list2(
             WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
             pindex_col_name = "pindex_dev",
             export_name_addendum = "dev_cross"
-        )
+        ),
+        format = "file"
     ),
     tar_target(
         exported_deviations_cross_grids_dev_perc,
@@ -596,7 +607,8 @@ targets_deviation_cross <- rlang::list2(
             WM_estimated_region_effects = WM_calculated_deviations_cross_grids,
             pindex_col_name = "pindex_dev_perc",
             export_name_addendum = "dev_perc_cross"
-        )
+        ),
+        format = "file"
     ),
     tar_target(
         combined_deviations_cross_grids,
@@ -615,7 +627,8 @@ targets_deviation_cross <- rlang::list2(
             nvar = "total_nobs",
             housing_type = "CI",
             export_name_addendum = "dev_perc_cross"
-        )
+        ),
+        format = "file"
     ),
     tar_target(
         combined_deviations_cross,
@@ -634,12 +647,10 @@ targets_deviation_cross <- rlang::list2(
             housing_type_label = "CombInd",
             pindex_col_name = "weighted_pindex",
             sheet_name_addendum = "devpc",
-            export_name_addendum = "dev_cross",
-            dependencies = list(
-                empty_export_workbooks,
-                combined_deviations_cross
-            )
-        )
+            export_name_addendum = "dev_cross"
+        ),
+        deployment = "main",
+        format = "file"
     )
 )
 
@@ -651,32 +662,35 @@ targets_cleanup <- rlang::list2(
         copy_information_worksheet,
         copying_information_worksheet(
             housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependencies = list(
-                HK_exported_aggregated_region_effects_abs,
-                exported_region_effects_abs_grids,
-                HK_exported_aggregated_region_effects_dev,
-                exported_deviations_regions_grids_dev,
-                HK_exported_aggregated_region_effects_dev_cross,
-                exported_deviations_cross_grids_dev,
-                exported_deviations_combined_grids_dev_perc_cross,
-                exported_combined_deviations_cross_dev_perc,
-                exported_combined_deviations_regions_dev_perc
-            )
-        )
+            dependency = empty_export_workbooks
+        ),
+        deployment = "main",
+        format = "file"
     ),
     tar_target(
         reorder_worksheets,
         reordering_worksheets(
             housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = copy_information_worksheet
-        )
+            dependency = list(
+                empty_export_workbooks,
+                copy_information_worksheet,
+                HK_exported_aggregated_region_effects_abs,
+                HK_exported_aggregated_region_effects_dev,
+                HK_exported_aggregated_region_effects_dev_perc,
+                HK_exported_aggregated_region_effects_dev_cross,
+                HK_exported_aggregated_region_effects_dev_perc_cross
+            )
+        ),
+        deployment = "main",
+        format = "file"
     ),
     tar_target(
         calculate_num_rows_cols_doi,
         calculating_num_rows_cols_doi(
-            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]],
-            dependency = reorder_worksheets
-        )
+            housing_types_labels = helpers_target_names()[["static_housing_types_labels"]]
+        ),
+        deployment = "main",
+        format = "file"
     )
 )
 
@@ -911,7 +925,7 @@ rlang::list2(
     targets_deviation_region,
     targets_deviation_cross,
     targets_cleanup,
-    targets_test, # TODO: TURN ON LATER (ADJUST)
+    # targets_test, # TODO: TURN ON LATER (ADJUST)
     # targets_visualization, TODO: TURN ON LATER (ADJUST)
     targets_pipeline_stats
 )
