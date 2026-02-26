@@ -2,7 +2,9 @@ estimating_regional_effects_abs <- function(
     housing_data = NA,
     housing_type = NA,
     grids_municipalities = NA,
-    grids_lmr = NA
+    grids_lmr = NA,
+    grids_zipcodes = NA,
+    destatis = FALSE
 ) {
     #' @title Estimating regional effects change
     #' 
@@ -15,6 +17,8 @@ estimating_regional_effects_abs <- function(
     #' and municipalities
     #' @param grids_lmr Dataframe with connection between grids and labor market
     #' regions (LMR/AMR)
+    #' @param grids_zipcodes Dataframe with connection between grids and zip codes
+    #' @param destatis Logical indicating whether to use Destatis references.
     #' 
     #' @note This refers to regression 3 in the former Stata coding but in
     #' absolute terms.
@@ -51,9 +55,21 @@ estimating_regional_effects_abs <- function(
             #--------------------------------------------------
             # set up for different time periods
 
-            time_fe_id <- helpers_regional_effects_change_settings(time_period = time_fe)[["time_fe_id"]]
-            string_cutoff <- helpers_regional_effects_change_settings(time_period = time_fe)[["string_cutoff"]]
-            time_label <- helpers_regional_effects_change_settings(time_period = time_fe)[["time_label"]]
+            time_fe_id <- helpers_regional_effects_change_settings(
+                time_period = time_fe,
+                destatis = destatis,
+                housing_type = housing_type
+            )[["time_fe_id"]]
+            string_cutoff <- helpers_regional_effects_change_settings(
+                time_period = time_fe,
+                destatis = destatis,
+                housing_type = housing_type
+            )[["string_cutoff"]]
+            time_label <- helpers_regional_effects_change_settings(
+                time_period = time_fe,
+                destatis = destatis,
+                housing_type = housing_type
+            )[["time_label"]]
 
             #--------------------------------------------------
             # create fixed effect combination between regional and time fixed effects
@@ -193,6 +209,25 @@ estimating_regional_effects_abs <- function(
                     nobs_lmr = sum(nobs_grid, na.rm = TRUE)
                 ) |>
                 dplyr::rename(lmrid = amr) |>
+                dplyr::ungroup() |>
+                as.data.frame()
+
+            # merge zipcode identifiers
+            nobs <- nobs |>
+                dplyr::ungroup() |>
+                merge(
+                    grids_zipcodes,
+                    by = "grid",
+                    all.x = TRUE
+                ) |>
+                dplyr::group_by(
+                    !!rlang::sym(time_label),
+                    zipcode
+                ) |>
+                dplyr::mutate(
+                    nobs_zipcode = sum(nobs_grid, na.rm = TRUE)
+                ) |>
+                dplyr::rename(zipcodeid = zipcode) |>
                 dplyr::ungroup() |>
                 as.data.frame()
 

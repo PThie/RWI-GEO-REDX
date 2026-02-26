@@ -1,6 +1,7 @@
 aggregating_regional_effects_abs <- function(
     estimated_effects_list = NA,
-    housing_type = NA
+    housing_type = NA,
+    destatis = NA
 ) {
     #' @title Aggregating regional effects
     #' 
@@ -9,6 +10,7 @@ aggregating_regional_effects_abs <- function(
     #' 
     #' @param estimated_effects_list List with estimated regional effects
     #' @param housing_type Housing type
+    #' @param destatis Logical indicating if the data is from Destatis
     #' 
     #' @note Based on regression 3 in the former Stata coding.
     #' 
@@ -20,7 +22,7 @@ aggregating_regional_effects_abs <- function(
 
     results_list <- list()
     for (result in names(estimated_effects_list)) {
-        for (agg_level in c("munic", "district", "lmr")) {
+        for (agg_level in c("munic", "district", "lmr", "zipcode")) {
             #--------------------------------------------------
             # set up for specific regional level
             # and time definitions
@@ -28,7 +30,11 @@ aggregating_regional_effects_abs <- function(
             nobs_var <- helpers_regional_effects_settings(agg_level = agg_level)[["nobs_var"]]
             region_id <- helpers_regional_effects_settings(agg_level = agg_level)[["region_id"]]
             region_label <- helpers_regional_effects_settings(agg_level = agg_level)[["region_label"]]
-            time_label <- helpers_regional_effects_change_settings(time_period = result)[["time_label"]]
+            time_label <- helpers_regional_effects_change_settings(
+                time_period = result,
+                destatis = destatis,
+                housing_type = housing_type
+            )[["time_label"]]
 
             #--------------------------------------------------
             # calculate weights
