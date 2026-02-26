@@ -4,8 +4,7 @@ exporting_aggregated_regional_effects <- function(
     housing_type_label = NA,
     pindex_col_name = c("weighted_pindex", "pindex_dev", "pindex_dev_perc"),
     sheet_name_addendum = c("abs", "dev", "devpc"),
-    export_name_addendum = c("abs", "dev_cross", "dev_region"),
-    dependencies = NA
+    export_name_addendum = c("abs", "dev_cross", "dev_region")
 ) {
     #' @title Exporting aggregated regional effects (change values)
     #' 
@@ -20,16 +19,9 @@ exporting_aggregated_regional_effects <- function(
     #' @param pindex_col_name Name of the column with the price index
     #' @param sheet_name_addendum Addendum for the sheet name
     #' @param export_name_addendum Addendum for the exported file name
-    #' @param dependencies Dependencies for the function
     #' 
-    #' @return List with exported aggregated regional effects (change values)
+    #' @return List with exported file names
     #' @author Patrick Thiel
-
-    #--------------------------------------------------
-    # check dependencies
-
-    targets::tar_assert_nonempty(dependencies[[1]])
-    targets::tar_assert_nonempty(dependencies[[2]])
 
     #--------------------------------------------------
     # loop through different regional delineations
@@ -242,7 +234,23 @@ exporting_aggregated_regional_effects <- function(
     }
 
     #--------------------------------------------------
+    # load files that have been exported
+
+    files <- list.files(
+        file.path(
+            config_paths()[["output_path"]],
+            "export"
+        ),
+        full.names = TRUE
+    )
+    
+    # keep only Excel workbooks
+    files <- files[
+        stringr::str_detect(files, "\\.xlsx$")
+    ]
+
+    #--------------------------------------------------
     # return
 
-    return(results_list)
+    return(files)
 }

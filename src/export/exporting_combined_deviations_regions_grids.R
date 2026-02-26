@@ -3,7 +3,7 @@ exporting_combined_deviations_regions_grids <- function(
     pindex_col_name = "weighted_pindex",
     nvar = "total_nobs",
     housing_type = "CI",
-    export_name_addendum = "dev_perc"
+    export_name_addendum = c("dev_perc_cross", "dev_perc_region")
 ) {
     #' @title Exporting combined deviations for grids
     #' 
@@ -151,7 +151,60 @@ exporting_combined_deviations_regions_grids <- function(
     }
 
     #--------------------------------------------------
+    # load files that have been modified
+
+    files <- list.files(
+        file.path(
+            config_paths()[["output_path"]],
+            "export"
+        ),
+        full.names = TRUE
+    )
+
+    # only keep csv and parquet files
+    files <- files[
+        stringr::str_detect(files, "\\.(csv|parquet)$")
+    ]
+
+    # keep only exported files depending on type
+    files <- files[
+        stringr::str_detect(files, toupper(export_name_addendum))
+    ]
+
+    # keep only files that are CI
+    # because the other GRIDS files have their own export function
+    files <- files[
+        stringr::str_detect(files, "CI")
+    ]
+
+    # define what number of exported files to expect
+    n_file_formats <- 2 # CSV, parquet
+    n_anonym_types <- 2 # PUF and SUF
+    n_time_periods <- 2 # year and quarter
+    # NOTE: CombInd (CI) has different types because not all values can be
+    # calculated for CI
+    # NOTE: each type is exported separately such that the number is set to one
+    n_types <- 1 # DEV PERC REGION, DEV PERC CROSS
+
+    total_n <- (
+        n_file_formats *
+        n_anonym_types *
+        n_time_periods *
+        n_types
+    )
+
+    targets::tar_assert_true(
+        length(files) == total_n,
+        msg = glue::glue(
+            "!!! WARNING: ",
+            "The number of GRIDS files ({length(files)}) does not
+            match the expected number ({total_n}).",
+            " (Error code: ecdrg#1)"
+        )
+    )
+
+    #--------------------------------------------------
     # return
 
-    return(all_results)
+    return(files)
 }
