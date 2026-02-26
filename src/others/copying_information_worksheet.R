@@ -1,6 +1,6 @@
 copying_information_worksheet <- function(
     housing_types_labels = NA,
-    dependencies = NA
+    dependency = NA
 ) {
     #' @title Copying information worksheet
     #' 
@@ -9,8 +9,6 @@ copying_information_worksheet <- function(
     #' to the new version.
     #' 
     #' @param housing_types_labels Character with housing types
-    #' @param dependencies List with dependencies. This should ensure that this
-    #' step gets updated when previous steps change.
     #' 
     #' @return NULL, direct export
     #' @author Patrick Thiel
@@ -19,20 +17,6 @@ copying_information_worksheet <- function(
     #' However, this returned object is not used in the pipeline. It is only
     #' returned to establish dependencies in the next step.
     
-    #--------------------------------------------------
-    # check for dependencies
-
-    for (dta in dependencies) {
-        targets::tar_assert_nonempty(
-            dta,
-            msg = glue::glue(
-                "!!! WARNING: ",
-                "One of the dependencies is empty.",
-                " (Error code: ciw#1)"
-            )
-        )
-    }
-
     #--------------------------------------------------
     # define options
 
@@ -254,12 +238,12 @@ copying_information_worksheet <- function(
                     # NOTE: exception for DEV because they list sheets
                     # Hence the headings are shifted.
                     if (housing_types_label == "CombInd") {
-                        headings_pos <- c(4, 10, 21, 28, 33, 36)
+                        headings_pos <- c(4, 11, 23, 30, 35, 38)
                     } else {
                         if (data_type == "ABS") {
-                            headings_pos <- c(4, 10, 21, 28, 31, 34)
+                            headings_pos <- c(4, 11, 23, 30, 33, 36)
                         } else {
-                            headings_pos <- c(4, 13, 24, 31, 34, 37)
+                            headings_pos <- c(4, 15, 27, 34, 37, 40)
                         }
                     }
 
@@ -298,6 +282,12 @@ copying_information_worksheet <- function(
                             "ly"
                         )
 
+                        title_zip_regioneff_devpc <- paste0(
+                            "Zip_RegionEff_devpc_",
+                            time_period,
+                            "ly"
+                        )
+
                         # Lines for "Contents"
                         text_munic_regioneff_devpc <- paste0(
                             "Regional price index on municipality level, 2008Q1-",
@@ -323,17 +313,27 @@ copying_information_worksheet <- function(
                             " (deviations in percent)"
                         )
 
+                        text_zip_regioneff_devpc <- paste0(
+                            "Regional price index on zip-code level, 2008Q1-",
+                            config_globals()[["max_year"]],
+                            "Q",
+                            config_globals()[["max_quarter"]],
+                            " (deviations in percent)"
+                        )
+
                         # combine everything
                         table_of_content_list <- c(
                             text_munic_regioneff_devpc,
                             text_distr_regioneff_devpc,
-                            text_lmr_regioneff_devpc
+                            text_lmr_regioneff_devpc,
+                            text_zip_regioneff_devpc
                         )
 
                         titles_list <- c(
                             title_munic_regioneff_devpc,
                             title_distr_regioneff_devpc,
-                            title_lmr_regioneff_devpc
+                            title_lmr_regioneff_devpc,
+                            title_zip_regioneff_devpc
                         )
                     } else {
                         if (data_type == "ABS") {
@@ -361,7 +361,15 @@ copying_information_worksheet <- function(
                                 time_period,
                                 "ly"
                             )
-                            
+
+                            title_zip_regioneff <- paste0(
+                                "Zip_RegionEff_",
+                                tolower(data_type),
+                                "_",
+                                time_period,
+                                "ly"
+                            )
+
                             if (time_period == "year") {
                                 # Lines for "Contents"
                                 text_munic_regioneff <- paste0(
@@ -378,6 +386,12 @@ copying_information_worksheet <- function(
 
                                 text_lmr_regioneff <- paste0(
                                     "Regional price index on labor market region (LMR), 2008-",
+                                    config_globals()[["max_year"]],
+                                    " (absolute values)"
+                                )
+
+                                text_zip_regioneff <- paste0(
+                                    "Regional price index on zip-code level, 2008-",
                                     config_globals()[["max_year"]],
                                     " (absolute values)"
                                 )
@@ -401,6 +415,14 @@ copying_information_worksheet <- function(
 
                                 text_lmr_regioneff <- paste0(
                                     "Regional price index on labor market region (LMR), 2008Q1-",
+                                    config_globals()[["max_year"]],
+                                    "Q",
+                                    config_globals()[["max_quarter"]],
+                                    " (absolute values)"
+                                )
+
+                                text_zip_regioneff <- paste0(
+                                    "Regional price index on zip-code level, 2008Q1-",
                                     config_globals()[["max_year"]],
                                     "Q",
                                     config_globals()[["max_quarter"]],
@@ -427,6 +449,12 @@ copying_information_worksheet <- function(
                                 "ly"
                             )
 
+                            title_zip_regioneff_dev <- paste0(
+                                "Zip_RegionEff_dev_",
+                                time_period,
+                                "ly"
+                            )
+
                             title_munic_regioneff_devpc <- paste0(
                                 "Munic_RegionEff_devpc_",
                                 time_period,
@@ -441,6 +469,12 @@ copying_information_worksheet <- function(
 
                             title_lmr_regioneff_devpc <- paste0(
                                 "LMR_RegionEff_devpc_",
+                                time_period,
+                                "ly"
+                            )
+
+                            title_zip_regioneff_devpc <- paste0(
+                                "Zip_RegionEff_devpc_",
                                 time_period,
                                 "ly"
                             )
@@ -465,6 +499,12 @@ copying_information_worksheet <- function(
                                     " (deviations in absolute values)"
                                 )
 
+                                text_zip_regioneff_dev <- paste0(
+                                    "Regional price index on zip-code level, 2008-",
+                                    config_globals()[["max_year"]],
+                                    " (deviations in absolute values)"
+                                )
+
                                 text_munic_regioneff_devpc <- paste0(
                                     "Regional price index on municipality level, 2008-",
                                     config_globals()[["max_year"]],
@@ -481,6 +521,12 @@ copying_information_worksheet <- function(
                                     "Regional price index on labor market region (LMR), 2008-",
                                     config_globals()[["max_year"]],
                                     " (deviations in percent)"
+                                )
+
+                                text_zip_regioneff_devpc <- paste0(
+                                    "Regional price index on zip-code level, 2008-",
+                                    config_globals()[["max_year"]],
+                                    " (deviations in absolute values)"
                                 )
                             } else {
                                 # Lines for "Contents"
@@ -508,6 +554,14 @@ copying_information_worksheet <- function(
                                     " (deviations in absolute values)"
                                 )
 
+                                text_zip_regioneff_dev <- paste0(
+                                    "Regional price index on zip-code level, 2008Q1-",
+                                    config_globals()[["max_year"]],
+                                    "Q",
+                                    config_globals()[["max_quarter"]],
+                                    " (deviations in absolute values)"
+                                )
+
                                 # Lines for "Contents"
                                 text_munic_regioneff_devpc <- paste0(
                                     "Regional price index on municipality level, 2008Q1-",
@@ -532,6 +586,14 @@ copying_information_worksheet <- function(
                                     config_globals()[["max_quarter"]],
                                     " (deviations in percent)"
                                 )
+
+                                text_zip_regioneff_devpc <- paste0(
+                                    "Regional price index on zip-code level, 2008Q1-",
+                                    config_globals()[["max_year"]],
+                                    "Q",
+                                    config_globals()[["max_quarter"]],
+                                    " (deviations in percent)"
+                                )
                             }
                         }
                     
@@ -541,31 +603,37 @@ copying_information_worksheet <- function(
                             table_of_content_list <- c(
                                 text_munic_regioneff,
                                 text_distr_regioneff,
-                                text_lmr_regioneff
+                                text_lmr_regioneff,
+                                text_zip_regioneff
                             )
 
                             titles_list <- c(
                                 title_munic_regioneff,
                                 title_distr_regioneff,
-                                title_lmr_regioneff
+                                title_lmr_regioneff,
+                                title_zip_regioneff
                             )
                         } else {
                             table_of_content_list <- c(
                                 text_munic_regioneff_dev,
                                 text_distr_regioneff_dev,
                                 text_lmr_regioneff_dev,
+                                text_zip_regioneff_dev,
                                 text_munic_regioneff_devpc,
                                 text_distr_regioneff_devpc,
-                                text_lmr_regioneff_devpc
+                                text_lmr_regioneff_devpc,
+                                text_zip_regioneff_devpc
                             )
 
                             titles_list <- c(
                                 title_munic_regioneff_dev,
                                 title_distr_regioneff_dev,
                                 title_lmr_regioneff_dev,
+                                title_zip_regioneff_dev,
                                 title_munic_regioneff_devpc,
                                 title_distr_regioneff_devpc,
-                                title_lmr_regioneff_devpc
+                                title_lmr_regioneff_devpc,
+                                title_zip_regioneff_devpc
                             )
                         }
                     }
@@ -597,7 +665,7 @@ copying_information_worksheet <- function(
                         if (data_type == "ABS") {
                             second_table_pos <- 11
                         } else {
-                            second_table_pos <- 14
+                            second_table_pos <- 15
                         }
                     }
 
@@ -641,12 +709,12 @@ copying_information_worksheet <- function(
 
                     # define position
                     if (housing_types_label == "CombInd") {
-                        publications_pos <- 25
+                        publications_pos <- 27
                     } else {
                         if (data_type == "ABS") {
-                            publications_pos <- 25
+                            publications_pos <- 27
                         } else {
-                            publications_pos <- 28
+                            publications_pos <- 31
                         }
                     }
 
@@ -695,12 +763,12 @@ copying_information_worksheet <- function(
 
                     # define position
                     if (housing_types_label == "CombInd") {
-                        data_source_pos <- 29
+                        data_source_pos <- 31
                     } else {
                         if (data_type == "ABS") {
-                            data_source_pos <- 29
+                            data_source_pos <- 31
                         } else {
-                            data_source_pos <- 32
+                            data_source_pos <- 35
                         }
                     }
                     
@@ -727,12 +795,12 @@ copying_information_worksheet <- function(
                     # NOTE: varies because CombInd list all housing types as
                     # data source
                     if (housing_types_label == "CombInd") {
-                        dgp_pos <- 34
+                        dgp_pos <- 36
                     } else {
                         if (data_type == "ABS") {
-                            dgp_pos <- 32
+                            dgp_pos <- 34
                         } else {
-                            dgp_pos <- 35
+                            dgp_pos <- 38
                         }
                     }
 
@@ -769,12 +837,12 @@ copying_information_worksheet <- function(
                     # NOTE: varies because GRIDS and CombInd list all housing types as
                     # data source
                     if (housing_types_label == "CombInd") {
-                        cit_pos <- 37
+                        cit_pos <- 39
                     } else {
                         if (data_type == "ABS") {
-                            cit_pos <- 35
+                            cit_pos <- 37
                         } else {
-                            cit_pos <- 38
+                            cit_pos <- 41
                         }
                     }
 
@@ -817,7 +885,20 @@ copying_information_worksheet <- function(
     }
 
     #--------------------------------------------------
+    # load files that have been modified
+
+    files <- list.files(
+        file.path(
+            file.path(
+                config_paths()[["output_path"]],
+                "export"
+            ),
+            full.names = TRUE
+        )
+    )
+
+    #--------------------------------------------------
     # return
 
-    return(workbook)
+    return(files)
 }
