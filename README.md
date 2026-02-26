@@ -29,7 +29,7 @@ For more details, especially on the estimates, please refer to the [data report]
 - [Data report RWI-GEO-REDX V17](https://www.rwi-essen.de/fileadmin/user_upload/RWI/FDZ/Datenbeschreibung-REDX-v17.pdf). Please cite the data report as: Heuer and Thiel (2026), FDZ Data Description: Regional Real Estate Price Index for Germany, 2008-11/2025 (V17), RWI Projektberichte, Essen
 
 ## DOI
-- Repository for V17: [![DOI:10.5281/zenodo.16609434](http://img.shields.io/badge/DOI-10.5281/zenodo.16609434-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
+- Repository for V17: [![DOI:10.5281/zenodo.18782564](http://img.shields.io/badge/DOI-10.5281/zenodo.18782564-048BC0.svg)](https://zenodo.org/account/settings/github/repository/PThie/RWI-GEO-REDX)
 - RWI-GEO-REDX V17 (PUF): http://doi.org/10.7807/immo:redx:puf:v17
 - RWI-GEO-REDX V17 (SUF): http://doi.org/10.7807/immo:redx:suf:v17
 
