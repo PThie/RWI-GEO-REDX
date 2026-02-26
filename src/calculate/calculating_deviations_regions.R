@@ -1,5 +1,7 @@
 calculating_deviations_regions <- function(
-    aggregated_effects = NA
+    aggregated_effects = NA,
+    destatis = FALSE,
+    housing_type = NA
 ) {
     #' @title Calculate deviations for regions
     #' 
@@ -8,6 +10,8 @@ calculating_deviations_regions <- function(
     #' `helpers_regional_effects_change_settings` function.
     #' 
     #' @param aggregated_effects List of data frames with the regional effects
+    #' @param destatis Logical indicating whether to use Destatis references.
+    #' @param housing_type Character string specifying the housing type.
     #' 
     #' @return List of data frames with the deviations for each region and time period
     #' @author Patrick Thiel
@@ -29,7 +33,11 @@ calculating_deviations_regions <- function(
 
         region_id <- helpers_regional_effects_settings(agg_level = region_label)[["region_id"]]
 
-        reference_period <- helpers_regional_effects_change_settings(time_period = time_label)[["reference_period"]]
+        reference_period <- helpers_regional_effects_change_settings(
+            time_period = time_label,
+            destatis = destatis,
+            housing_type = housing_type
+        )[["reference_period"]]
 
         #--------------------------------------------------
         # merge base period to overall data
@@ -61,6 +69,22 @@ calculating_deviations_regions <- function(
         # store results
 
         results_list[[result]] <- region_time_effects_prep
+    }
+
+    #--------------------------------------------------
+    # export (only for destatis)
+
+    if (destatis == TRUE) {
+        for (result in names(results_list)) {
+            data.table::fwrite(
+                results_list[[result]],
+                file.path(
+                    config_paths()[["output_path"]],
+                    "destatis",
+                    paste0("deviations_", result, ".csv")
+                )
+            )
+        }
     }
     
     #--------------------------------------------------

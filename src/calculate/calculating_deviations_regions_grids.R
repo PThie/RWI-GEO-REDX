@@ -1,5 +1,7 @@
 calculating_deviations_regions_grids <- function(
-    grid_effects_abs = NA
+    grid_effects_abs = NA,
+    destatis = FALSE,
+    housing_type = NA
 ) {
     #' @title Calculating deviations within region
     #' 
@@ -8,6 +10,8 @@ calculating_deviations_regions_grids <- function(
     #' estimated region effects and the percentage deviations.
     #' 
     #' @param grid_effects_abs List of data frames with absolute estimated region.
+    #' @param destatis Logical indicating whether to use Destatis references.
+    #' @param housing_type Character string specifying the housing type.
     #' 
     #' @return List of data frames with deviations within region for each time
     #' period.
@@ -26,7 +30,11 @@ calculating_deviations_regions_grids <- function(
         #--------------------------------------------------
         # set up for different time periods
 
-        reference_period <- helpers_regional_effects_change_settings(time_period = time_label)[["reference_period"]]
+        reference_period <- helpers_regional_effects_change_settings(
+            time_period = time_label,
+            destatis = destatis,
+            housing_type = housing_type
+        )[["reference_period"]]
     
         #--------------------------------------------------
         # add reference value to data
