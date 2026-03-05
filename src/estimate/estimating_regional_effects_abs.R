@@ -36,6 +36,30 @@ estimating_regional_effects_abs <- function(
     time_fes <- helpers_var_definition(housing_type = housing_type)[["time_fe"]]
 
     #--------------------------------------------------
+    # means for independent variable to re-demean the variables
+    # NOTE: needed for the REDX visualization
+
+    # remove factor declaration for the sake of filtering the data
+    clean_indepvars <- stringr::str_replace_all(
+        indepvars, "as\\.factor\\(([^)]+)\\)", "\\1"
+    )
+
+    # calculate mean values for each independent variable
+    mean_indepvars <- housing_data |>
+        dplyr::select(dplyr::all_of(clean_indepvars)) |>
+        dplyr::summarise(
+            dplyr::across(
+                .cols = everything(),
+                ~ mean(.x, na.rm = TRUE)
+            )
+        ) |>
+        tidyr::pivot_longer(
+            cols = everything(),
+            names_to = "var_name",
+            values_to = "mean_var"
+        )
+
+    #--------------------------------------------------
     # prepare the housing data
     # includes demeaning of independent variables
 
@@ -110,6 +134,34 @@ estimating_regional_effects_abs <- function(
             )
 
             #--------------------------------------------------
+            # extract and export the model coefficients
+            # NOTE: needed for the REDX visualization
+            # NOTE: REDX visualization only uses yearly values. If other time frames
+            # needed change here
+
+            if (time_label == "year" & destatis == FALSE) {
+                coef_mod <- helpers_extracting_coefs(
+                    model = base_mod,
+                    means_independent = mean_indepvars
+                )
+
+                data.table::fwrite(
+                    coef_mod,
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0(
+                            "model_coefficients_year_absolute_",
+                            housing_type,
+                            ".csv"
+                        )
+                    ),
+                    sep = ";"
+                )
+            }
+
+            #--------------------------------------------------
             # extract fixed effects
 
             fixed_effects <- fixest::fixef(base_mod) |>
@@ -135,18 +187,29 @@ estimating_regional_effects_abs <- function(
             smearing_factor <- mean(exp(residuals_log))
 
             #--------------------------------------------------
-            # calculate price index, i.e. delogarithmize the fixed effect
+            # exporting smearing factor
+            # NOTE: Needed for REDX visualization
 
+            if (time_label == "year" & destatis == FALSE) {
+                data.table::fwrite(
+                    as.data.frame(cbind(
+                        smearing_factor = smearing_factor,
+                        housing_type = housing_type
+                    )),
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0(
+                            "smearing_factor_year_absolute_",
+                            housing_type,
+                            ".csv"
+                        )
+                    ),
+                    sep = ";"
+                )
+            }
 
-            fixed_effects_abs <- fixed_effects_logged |>
-                dplyr::mutate(
-                    pindex = exp(pindex_FE) * smearing_factor,
-                    # separate region and time into separate columns
-                    !!time_label := substring(id_fe, 1, string_cutoff),
-                    grid = substring(id_fe, string_cutoff + 2, nchar(id_fe))
-                ) |>
-                dplyr::select(-c(pindex_FE, id_fe))
-            
             #--------------------------------------------------
             # used sample
 
@@ -235,11 +298,46 @@ estimating_regional_effects_abs <- function(
             # merge FE and NOBS data
 
             regional_coef <- merge(
-                fixed_effects_abs,
+                fixed_effects_logged,
                 nobs,
                 by = c(time_label, "grid"),
                 all.x = TRUE
             )
+
+            #--------------------------------------------------
+            # export logged FE with observations
+            # NOTE: Needed for REDX visualization
+            # NOTE: REDX visualization only uses yearly values. If other time frames
+            # needed change here
+
+            if (time_label == "year" & destatis == FALSE) {
+                data.table::fwrite(
+                    regional_coef,
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0(
+                            "fixed_effects_grids_year_absolute_logged_",
+                            housing_type,
+                            ".csv"
+                        )
+                    ),
+                    sep = ";"
+                )
+            } 
+
+            #--------------------------------------------------
+            # calculate price index, i.e. delogarithmize the fixed effect
+
+            regional_coef <- regional_coef |>
+                dplyr::mutate(
+                    pindex = exp(pindex_FE) * smearing_factor,
+                    # separate region and time into separate columns
+                    !!time_label := substring(id_fe, 1, string_cutoff),
+                    grid = substring(id_fe, string_cutoff + 2, nchar(id_fe))
+                ) |>
+                dplyr::select(-c(pindex_FE, id_fe))
 
             #--------------------------------------------------
             # export findings
