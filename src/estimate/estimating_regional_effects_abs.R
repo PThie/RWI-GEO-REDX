@@ -140,9 +140,14 @@ estimating_regional_effects_abs <- function(
             # needed change here
 
             if (time_label == "year" & destatis == FALSE) {
+                # get estimation sample
+                est_sample <- est_data[base_mod$obs_selection[[1]], ]
+                
+                # get coefficients
                 coef_mod <- helpers_extracting_coefs(
                     model = base_mod,
-                    means_independent = mean_indepvars
+                    means_independent = mean_indepvars,
+                    est_sample = est_sample
                 )
 
                 data.table::fwrite(
@@ -158,6 +163,40 @@ estimating_regional_effects_abs <- function(
                         )
                     ),
                     sep = ";"
+                )
+
+                # save covariance matrix
+                cov_mat <- vcov(base_mod)
+
+                saveRDS(
+                    cov_mat,
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0(
+                            "model_covariance_",
+                            housing_type,
+                            ".rds"
+                        )
+                    )
+                )
+
+                # save sigma2
+                sigma2 <- base_mod$sigma2
+
+                saveRDS(
+                    sigma2,
+                    file.path(
+                        config_paths()[["output_path"]],
+                        housing_type,
+                        "estimates",
+                        paste0(
+                            "model_sigma2_",
+                            housing_type,
+                            ".rds"
+                        )
+                    )
                 )
             }
 
